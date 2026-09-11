@@ -25,10 +25,13 @@ date and time, and `results/latest` points at the most recent one:
 results/
 └── 2026-09-11_06-42-52/
     ├── configs/
-    │   ├── sw1.running-config.txt   captured before the tests run
-    │   ├── sw1.startup-config.txt
-    │   ├── sw2.running-config.txt
-    │   └── sw2.startup-config.txt
+    │   ├── pre-run/                 running + startup config of sw1/sw2 before the tests
+    │   ├── post-run/                the same after the tests — the config backup of record
+    │   │   ├── sw1.running-config.txt
+    │   │   ├── sw1.startup-config.txt
+    │   │   ├── sw2.running-config.txt
+    │   │   └── sw2.startup-config.txt
+    │   └── pre-vs-post.diff         what the run changed (empty when nothing did)
     ├── report.html                  pass/fail summary
     ├── log.html                     every command and its output
     └── output.xml                   machine-readable (robot/rebot)
