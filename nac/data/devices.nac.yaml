@@ -1,0 +1,107 @@
+---
+# Device inventory + device-specific configuration (highest precedence).
+iosxe:
+  devices:
+    - name: sw1
+      host: 10.0.0.11
+      protocol: restconf         # HTTPS/443; NETCONF lock is broken on Cat9kv 17.18
+      device_groups: [CORE_SWITCHES]
+      variables:
+        router_id: 10.255.0.1
+        transit_ip: 10.100.0.1
+        peer_transit_ip: 10.100.0.2
+      configuration:
+        system:
+          hostname: sw1
+        interfaces:
+          # sw1 is the gateway for the USERS VLAN
+          vlans:
+            - id: 10
+              description: USERS gateway
+              shutdown: false
+              ipv4: { address: 10.10.0.1, address_mask: 255.255.255.0 }
+            # routed VLANs 110-114 live on sw1
+            - id: 110
+              description: L3-110 gateway
+              shutdown: false
+              ipv4: { address: 10.110.0.1, address_mask: 255.255.255.0 }
+            - id: 111
+              description: L3-111 gateway
+              shutdown: false
+              ipv4: { address: 10.111.0.1, address_mask: 255.255.255.0 }
+            - id: 112
+              description: L3-112 gateway
+              shutdown: false
+              ipv4: { address: 10.112.0.1, address_mask: 255.255.255.0 }
+            - id: 113
+              description: L3-113 gateway
+              shutdown: false
+              ipv4: { address: 10.113.0.1, address_mask: 255.255.255.0 }
+            - id: 114
+              description: L3-114 gateway
+              shutdown: false
+              ipv4: { address: 10.114.0.1, address_mask: 255.255.255.0 }
+        routing:
+          bgp:
+            address_family:
+              ipv4_unicast:
+                networks:
+                  - { network: 10.255.0.1, mask: 255.255.255.255 }
+                  - { network: 10.10.0.0, mask: 255.255.255.0 }
+                  - { network: 10.110.0.0, mask: 255.255.255.0 }
+                  - { network: 10.111.0.0, mask: 255.255.255.0 }
+                  - { network: 10.112.0.0, mask: 255.255.255.0 }
+                  - { network: 10.113.0.0, mask: 255.255.255.0 }
+                  - { network: 10.114.0.0, mask: 255.255.255.0 }
+
+    - name: sw2
+      host: 10.0.0.12
+      protocol: restconf
+      device_groups: [CORE_SWITCHES]
+      variables:
+        router_id: 10.255.0.2
+        transit_ip: 10.100.0.2
+        peer_transit_ip: 10.100.0.1
+      configuration:
+        system:
+          hostname: sw2
+        interfaces:
+          # sw2 is the gateway for the SERVERS VLAN
+          vlans:
+            - id: 20
+              description: SERVERS gateway
+              shutdown: false
+              ipv4: { address: 10.20.0.1, address_mask: 255.255.255.0 }
+            # routed VLANs 115-119 live on sw2
+            - id: 115
+              description: L3-115 gateway
+              shutdown: false
+              ipv4: { address: 10.115.0.1, address_mask: 255.255.255.0 }
+            - id: 116
+              description: L3-116 gateway
+              shutdown: false
+              ipv4: { address: 10.116.0.1, address_mask: 255.255.255.0 }
+            - id: 117
+              description: L3-117 gateway
+              shutdown: false
+              ipv4: { address: 10.117.0.1, address_mask: 255.255.255.0 }
+            - id: 118
+              description: L3-118 gateway
+              shutdown: false
+              ipv4: { address: 10.118.0.1, address_mask: 255.255.255.0 }
+            - id: 119
+              description: L3-119 gateway
+              shutdown: false
+              ipv4: { address: 10.119.0.1, address_mask: 255.255.255.0 }
+        routing:
+          bgp:
+            address_family:
+              ipv4_unicast:
+                networks:
+                  - { network: 10.255.0.2, mask: 255.255.255.255 }
+                  - { network: 10.20.0.0, mask: 255.255.255.0 }
+                  - { network: 10.115.0.0, mask: 255.255.255.0 }
+                  - { network: 10.116.0.0, mask: 255.255.255.0 }
+                  - { network: 10.117.0.0, mask: 255.255.255.0 }
+                  - { network: 10.118.0.0, mask: 255.255.255.0 }
+                  - { network: 10.119.0.0, mask: 255.255.255.0 }

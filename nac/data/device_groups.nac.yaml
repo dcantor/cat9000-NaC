@@ -1,0 +1,129 @@
+---
+# Role-based configuration shared by both switches (medium precedence).
+iosxe:
+  device_groups:
+    - name: CORE_SWITCHES
+      devices: [sw1, sw2]
+      variables:
+        bgp_asn: 65000            # single AS: iBGP between the two core switches
+      configuration:
+        vlan:
+          vlans:
+            - id: 10
+              name: USERS
+            - id: 20
+              name: SERVERS
+            - id: 99
+              name: NATIVE
+            - id: 100
+              name: TRANSIT
+            # routed VLANs (one /24 each; SVIs split across the two switches, see devices.nac.yaml)
+            - id: 110
+              name: L3-110
+            - id: 111
+              name: L3-111
+            - id: 112
+              name: L3-112
+            - id: 113
+              name: L3-113
+            - id: 114
+              name: L3-114
+            - id: 115
+              name: L3-115
+            - id: 116
+              name: L3-116
+            - id: 117
+              name: L3-117
+            - id: 118
+              name: L3-118
+            - id: 119
+              name: L3-119
+            # layer-2 only VLANs (no SVI, bridged across the trunk)
+            - id: 210
+              name: L2-210
+            - id: 211
+              name: L2-211
+            - id: 212
+              name: L2-212
+            - id: 213
+              name: L2-213
+            - id: 214
+              name: L2-214
+            - id: 215
+              name: L2-215
+            - id: 216
+              name: L2-216
+            - id: 217
+              name: L2-217
+            - id: 218
+              name: L2-218
+            - id: 219
+              name: L2-219
+        interfaces:
+          ethernets:
+            # inter-switch trunk (sw1 Gi1/0/1 <-> sw2 Gi1/0/1)
+            - type: GigabitEthernet
+              id: "1/0/1"
+              description: TRUNK to peer core switch
+              shutdown: false
+              switchport:
+                enable: true
+                mode: trunk
+                trunk_native_vlan_id: 99
+                trunk_allowed_vlans:
+                  vlans:
+                    ids: [10, 20, 100]
+                    ranges:
+                      - { from: 110, to: 119 }
+                      - { from: 210, to: 219 }
+                nonegotiate: true
+            # user-facing access ports
+            - type: GigabitEthernet
+              id: "1/0/2"
+              description: ACCESS - USERS
+              shutdown: false
+              switchport: { enable: true, mode: access, access_vlan: 10 }
+              spanning_tree: { portfast: true, bpduguard: true }
+            - type: GigabitEthernet
+              id: "1/0/3"
+              description: ACCESS - USERS
+              shutdown: false
+              switchport: { enable: true, mode: access, access_vlan: 10 }
+              spanning_tree: { portfast: true, bpduguard: true }
+            - type: GigabitEthernet
+              id: "1/0/4"
+              description: ACCESS - SERVERS
+              shutdown: false
+              switchport: { enable: true, mode: access, access_vlan: 20 }
+              spanning_tree: { portfast: true, bpduguard: true }
+          # routed transit SVI between the two switches (OSPF area 0)
+          vlans:
+            - id: 100
+              description: TRANSIT sw1-sw2
+              shutdown: false
+              ipv4:
+                address: "${transit_ip}"
+                address_mask: 255.255.255.252
+          loopbacks:
+            - id: 0
+              description: Router ID
+              ipv4:
+                address: "${router_id}"
+                address_mask: 255.255.255.255
+        routing:
+          # iBGP (one AS) over the directly connected transit SVIs; each switch
+          # originates its loopback and the VLANs it is the gateway for
+          # (networks are listed per device in devices.nac.yaml)
+          bgp:
+            as_number: "${bgp_asn}"
+            router_id: "${router_id}"
+            log_neighbor_changes: true
+            neighbors:
+              - ip: "${peer_transit_ip}"
+                remote_as: "${bgp_asn}"
+                description: iBGP to peer core switch
+            address_family:
+              ipv4_unicast:
+                neighbors:
+                  - ip: "${peer_transit_ip}"
+                    activate: true

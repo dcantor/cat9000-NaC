@@ -1,0 +1,40 @@
+hostname sw2
+!
+no aaa new-model
+username admin privilege 15 secret admin
+enable secret admin
+ip domain name lab.local
+no ip domain lookup
+!
+interface GigabitEthernet0/0
+ description OOB management
+ vrf forwarding Mgmt-vrf
+ ip address 10.0.0.12 255.255.255.0
+ negotiation auto
+ no shutdown
+!
+ip route vrf Mgmt-vrf 0.0.0.0 0.0.0.0 10.0.0.10
+!
+lldp run
+cdp run
+!
+snmp-server community lab RO
+snmp-server location cat9000v-lab
+!
+ip ssh version 2
+!
+! NETCONF for the Network-as-Code Terraform provider
+netconf-yang
+restconf
+ip http secure-server
+ip http authentication local
+!
+line con 0
+ exec-timeout 0 0
+ logging synchronous
+line vty 0 15
+ exec-timeout 0 0
+ login local
+ transport input ssh
+!
+end

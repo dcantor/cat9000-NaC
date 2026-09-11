@@ -1,0 +1,11 @@
+version: 2
+ethernets:
+  wan:
+    match: { macaddress: "52:54:00:c9:0a:01" }
+    set-name: eth0
+    dhcp4: true
+  oob:
+    match: { macaddress: "52:54:00:c9:0a:02" }
+    set-name: eth1
+    addresses: [10.0.0.10/24]
+    dhcp4: false

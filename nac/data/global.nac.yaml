@@ -1,0 +1,49 @@
+---
+# Organisation-wide baseline: applied to every device unless overridden by a
+# device group or a device (lowest precedence).
+iosxe:
+  global:
+    variables:
+      domain_name: lab.local
+      mgmt_vrf: Mgmt-vrf
+      nms_ip: 10.0.0.10          # NTP / syslog / SNMP trap receiver
+      snmp_community: lab
+    configuration:
+      system:
+        ip_domain_name: "${domain_name}"
+        ip_domain_lookup: false
+        ip_routing: true
+      cdp:
+        run: true
+      lldp:
+        run: true
+      spanning_tree:
+        mode: rapid-pvst
+        extend_system_id: true
+      ntp:
+        servers:
+          - ip: "${nms_ip}"
+            vrf: "${mgmt_vrf}"
+            prefer: true
+      logging:
+        buffered_size: 64000
+        buffered_severity: informational
+        # trap severity is left at the IOS default (informational): setting it explicitly
+        # drifts after a reload because IOS drops default values from running-config
+        hosts:
+          - ip: "${nms_ip}"
+            vrf: "${mgmt_vrf}"
+      snmp_server:
+        contact: netops@lab.local
+        location: cat9000v-lab
+        snmp_communities:
+          - name: "${snmp_community}"
+            permission: ro
+        hosts:
+          - ip: "${nms_ip}"
+            vrf: "${mgmt_vrf}"
+            community: "${snmp_community}"
+            version: 2c
+        enable_traps: true
+      banner:
+        motd: "Managed by Network-as-Code (Terraform). Manual changes will be reverted."

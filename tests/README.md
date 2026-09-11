@@ -1,0 +1,55 @@
+# Robot Framework tests for the cat9000v lab
+
+End-to-end validation of every feature the lab enables — run from the host
+against the live topology (switches over SSH + RESTCONF, the NMS jumphost
+over SSH, Terraform for drift detection).
+
+```bash
+../lab.sh test                      # or: tests/run.sh
+../lab.sh test --exclude internet   # skip tests that need external connectivity
+../lab.sh test --exclude slow       # skip NTP-sync (needs a few minutes after first apply)
+../lab.sh test --suite 03_layer3    # one suite
+../lab.sh test --test "*BGP*"      # matching tests only
+```
+
+`lab.sh test` creates the virtualenv on first use (`tests/setup.sh`,
+packages in `requirements.txt`). Credentials default to `admin`/`admin`
+and can be overridden with `IOSXE_USERNAME` / `IOSXE_PASSWORD`.
+
+## Results
+
+Every run gets its own timestamped folder, and `results/latest` points at the
+most recent one:
+
+```
+results/
+└── results-20260910-224457/
+    ├── configs/
+    │   ├── sw1.running-config.txt   captured before the tests run
+    │   ├── sw1.startup-config.txt
+    │   ├── sw2.running-config.txt
+    │   └── sw2.startup-config.txt
+    ├── report.html                  pass/fail summary
+    ├── log.html                     every command and its output
+    └── output.xml                   machine-readable (robot/rebot)
+```
+
+## Suites
+
+| Suite | Covers |
+|---|---|
+| `01_management` | ICMP/SSH/RESTCONF/NETCONF reachability of each switch, Gi0/0 state, Mgmt-vrf reachability of the NMS, NMS on both networks with forwarding, NMS→switch SSH, internet via NMS NAT (`internet` tag) |
+| `02_layer2` | Gi1/0/1 link up, VLAN database, trunk (native VLAN, allowed list, nonegotiate), access ports + portfast + bpduguard, rapid-PVST and trunk forwarding, CDP + LLDP neighbours |
+| `03_layer3` | SVI/loopback addresses up/up, `ip routing`, BGP AS + router-id, iBGP session Established over the transit SVI, each switch advertises its loopback + gateway VLANs, peer prefixes installed as `B [200/0]`, no OSPF routes, inter-VLAN and loopback pings |
+| `04_services` | NTP server config + association (+ synced, `slow` tag), syslog end-to-end (marker via `send log`, seen in `/var/log/lab/swN.log` on the NMS), SNMP identity queried from the NMS + trap host, banner, CDP/LLDP global |
+| `06_vlans` | Routed VLANs 110-119: present on both switches, SVI up with the /24 gateway on the owning switch, originated into BGP by the owner, learned via iBGP on the other switch, gateway pingable across the trunk; L2 VLANs 210-219: present, no SVI, STP forwarding on the trunk; trunk allowed list |
+| `07_hosts` | CirrOS hosts: OOB reachability + hostname, eth1 address and default route via the SVI, switch sees the host MAC/ARP on the right access port and VLAN, gateway ping, **host1 ↔ host2 ping through the switches (iBGP-routed)**, traceroute hops = sw1 SVI → sw2 transit SVI (never the OOB net), far-switch loopback and routed-VLAN gateways reachable |
+| `05_nac_compliance` | `terraform plan -detailed-exitcode` == 0 (device config matches the NAC data model), rendered model present |
+
+Host credentials (`cirros`/`gocubsgo`) and attachments (`HOSTS`) are in
+`resources/lab_vars.py` too — keep them in sync with `HOST_ATTACH` in `lab.conf`.
+
+Expected values live in `resources/lab_vars.py` — update it alongside
+`nac/data/*.nac.yaml` when the model changes. Keywords that talk to devices are
+in `resources/LabLib.py` (`Run Command`, `Restconf Get`, `Nms Command`,
+`Host Ping`, `Terraform Plan Exit Code`, …).

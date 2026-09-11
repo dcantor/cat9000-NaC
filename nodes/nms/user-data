@@ -1,0 +1,83 @@
+#cloud-config
+hostname: nms
+fqdn: nms.lab.local
+manage_etc_hosts: true
+timezone: UTC
+users:
+  - name: lab
+    gecos: Lab user
+    groups: [adm, sudo]
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock_passwd: false
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDUydcJl0VOMmf1cl5ifvV6cPyzzStr1HOkMrX1wt8jX your_email@example.com
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP0zx+wt3Otxjxb4ZLEl9y0Gv4EqEcORafmNcn7vXWAH dcantor@macbook
+chpasswd:
+  expire: false
+  users:
+    - name: lab
+      password: lab
+      type: text
+ssh_pwauth: true
+package_update: true
+package_upgrade: false
+packages:
+  - net-tools
+  - traceroute
+  - mtr-tiny
+  - tcpdump
+  - nmap
+  - iperf3
+  - telnet
+  - snmp
+  - snmp-mibs-downloader
+  - sshpass
+  - lldpd
+  - ansible-core
+  - python3-netmiko
+  - python3-ncclient
+  - python3-pysnmp4
+  - iptables-persistent
+  - chrony
+  - rsyslog
+write_files:
+  - path: /home/lab/.ssh/config
+    owner: lab:lab
+    permissions: '0600'
+    defer: true
+    content: |
+      Host sw1 sw2 10.0.0.*
+        User admin
+        StrictHostKeyChecking no
+        UserKnownHostsFile /dev/null
+        LogLevel ERROR
+        KexAlgorithms +diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1
+        HostKeyAlgorithms +ssh-rsa
+        PubkeyAcceptedAlgorithms +ssh-rsa
+  - path: /etc/chrony/conf.d/lab.conf
+    content: |
+      # serve time to the OOB management network
+      allow 10.0.0.0/24
+      local stratum 10
+  - path: /etc/rsyslog.d/10-lab-udp.conf
+    content: |
+      # receive syslog from the lab switches on UDP/514, one file per device
+      module(load="imudp")
+      input(type="imudp" port="514")
+      $template LabDev,"/var/log/lab/%HOSTNAME%.log"
+      if $fromhost-ip startswith "10.0.0." then { action(type="omfile" dynaFile="LabDev") stop }
+  - path: /etc/sysctl.d/90-lab-forward.conf
+    content: |
+      net.ipv4.ip_forward = 1
+runcmd:
+  # lab name resolution (runcmd runs after cloud-init's own /etc/hosts management)
+  - [ sh, -c, "grep -q ' sw1$' /etc/hosts || printf '10.0.0.1 host\\n10.0.0.11 sw1\\n10.0.0.12 sw2\\n' >> /etc/hosts" ]
+  # NAT the OOB management network out through the internet-facing NIC
+  - sysctl -w net.ipv4.ip_forward=1
+  - iptables -t nat -A POSTROUTING -s 10.0.0.0/24 ! -d 10.0.0.0/24 -j MASQUERADE
+  - netfilter-persistent save
+  - mkdir -p /var/log/lab && chown syslog:adm /var/log/lab
+  - systemctl restart chrony rsyslog
+  - [ sh, -c, "echo 'Lab jumphost ready' > /etc/motd" ]
+final_message: "nms jumphost is up after $UPTIME seconds"

@@ -1,0 +1,7 @@
+<network>
+  <name>oob-mgmt</name>
+  <bridge name='virbr-oob' stp='off' delay='0'/>
+  <!-- isolated: no NAT from the host; the nms jumphost provides internet via NAT.
+       The host itself sits on the segment as 10.0.0.1 for direct SSH access. -->
+  <ip address='10.0.0.1' netmask='255.255.255.0'/>
+</network>
