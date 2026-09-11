@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.4.2 (Python 3.14.4 on linux)" generated="2026-09-11T10:32:37.172842" rpa="false" schemaversion="5">
+<suite id="s1" name="cat9000v lab" source="/home/dcantor/cat9000v/tests/suites">
+<suite id="s1-s1" name="05 Nac Compliance" source="/home/dcantor/cat9000v/tests/suites/05_nac_compliance.robot">
+<test id="s1-s1-t1" name="Terraform plan reports no drift from the NAC data model" line="7">
+<kw name="Terraform Plan Exit Code" owner="LabLib">
+<msg time="2026-09-11T10:32:40.825106" level="INFO" html="true">&lt;pre&gt;Vlan114"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/Vlan=114]
+module.iosxe.iosxe_interface_vlan.vlan["sw2/Vlan115"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/Vlan=115]
+module.iosxe.iosxe_interface_vlan.vlan["sw1/Vlan100"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/Vlan=100]
+module.iosxe.iosxe_interface_vlan.vlan["sw2/Vlan117"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/Vlan=117]
+module.iosxe.iosxe_interface_vlan.vlan["sw1/Vlan112"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/Vlan=112]
+module.iosxe.iosxe_interface_ethernet.ethernet["sw2/GigabitEthernet1/0/2"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F2]
+module.iosxe.iosxe_interface_ethernet.ethernet["sw1/GigabitEthernet1/0/2"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F2]
+module.iosxe.iosxe_interface_ethernet.ethernet["sw2/GigabitEthernet1/0/1"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F1]
+module.iosxe.iosxe_interface_ethernet.ethernet["sw1/GigabitEthernet1/0/4"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F4]
+module.iosxe.iosxe_interface_ethernet.ethernet["sw1/GigabitEthernet1/0/3"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F3]
+module.iosxe.iosxe_interface_ethernet.ethernet["sw2/GigabitEthernet1/0/3"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F3]
+module.iosxe.iosxe_interface_ethernet.ethernet["sw2/GigabitEthernet1/0/4"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F4]
+module.iosxe.iosxe_interface_ethernet.ethernet["sw1/GigabitEthernet1/0/1"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F1]
+module.iosxe.iosxe_interface_switchport.ethernet_switchport["sw1/GigabitEthernet1/0/2"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F2/switchport-config/switchport]
+module.iosxe.iosxe_interface_switchport.ethernet_switchport["sw2/GigabitEthernet1/0/2"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F2/switchport-config/switchport]
+module.iosxe.iosxe_interface_switchport.ethernet_switchport["sw1/GigabitEthernet1/0/3"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F3/switchport-config/switchport]
+module.iosxe.iosxe_interface_switchport.ethernet_switchport["sw2/GigabitEthernet1/0/3"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F3/switchport-config/switchport]
+module.iosxe.iosxe_interface_switchport.ethernet_switchport["sw1/GigabitEthernet1/0/4"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F4/switchport-config/switchport]
+module.iosxe.iosxe_ntp.ntp["sw1"]: Refreshing state... [id=Cisco-IOS-XE-native:native/ntp]
+module.iosxe.iosxe_interface_switchport.ethernet_switchport["sw2/GigabitEthernet1/0/1"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F1/switchport-config/switchport]
+module.iosxe.iosxe_interface_switchport.ethernet_switchport["sw1/GigabitEthernet1/0/1"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F1/switchport-config/switchport]
+module.iosxe.iosxe_interface_switchport.ethernet_switchport["sw2/GigabitEthernet1/0/4"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F4/switchport-config/switchport]
+module.iosxe.iosxe_ntp.ntp["sw2"]: Refreshing state... [id=Cisco-IOS-XE-native:native/ntp]
+module.iosxe.iosxe_system.system["sw2"]: Refreshing state... [id=Cisco-IOS-XE-native:native]
+module.iosxe.iosxe_system.system["sw1"]: Refreshing state... [id=Cisco-IOS-XE-native:native]
+module.iosxe.iosxe_logging.logging["sw1"]: Refreshing state... [id=Cisco-IOS-XE-native:native/logging]
+module.iosxe.iosxe_logging.logging["sw2"]: Refreshing state... [id=Cisco-IOS-XE-native:native/logging]
+module.iosxe.iosxe_snmp_server.snmp_server["sw1"]: Refreshing state... [id=Cisco-IOS-XE-native:native/snmp-server]
+module.iosxe.iosxe_snmp_server.snmp_server["sw2"]: Refreshing state... [id=Cisco-IOS-XE-native:native/snmp-server]
+module.iosxe.iosxe_bgp.bgp["sw2"]: Refreshing state... [id=Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000]
+module.iosxe.iosxe_bgp.bgp["sw1"]: Refreshing state... [id=Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000]
+module.iosxe.iosxe_bgp_address_family_ipv4.bgp_address_family_ipv4["sw1"]: Refreshing state... [id=Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000/address-family/no-vrf/ipv4=unicast]
+module.iosxe.iosxe_bgp_address_family_ipv4.bgp_address_family_ipv4["sw2"]: Refreshing state... [id=Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000/address-family/no-vrf/ipv4=unicast]
+module.iosxe.iosxe_bgp_neighbor.bgp_neighbor["sw2/10.100.0.1"]: Refreshing state... [id=Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000/neighbor=10.100.0.1]
+module.iosxe.iosxe_bgp_neighbor.bgp_neighbor["sw1/10.100.0.2"]: Refreshing state... [id=Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000/neighbor=10.100.0.2]
+module.iosxe.iosxe_bgp_ipv4_unicast_neighbor.bgp_ipv4_unicast_neighbor["sw1/10.100.0.2"]: Refreshing state... [id=Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000/address-family/no-vrf/ipv4=unicast/ipv4-unicast/neighbor=10.100.0.2]
+module.iosxe.iosxe_bgp_ipv4_unicast_neighbor.bgp_ipv4_unicast_neighbor["sw2/10.100.0.1"]: Refreshing state... [id=Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-bgp:bgp=65000/address-family/no-vrf/ipv4=unicast/ipv4-unicast/neighbor=10.100.0.1]
+
+No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your configuration
+and found no differences, so no changes are needed.
+
+&lt;/pre&gt;</msg>
+<msg time="2026-09-11T10:32:40.825297" level="INFO">${rc} = 0</msg>
+<var>${rc}</var>
+<doc>Run `terraform plan -detailed-exitcode` via lab.sh nac: 0 = no drift, 2 = changes.</doc>
+<status status="PASS" start="2026-09-11T10:32:37.361925" elapsed="3.463401"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2026-09-11T10:32:40.825852" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${rc}</arg>
+<arg>0</arg>
+<arg>msg=terraform plan exit code ${rc} (0 = in sync, 2 = drift, 1 = error)</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2026-09-11T10:32:40.825479" elapsed="0.000427"/>
+</kw>
+<tag>nac</tag>
+<status status="PASS" start="2026-09-11T10:32:37.361244" elapsed="3.464766"/>
+</test>
+<test id="s1-s1-t2" name="Rendered model was produced by the last plan" line="12">
+<kw name="File Should Exist" owner="OperatingSystem">
+<msg time="2026-09-11T10:32:40.826471" level="INFO" html="true">File '&lt;a href="file:///home/dcantor/cat9000v/nac/rendered-model.yaml"&gt;/home/dcantor/cat9000v/nac/rendered-model.yaml&lt;/a&gt;' exists.</msg>
+<arg>/home/dcantor/cat9000v/tests/suites/../../nac/rendered-model.yaml</arg>
+<doc>Fails unless the given ``path`` points to an existing file.</doc>
+<status status="PASS" start="2026-09-11T10:32:40.826377" elapsed="0.000129"/>
+</kw>
+<kw name="Get File" owner="OperatingSystem">
+<msg time="2026-09-11T10:32:40.826633" level="INFO" html="true">Getting file '&lt;a href="file:///home/dcantor/cat9000v/nac/rendered-model.yaml"&gt;/home/dcantor/cat9000v/nac/rendered-model.yaml&lt;/a&gt;'.</msg>
+<msg time="2026-09-11T10:32:40.826769" level="INFO">${model} = "iosxe":
+  "devices":
+  - "cli_templates": []
+    "configuration":
+      "banner":
+        "motd": "Managed by Network-as-Code (Terraform). Manual changes will be reverted."
+      "cdp":
+        "run"...</msg>
+<var>${model}</var>
+<arg>/home/dcantor/cat9000v/tests/suites/../../nac/rendered-model.yaml</arg>
+<doc>Returns the contents of a specified file.</doc>
+<status status="PASS" start="2026-09-11T10:32:40.826568" elapsed="0.000219"/>
+</kw>
+<for flavor="IN">
+<iter>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${model}</arg>
+<arg>"?name"?: "?${sw}"?</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-11T10:32:40.827041" elapsed="0.000323"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-11T10:32:40.826982" elapsed="0.000409"/>
+</iter>
+<iter>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${model}</arg>
+<arg>"?name"?: "?${sw}"?</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-11T10:32:40.827503" elapsed="0.000322"/>
+</kw>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-11T10:32:40.827453" elapsed="0.000398"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-11T10:32:40.826837" elapsed="0.001036"/>
+</for>
+<tag>nac</tag>
+<status status="PASS" start="2026-09-11T10:32:40.826155" elapsed="0.001782"/>
+</test>
+<doc>Configuration compliance: the switches match the Network-as-Code data model (no Terraform drift).</doc>
+<status status="PASS" start="2026-09-11T10:32:37.198239" elapsed="3.629954"/>
+</suite>
+<status status="PASS" start="2026-09-11T10:32:37.173536" elapsed="3.655127"/>
+</suite>
+<statistics>
+<total>
+<stat pass="2" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="2" fail="0" skip="0">nac</stat>
+</tag>
+<suite>
+<stat name="cat9000v lab" id="s1" pass="2" fail="0" skip="0">cat9000v lab</stat>
+<stat name="05 Nac Compliance" id="s1-s1" pass="2" fail="0" skip="0">cat9000v lab.05 Nac Compliance</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

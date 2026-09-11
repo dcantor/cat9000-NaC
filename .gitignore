@@ -11,8 +11,6 @@ images/
 nac/.terraform/
 nac/*.tfstate*
 nac/rendered-model.yaml
-# test runs
-results/
 tests/.venv/
 # generated CirrOS seeds (from HOST_ATTACH in lab.conf)
 nodes/host*/user-data

@@ -1,0 +1,1031 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.4.2 (Python 3.14.4 on linux)" generated="2026-09-11T00:51:16.445882" rpa="false" schemaversion="5">
+<suite id="s1" name="cat9000v lab" source="/home/dcantor/cat9000v/tests/suites">
+<suite id="s1-s1" name="07 Hosts" source="/home/dcantor/cat9000v/tests/suites/07_hosts.robot">
+<test id="s1-s1-t1" name="Hosts are reachable on the OOB network and identify themselves" line="8">
+<for flavor="IN">
+<iter>
+<kw name="Host Ping" owner="LabLib">
+<msg time="2026-09-11T00:51:18.702487" level="INFO">PING 10.0.0.21 (10.0.0.21) 56(84) bytes of data.
+64 bytes from 10.0.0.21: icmp_seq=1 ttl=64 time=0.140 ms
+64 bytes from 10.0.0.21: icmp_seq=2 ttl=64 time=0.124 ms
+64 bytes from 10.0.0.21: icmp_seq=3 ttl=64 time=0.141 ms
+
+--- 10.0.0.21 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2079ms
+rtt min/avg/max/mdev = 0.124/0.135/0.141/0.007 ms
+</msg>
+<arg>${host}[mgmt]</arg>
+<doc>ICMP ping from the host; fails unless at least one reply.</doc>
+<status status="PASS" start="2026-09-11T00:51:16.621351" elapsed="2.081254"/>
+</kw>
+<kw name="Host Command" owner="LabLib">
+<msg time="2026-09-11T00:51:18.797465" level="INFO" html="true">&lt;pre&gt;10.0.0.21$ hostname
+rc=0
+host1
+&lt;/pre&gt;</msg>
+<msg time="2026-09-11T00:51:18.797716" level="INFO">${name} = host1
+</msg>
+<var>${name}</var>
+<arg>${host}[mgmt]</arg>
+<arg>hostname</arg>
+<doc>Run a shell command on a CirrOS host over SSH; returns stdout+stderr, fails on non-zero rc.</doc>
+<status status="PASS" start="2026-09-11T00:51:18.702801" elapsed="0.094955"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${name.strip()}</arg>
+<arg>${h}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-11T00:51:18.797966" elapsed="0.001051"/>
+</kw>
+<var name="${h}">host1</var>
+<var name="${host}">{'mgmt': '10.0.0.21', 'switch': 'sw1', 'port': 'Gi1/0/2', 'vlan': '10', 'ip': '10.10.0.100', 'gateway': '10.10.0.1', 'mac': '5254.00c9.0301', 'peer': 'host2'}</var>
+<status status="PASS" start="2026-09-11T00:51:16.620892" elapsed="2.178173"/>
+</iter>
+<iter>
+<kw name="Host Ping" owner="LabLib">
+<msg time="2026-09-11T00:51:20.878435" level="INFO">PING 10.0.0.22 (10.0.0.22) 56(84) bytes of data.
+64 bytes from 10.0.0.22: icmp_seq=1 ttl=64 time=0.123 ms
+64 bytes from 10.0.0.22: icmp_seq=2 ttl=64 time=0.150 ms
+64 bytes from 10.0.0.22: icmp_seq=3 ttl=64 time=0.112 ms
+
+--- 10.0.0.22 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2077ms
+rtt min/avg/max/mdev = 0.112/0.128/0.150/0.015 ms
+</msg>
+<arg>${host}[mgmt]</arg>
+<doc>ICMP ping from the host; fails unless at least one reply.</doc>
+<status status="PASS" start="2026-09-11T00:51:18.799350" elapsed="2.079205"/>
+</kw>
+<kw name="Host Command" owner="LabLib">
+<msg time="2026-09-11T00:51:20.975949" level="INFO" html="true">&lt;pre&gt;10.0.0.22$ hostname
+rc=0
+host2
+&lt;/pre&gt;</msg>
+<msg time="2026-09-11T00:51:20.976175" level="INFO">${name} = host2
+</msg>
+<var>${name}</var>
+<arg>${host}[mgmt]</arg>
+<arg>hostname</arg>
+<doc>Run a shell command on a CirrOS host over SSH; returns stdout+stderr, fails on non-zero rc.</doc>
+<status status="PASS" start="2026-09-11T00:51:20.878692" elapsed="0.097516"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${name.strip()}</arg>
+<arg>${h}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-11T00:51:20.976365" elapsed="0.000842"/>
+</kw>
+<var name="${h}">host2</var>
+<var name="${host}">{'mgmt': '10.0.0.22', 'switch': 'sw2', 'port': 'Gi1/0/4', 'vlan': '20', 'ip': '10.20.0.100', 'gateway': '10.20.0.1', 'mac': '5254.00c9.0401', 'peer': 'host1'}</var>
+<status status="PASS" start="2026-09-11T00:51:18.799249" elapsed="2.178000"/>
+</iter>
+<var>${h}</var>
+<var>${host}</var>
+<value>&amp;{HOSTS}</value>
+<status status="PASS" start="2026-09-11T00:51:16.620598" elapsed="4.356696"/>
+</for>
+<status status="PASS" start="2026-09-11T00:51:16.620333" elapsed="4.357089"/>
+</test>
+<test id="s1-s1-t2" name="Hosts have their VLAN address on eth1 and default route via the switch SVI" line="15">
+<for flavor="IN">
+<iter>
+<kw name="Host Command" owner="LabLib">
+<msg time="2026-09-11T00:51:21.070339" level="INFO" html="true">&lt;pre&gt;10.0.0.21$ ip addr show eth1
+rc=0
+3: eth1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast qlen 1000
+    link/ether 52:54:00:c9:03:01 brd ff:ff:ff:ff:ff:ff
+    inet 10.10.0.100/24 scope global eth1
+       valid_lft forever preferred_lft forever
+    inet6 fe80::5054:ff:fec9:301/64 scope link 
+       valid_lft forever preferred_lft forever
+&lt;/pre&gt;</msg>
+<msg time="2026-09-11T00:51:21.070533" level="INFO">${addr} = 3: eth1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast qlen 1000
+    link/ether 52:54:00:c9:03:01 brd ff:ff:ff:ff:ff:ff
+    inet 10.10.0.100/24 scope global eth1
+       valid_lft forever...</msg>
+<var>${addr}</var>
+<arg>${host}[mgmt]</arg>
+<arg>ip addr show eth1</arg>
+<doc>Run a shell command on a CirrOS host over SSH; returns stdout+stderr, fails on non-zero rc.</doc>
+<status status="PASS" start="2026-09-11T00:51:20.978250" elapsed="0.092305"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${addr}</arg>
+<arg>inet ${host}[ip]/24</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-11T00:51:21.070694" elapsed="0.000415"/>
+</kw>
+<kw name="Host Command" owner="LabLib">
+<msg time="2026-09-11T00:51:21.162168" level="INFO" html="true">&lt;pre&gt;10.0.0.21$ ip route
+rc=0
+default via 10.10.0.1 dev eth1 
+10.0.0.0/24 dev eth0 scope link  src 10.0.0.21 
+10.10.0.0/24 dev eth1 scope link  src 10.10.0.100 
+&lt;/pre&gt;</msg>
+<msg time="2026-09-11T00:51:21.162390" level="INFO">${route} = default via 10.10.0.1 dev eth1 
+10.0.0.0/24 dev eth0 scope link  src 10.0.0.21 
+10.10.0.0/24 dev eth1 scope link  src 10.10.0.100 
+</msg>
+<var>${route}</var>
+<arg>${host}[mgmt]</arg>
+<arg>ip route</arg>
+<doc>Run a shell command on a CirrOS host over SSH; returns stdout+stderr, fails on non-zero rc.</doc>
+<status status="PASS" start="2026-09-11T00:51:21.071189" elapsed="0.091238"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${route}</arg>
+<arg>(?m)^default via ${host}[gateway] dev eth1</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-11T00:51:21.162620" elapsed="0.000605"/>
+</kw>
+<var name="${h}">host1</var>
+<var name="${host}">{'mgmt': '10.0.0.21', 'switch': 'sw1', 'port': 'Gi1/0/2', 'vlan': '10', 'ip': '10.10.0.100', 'gateway': '10.10.0.1', 'mac': '5254.00c9.0301', 'peer': 'host2'}</var>
+<status status="PASS" start="2026-09-11T00:51:20.978154" elapsed="0.185119"/>
+</iter>
+<iter>
+<kw name="Host Command" owner="LabLib">
+<msg time="2026-09-11T00:51:21.255580" level="INFO" html="true">&lt;pre&gt;10.0.0.22$ ip addr show eth1
+rc=0
+3: eth1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast qlen 1000
+    link/ether 52:54:00:c9:04:01 brd ff:ff:ff:ff:ff:ff
+    inet 10.20.0.100/24 scope global eth1
+       valid_lft forever preferred_lft forever
+    inet6 fe80::5054:ff:fec9:401/64 scope link 
+       valid_lft forever preferred_lft forever
+&lt;/pre&gt;</msg>
+<msg time="2026-09-11T00:51:21.255817" level="INFO">${addr} = 3: eth1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast qlen 1000
+    link/ether 52:54:00:c9:04:01 brd ff:ff:ff:ff:ff:ff
+    inet 10.20.0.100/24 scope global eth1
+       valid_lft forever...</msg>
+<var>${addr}</var>
+<arg>${host}[mgmt]</arg>
+<arg>ip addr show eth1</arg>
+<doc>Run a shell command on a CirrOS host over SSH; returns stdout+stderr, fails on non-zero rc.</doc>
+<status status="PASS" start="2026-09-11T00:51:21.163545" elapsed="0.092308"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${addr}</arg>
+<arg>inet ${host}[ip]/24</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-11T00:51:21.256062" elapsed="0.000543"/>
+</kw>
+<kw name="Host Command" owner="LabLib">
+<msg time="2026-09-11T00:51:21.347121" level="INFO" html="true">&lt;pre&gt;10.0.0.22$ ip route
+rc=0
+default via 10.20.0.1 dev eth1 
+10.0.0.0/24 dev eth0 scope link  src 10.0.0.22 
+10.20.0.0/24 dev eth1 scope link  src 10.20.0.100 
+&lt;/pre&gt;</msg>
+<msg time="2026-09-11T00:51:21.347314" level="INFO">${route} = default via 10.20.0.1 dev eth1 
+10.0.0.0/24 dev eth0 scope link  src 10.0.0.22 
+10.20.0.0/24 dev eth1 scope link  src 10.20.0.100 
+</msg>
+<var>${route}</var>
+<arg>${host}[mgmt]</arg>
+<arg>ip route</arg>
+<doc>Run a shell command on a CirrOS host over SSH; returns stdout+stderr, fails on non-zero rc.</doc>
+<status status="PASS" start="2026-09-11T00:51:21.256721" elapsed="0.090617"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${route}</arg>
+<arg>(?m)^default via ${host}[gateway] dev eth1</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-11T00:51:21.347477" elapsed="0.000408"/>
+</kw>
+<var name="${h}">host2</var>
+<var name="${host}">{'mgmt': '10.0.0.22', 'switch': 'sw2', 'port': 'Gi1/0/4', 'vlan': '20', 'ip': '10.20.0.100', 'gateway': '10.20.0.1', 'mac': '5254.00c9.0401', 'peer': 'host1'}</var>
+<status status="PASS" start="2026-09-11T00:51:21.163450" elapsed="0.184466"/>
+</iter>
+<var>${h}</var>
+<var>${host}</var>
+<value>&amp;{HOSTS}</value>
+<status status="PASS" start="2026-09-11T00:51:20.977930" elapsed="0.370016"/>
+</for>
+<status status="PASS" start="2026-09-11T00:51:20.977627" elapsed="0.370438"/>
+</test>
+<test id="s1-s1-t3" name="Switch sees each host on the right access port and VLAN" line="23">
+<for flavor="IN">
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-11T00:51:21.349471" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-11T00:51:21.349260" elapsed="0.000230"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-11T00:51:21.349537" elapsed="0.000051"/>
+</return>
+<msg time="2026-09-11T00:51:21.349698" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-11T00:51:21.349087" elapsed="0.000629"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-11T00:51:22.842070" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show interfaces status | include Gi1/0/2 
+Gi1/0/2      ACCESS - USERS     connected    10         a-full a-1000 unknown&lt;/pre&gt;</msg>
+<msg time="2026-09-11T00:51:22.842247" level="INFO">${out} = Gi1/0/2      ACCESS - USERS     connected    10         a-full a-1000 unknown</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-11T00:51:21.349781" elapsed="1.492491"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-11T00:51:22.842354" elapsed="0.000064"/>
+</return>
+<msg time="2026-09-11T00:51:22.842564" level="INFO">${st} = Gi1/0/2      ACCESS - USERS     connected    10         a-full a-1000 unknown</msg>
+<var>${st}</var>
+<arg>${host}[switch]</arg>
+<arg>show interfaces status | include ${host}[port]${SPACE}</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-11T00:51:21.348705" elapsed="1.493880"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${st}</arg>
+<arg>${host}[port]\\s.*\\sconnected\\s+${host}[vlan]\\s</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-11T00:51:22.842712" elapsed="0.000515"/>
+</kw>
+<kw name="Host Command" owner="LabLib">
+<msg time="2026-09-11T00:51:23.957086" level="INFO" html="true">&lt;pre&gt;10.0.0.21$ ping -c 2 -W 2 10.10.0.1
+rc=0
+PING 10.10.0.1 (10.10.0.1) 56(84) bytes of data.
+64 bytes from 10.10.0.1: icmp_seq=1 ttl=254 time=11.7 ms
+64 bytes from 10.10.0.1: icmp_seq=2 ttl=254 time=21.8 ms
+
+--- 10.10.0.1 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1002ms
+rtt min/avg/max/mdev = 11.663/16.750/21.838/5.087 ms
+&lt;/pre&gt;</msg>
+<arg>${host}[mgmt]</arg>
+<arg>ping -c 2 -W 2 ${host}[gateway]</arg>
+<doc>Run a shell command on a CirrOS host over SSH; returns stdout+stderr, fails on non-zero rc.</doc>
+<status status="PASS" start="2026-09-11T00:51:22.843311" elapsed="1.113907"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-11T00:51:23.958415" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-11T00:51:23.958101" elapsed="0.000338"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-11T00:51:23.958489" elapsed="0.000041"/>
+</return>
+<msg time="2026-09-11T00:51:23.958637" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-11T00:51:23.957865" elapsed="0.000791"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-11T00:51:24.455292" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show mac address-table interface Gi1/0/2
+          Mac Address Table
+-------------------------------------------
+
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+  10    5254.00c9.0301    DYNAMIC     Gi1/0/2
+Total Mac Addresses for this criterion: 1&lt;/pre&gt;</msg>
+<msg time="2026-09-11T00:51:24.455449" level="INFO">${out} =           Mac Address Table
+-------------------------------------------
+
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+  10    5254.00c9.0301    DYNAMIC     G...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-11T00:51:23.958737" elapsed="0.496740"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-11T00:51:24.455546" elapsed="0.000046"/>
+</return>
+<msg time="2026-09-11T00:51:24.455719" level="INFO">${mac} =           Mac Address Table
+-------------------------------------------
+
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+  10    5254.00c9.0301    DYNAMIC     G...</msg>
+<var>${mac}</var>
+<arg>${host}[switch]</arg>
+<arg>show mac address-table interface ${host}[port]</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-11T00:51:23.957465" elapsed="0.498275"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${mac}</arg>
+<arg>(?m)^\\s*${host}[vlan]\\s+${host}[mac]\\s+DYNAMIC\\s+${host}[port]</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-11T00:51:24.455867" elapsed="0.000452"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-11T00:51:24.457121" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-11T00:51:24.456904" elapsed="0.000235"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-11T00:51:24.457173" elapsed="0.000027"/>
+</return>
+<msg time="2026-09-11T00:51:24.457283" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-11T00:51:24.456736" elapsed="0.000562"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-11T00:51:24.943780" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show ip arp 10.10.0.100
+Protocol  Address          Age (min)  Hardware Addr   Type   Interface
+Internet  10.10.0.100             1   5254.00c9.0301  ARPA   Vlan10&lt;/pre&gt;</msg>
+<msg time="2026-09-11T00:51:24.943955" level="INFO">${out} = Protocol  Address          Age (min)  Hardware Addr   Type   Interface
+Internet  10.10.0.100             1   5254.00c9.0301  ARPA   Vlan10</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-11T00:51:24.457359" elapsed="0.486630"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-11T00:51:24.944103" elapsed="0.000051"/>
+</return>
+<msg time="2026-09-11T00:51:24.944294" level="INFO">${arp} = Protocol  Address          Age (min)  Hardware Addr   Type   Interface
+Internet  10.10.0.100             1   5254.00c9.0301  ARPA   Vlan10</msg>
+<var>${arp}</var>
+<arg>${host}[switch]</arg>
+<arg>show ip arp ${host}[ip]</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-11T00:51:24.456463" elapsed="0.487855"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${arp}</arg>
+<arg>Internet\\s+${host}[ip]\\s+\\S+\\s+${host}[mac]\\s+ARPA\\s+Vlan${host}[vlan]</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-11T00:51:24.944446" elapsed="0.000573"/>
+</kw>
+<var name="${h}">host1</var>
+<var name="${host}">{'mgmt': '10.0.0.21', 'switch': 'sw1', 'port': 'Gi1/0/2', 'vlan': '10', 'ip': '10.10.0.100', 'gateway': '10.10.0.1', 'mac': '5254.00c9.0301', 'peer': 'host2'}</var>
+<status status="PASS" start="2026-09-11T00:51:21.348544" elapsed="3.596512"/>
+</iter>
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-11T00:51:24.946173" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-11T00:51:24.945863" elapsed="0.000332"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-11T00:51:24.946228" elapsed="0.000025"/>
+</return>
+<msg time="2026-09-11T00:51:24.946365" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-11T00:51:24.945668" elapsed="0.000715"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-11T00:51:26.451895" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show interfaces status | include Gi1/0/4 
+Gi1/0/4      ACCESS - SERVERS   connected    20         a-full a-1000 unknown&lt;/pre&gt;</msg>
+<msg time="2026-09-11T00:51:26.452076" level="INFO">${out} = Gi1/0/4      ACCESS - SERVERS   connected    20         a-full a-1000 unknown</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-11T00:51:24.946453" elapsed="1.505649"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-11T00:51:26.452177" elapsed="0.000050"/>
+</return>
+<msg time="2026-09-11T00:51:26.452376" level="INFO">${st} = Gi1/0/4      ACCESS - SERVERS   connected    20         a-full a-1000 unknown</msg>
+<var>${st}</var>
+<arg>${host}[switch]</arg>
+<arg>show interfaces status | include ${host}[port]${SPACE}</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-11T00:51:24.945333" elapsed="1.507067"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${st}</arg>
+<arg>${host}[port]\\s.*\\sconnected\\s+${host}[vlan]\\s</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-11T00:51:26.452540" elapsed="0.000525"/>
+</kw>
+<kw name="Host Command" owner="LabLib">
+<msg time="2026-09-11T00:51:27.559174" level="INFO" html="true">&lt;pre&gt;10.0.0.22$ ping -c 2 -W 2 10.20.0.1
+rc=0
+PING 10.20.0.1 (10.20.0.1) 56(84) bytes of data.
+64 bytes from 10.20.0.1: icmp_seq=1 ttl=254 time=16.5 ms
+64 bytes from 10.20.0.1: icmp_seq=2 ttl=254 time=14.1 ms
+
+--- 10.20.0.1 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1002ms
+rtt min/avg/max/mdev = 14.075/15.306/16.537/1.231 ms
+&lt;/pre&gt;</msg>
+<arg>${host}[mgmt]</arg>
+<arg>ping -c 2 -W 2 ${host}[gateway]</arg>
+<doc>Run a shell command on a CirrOS host over SSH; returns stdout+stderr, fails on non-zero rc.</doc>
+<status status="PASS" start="2026-09-11T00:51:26.453160" elapsed="1.106169"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-11T00:51:27.560873" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-11T00:51:27.560462" elapsed="0.000444"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-11T00:51:27.560962" elapsed="0.000058"/>
+</return>
+<msg time="2026-09-11T00:51:27.561161" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-11T00:51:27.560165" elapsed="0.001025"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-11T00:51:28.078318" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show mac address-table interface Gi1/0/4
+          Mac Address Table
+-------------------------------------------
+
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+  20    5254.00c9.0401    DYNAMIC     Gi1/0/4
+Total Mac Addresses for this criterion: 1&lt;/pre&gt;</msg>
+<msg time="2026-09-11T00:51:28.078516" level="INFO">${out} =           Mac Address Table
+-------------------------------------------
+
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+  20    5254.00c9.0401    DYNAMIC     G...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-11T00:51:27.561292" elapsed="0.517260"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-11T00:51:28.078640" elapsed="0.000061"/>
+</return>
+<msg time="2026-09-11T00:51:28.078872" level="INFO">${mac} =           Mac Address Table
+-------------------------------------------
+
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+  20    5254.00c9.0401    DYNAMIC     G...</msg>
+<var>${mac}</var>
+<arg>${host}[switch]</arg>
+<arg>show mac address-table interface ${host}[port]</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-11T00:51:27.559620" elapsed="0.519285"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${mac}</arg>
+<arg>(?m)^\\s*${host}[vlan]\\s+${host}[mac]\\s+DYNAMIC\\s+${host}[port]</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-11T00:51:28.079074" elapsed="0.000672"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-11T00:51:28.081025" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-11T00:51:28.080677" elapsed="0.000380"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-11T00:51:28.081111" elapsed="0.000037"/>
+</return>
+<msg time="2026-09-11T00:51:28.081288" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-11T00:51:28.080389" elapsed="0.000929"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-11T00:51:28.578074" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show ip arp 10.20.0.100
+Protocol  Address          Age (min)  Hardware Addr   Type   Interface
+Internet  10.20.0.100             1   5254.00c9.0401  ARPA   Vlan20&lt;/pre&gt;</msg>
+<msg time="2026-09-11T00:51:28.578233" level="INFO">${out} = Protocol  Address          Age (min)  Hardware Addr   Type   Interface
+Internet  10.20.0.100             1   5254.00c9.0401  ARPA   Vlan20</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-11T00:51:28.081417" elapsed="0.496841"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-11T00:51:28.578374" elapsed="0.000054"/>
+</return>
+<msg time="2026-09-11T00:51:28.578565" level="INFO">${arp} = Protocol  Address          Age (min)  Hardware Addr   Type   Interface
+Internet  10.20.0.100             1   5254.00c9.0401  ARPA   Vlan20</msg>
+<var>${arp}</var>
+<arg>${host}[switch]</arg>
+<arg>show ip arp ${host}[ip]</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-11T00:51:28.079942" elapsed="0.498644"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${arp}</arg>
+<arg>Internet\\s+${host}[ip]\\s+\\S+\\s+${host}[mac]\\s+ARPA\\s+Vlan${host}[vlan]</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-11T00:51:28.578717" elapsed="0.000470"/>
+</kw>
+<var name="${h}">host2</var>
+<var name="${host}">{'mgmt': '10.0.0.22', 'switch': 'sw2', 'port': 'Gi1/0/4', 'vlan': '20', 'ip': '10.20.0.100', 'gateway': '10.20.0.1', 'mac': '5254.00c9.0401', 'peer': 'host1'}</var>
+<status status="PASS" start="2026-09-11T00:51:24.945199" elapsed="3.634018"/>
+</iter>
+<var>${h}</var>
+<var>${host}</var>
+<value>&amp;{HOSTS}</value>
+<status status="PASS" start="2026-09-11T00:51:21.348382" elapsed="7.230863"/>
+</for>
+<status status="PASS" start="2026-09-11T00:51:21.348201" elapsed="7.231126"/>
+</test>
+<test id="s1-s1-t4" name="Hosts can ping their local gateway" line="34">
+<for flavor="IN">
+<iter>
+<kw name="Host Command" owner="LabLib">
+<msg time="2026-09-11T00:51:30.691224" level="INFO" html="true">&lt;pre&gt;10.0.0.21$ ping -c 3 -W 2 10.10.0.1
+rc=0
+PING 10.10.0.1 (10.10.0.1) 56(84) bytes of data.
+64 bytes from 10.10.0.1: icmp_seq=1 ttl=254 time=9.38 ms
+64 bytes from 10.10.0.1: icmp_seq=2 ttl=254 time=14.6 ms
+64 bytes from 10.10.0.1: icmp_seq=3 ttl=254 time=13.6 ms
+
+--- 10.10.0.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 9.384/12.528/14.598/2.260 ms
+&lt;/pre&gt;</msg>
+<msg time="2026-09-11T00:51:30.691397" level="INFO">${p} = PING 10.10.0.1 (10.10.0.1) 56(84) bytes of data.
+64 bytes from 10.10.0.1: icmp_seq=1 ttl=254 time=9.38 ms
+64 bytes from 10.10.0.1: icmp_seq=2 ttl=254 time=14.6 ms
+64 bytes from 10.10.0.1: icmp_seq=3 t...</msg>
+<var>${p}</var>
+<arg>${host}[mgmt]</arg>
+<arg>ping -c 3 -W 2 ${host}[gateway]</arg>
+<doc>Run a shell command on a CirrOS host over SSH; returns stdout+stderr, fails on non-zero rc.</doc>
+<status status="PASS" start="2026-09-11T00:51:28.579856" elapsed="2.111566"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<msg time="2026-09-11T00:51:30.692004" level="FAIL">'PING 10.10.0.1 (10.10.0.1) 56(84) bytes of data.
+64 bytes from 10.10.0.1: icmp_seq=1 ttl=254 time=9.38 ms
+64 bytes from 10.10.0.1: icmp_seq=2 ttl=254 time=14.6 ms
+64 bytes from 10.10.0.1: icmp_seq=3 ttl=254 time=13.6 ms
+
+--- 10.10.0.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 9.384/12.528/14.598/2.260 ms
+' does not match '3 packets transmitted, [23] packets received'</msg>
+<arg>${p}</arg>
+<arg>3 packets transmitted, [23] packets received</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="FAIL" start="2026-09-11T00:51:30.691561" elapsed="0.000576">'PING 10.10.0.1 (10.10.0.1) 56(84) bytes of data.
+64 bytes from 10.10.0.1: icmp_seq=1 ttl=254 time=9.38 ms
+64 bytes from 10.10.0.1: icmp_seq=2 ttl=254 time=14.6 ms
+64 bytes from 10.10.0.1: icmp_seq=3 ttl=254 time=13.6 ms
+
+--- 10.10.0.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 9.384/12.528/14.598/2.260 ms
+' does not match '3 packets transmitted, [23] packets received'</status>
+</kw>
+<var name="${h}">host1</var>
+<var name="${host}">{'mgmt': '10.0.0.21', 'switch': 'sw1', 'port': 'Gi1/0/2', 'vlan': '10', 'ip': '10.10.0.100', 'gateway': '10.10.0.1', 'mac': '5254.00c9.0301', 'peer': 'host2'}</var>
+<status status="FAIL" start="2026-09-11T00:51:28.579792" elapsed="2.112404">'PING 10.10.0.1 (10.10.0.1) 56(84) bytes of data.
+64 bytes from 10.10.0.1: icmp_seq=1 ttl=254 time=9.38 ms
+64 bytes from 10.10.0.1: icmp_seq=2 ttl=254 time=14.6 ms
+64 bytes from 10.10.0.1: icmp_seq=3 ttl=254 time=13.6 ms
+
+--- 10.10.0.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 9.384/12.528/14.598/2.260 ms
+' does not match '3 packets transmitted, [23] packets received'</status>
+</iter>
+<var>${h}</var>
+<var>${host}</var>
+<value>&amp;{HOSTS}</value>
+<status status="FAIL" start="2026-09-11T00:51:28.579653" elapsed="2.112594">'PING 10.10.0.1 (10.10.0.1) 56(84) bytes of data.
+64 bytes from 10.10.0.1: icmp_seq=1 ttl=254 time=9.38 ms
+64 bytes from 10.10.0.1: icmp_seq=2 ttl=254 time=14.6 ms
+64 bytes from 10.10.0.1: icmp_seq=3 ttl=254 time=13.6 ms
+
+--- 10.10.0.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 9.384/12.528/14.598/2.260 ms
+' does not match '3 packets transmitted, [23] packets received'</status>
+</for>
+<status status="FAIL" start="2026-09-11T00:51:28.579474" elapsed="2.112883">'PING 10.10.0.1 (10.10.0.1) 56(84) bytes of data.
+64 bytes from 10.10.0.1: icmp_seq=1 ttl=254 time=9.38 ms
+64 bytes from 10.10.0.1: icmp_seq=2 ttl=254 time=14.6 ms
+64 bytes from 10.10.0.1: icmp_seq=3 ttl=254 time=13.6 ms
+
+--- 10.10.0.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 9.384/12.528/14.598/2.260 ms
+' does not match '3 packets transmitted, [23] packets received'</status>
+</test>
+<test id="s1-s1-t5" name="Hosts can ping each other across the switches" line="40">
+<for flavor="IN">
+<iter>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-11T00:51:30.693103" level="INFO">${peer} = {'mgmt': '10.0.0.22', 'switch': 'sw2', 'port': 'Gi1/0/4', 'vlan': '20', 'ip': '10.20.0.100', 'gateway': '10.20.0.1', 'mac': '5254.00c9.0401', 'peer': 'host1'}</msg>
+<var>${peer}</var>
+<arg>${HOSTS}[${host}[peer]]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-11T00:51:30.692872" elapsed="0.000250"/>
+</kw>
+<kw name="Host Command" owner="LabLib">
+<msg time="2026-09-11T00:51:34.831616" level="INFO" html="true">&lt;pre&gt;10.0.0.21$ ping -c 5 -W 2 -I 10.10.0.100 10.20.0.100
+rc=0
+PING 10.20.0.100 (10.20.0.100) from 10.10.0.100 : 56(84) bytes of data.
+64 bytes from 10.20.0.100: icmp_seq=1 ttl=62 time=43.4 ms
+64 bytes from 10.20.0.100: icmp_seq=2 ttl=62 time=50.8 ms
+64 bytes from 10.20.0.100: icmp_seq=3 ttl=62 time=51.1 ms
+64 bytes from 10.20.0.100: icmp_seq=4 ttl=62 time=43.1 ms
+64 bytes from 10.20.0.100: icmp_seq=5 ttl=62 time=44.2 ms
+
+--- 10.20.0.100 ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4002ms
+rtt min/avg/max/mdev = 43.132/46.519/51.096/3.630 ms
+&lt;/pre&gt;</msg>
+<msg time="2026-09-11T00:51:34.831807" level="INFO">${p} = PING 10.20.0.100 (10.20.0.100) from 10.10.0.100 : 56(84) bytes of data.
+64 bytes from 10.20.0.100: icmp_seq=1 ttl=62 time=43.4 ms
+64 bytes from 10.20.0.100: icmp_seq=2 ttl=62 time=50.8 ms
+64 bytes fro...</msg>
+<var>${p}</var>
+<arg>${host}[mgmt]</arg>
+<arg>ping -c 5 -W 2 -I ${host}[ip] ${peer}[ip]</arg>
+<doc>Run a shell command on a CirrOS host over SSH; returns stdout+stderr, fails on non-zero rc.</doc>
+<status status="PASS" start="2026-09-11T00:51:30.693181" elapsed="4.138650"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<msg time="2026-09-11T00:51:34.832380" level="FAIL">'PING 10.20.0.100 (10.20.0.100) from 10.10.0.100 : 56(84) bytes of data.
+64 bytes from 10.20.0.100: icmp_seq=1 ttl=62 time=43.4 ms
+64 bytes from 10.20.0.100: icmp_seq=2 ttl=62 time=50.8 ms
+64 bytes from 10.20.0.100: icmp_seq=3 ttl=62 time=51.1 ms
+64 bytes from 10.20.0.100: icmp_seq=4 ttl=62 time=43.1 ms
+64 bytes from 10.20.0.100: icmp_seq=5 ttl=62 time=44.2 ms
+
+--- 10.20.0.100 ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4002ms
+rtt min/avg/max/mdev = 43.132/46.519/51.096/3.630 ms
+' does not match '5 packets transmitted, [45] packets received'</msg>
+<arg>${p}</arg>
+<arg>5 packets transmitted, [45] packets received</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="FAIL" start="2026-09-11T00:51:34.831962" elapsed="0.000521">'PING 10.20.0.100 (10.20.0.100) from 10.10.0.100 : 56(84) bytes of data.
+64 bytes from 10.20.0.100: icmp_seq=1 ttl=62 time=43.4 ms
+64 bytes from 10.20.0.100: icmp_seq=2 ttl=62 time=50.8 ms
+64 bytes from 10.20.0.100: icmp_seq=3 ttl=62 time=51.1 ms
+64 bytes from 10.20.0.100: icmp_seq=4 ttl=62 time=43.1 ms
+64 bytes from 10.20.0.100: icmp_seq=5 ttl=62 time=44.2 ms
+
+--- 10.20.0.100 ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4002ms
+rtt min/avg/max/mdev = 43.132/46.519/51.096/3.630 ms
+' does not match '5 packets transmitted, [45] packets received'</status>
+</kw>
+<var name="${h}">host1</var>
+<var name="${host}">{'mgmt': '10.0.0.21', 'switch': 'sw1', 'port': 'Gi1/0/2', 'vlan': '10', 'ip': '10.10.0.100', 'gateway': '10.10.0.1', 'mac': '5254.00c9.0301', 'peer': 'host2'}</var>
+<status status="FAIL" start="2026-09-11T00:51:30.692802" elapsed="4.139733">'PING 10.20.0.100 (10.20.0.100) from 10.10.0.100 : 56(84) bytes of data.
+64 bytes from 10.20.0.100: icmp_seq=1 ttl=62 time=43.4 ms
+64 bytes from 10.20.0.100: icmp_seq=2 ttl=62 time=50.8 ms
+64 bytes from 10.20.0.100: icmp_seq=3 ttl=62 time=51.1 ms
+64 bytes from 10.20.0.100: icmp_seq=4 ttl=62 time=43.1 ms
+64 bytes from 10.20.0.100: icmp_seq=5 ttl=62 time=44.2 ms
+
+--- 10.20.0.100 ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4002ms
+rtt min/avg/max/mdev = 43.132/46.519/51.096/3.630 ms
+' does not match '5 packets transmitted, [45] packets received'</status>
+</iter>
+<var>${h}</var>
+<var>${host}</var>
+<value>&amp;{HOSTS}</value>
+<status status="FAIL" start="2026-09-11T00:51:30.692658" elapsed="4.139932">'PING 10.20.0.100 (10.20.0.100) from 10.10.0.100 : 56(84) bytes of data.
+64 bytes from 10.20.0.100: icmp_seq=1 ttl=62 time=43.4 ms
+64 bytes from 10.20.0.100: icmp_seq=2 ttl=62 time=50.8 ms
+64 bytes from 10.20.0.100: icmp_seq=3 ttl=62 time=51.1 ms
+64 bytes from 10.20.0.100: icmp_seq=4 ttl=62 time=43.1 ms
+64 bytes from 10.20.0.100: icmp_seq=5 ttl=62 time=44.2 ms
+
+--- 10.20.0.100 ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4002ms
+rtt min/avg/max/mdev = 43.132/46.519/51.096/3.630 ms
+' does not match '5 packets transmitted, [45] packets received'</status>
+</for>
+<status status="FAIL" start="2026-09-11T00:51:30.692490" elapsed="4.140245">'PING 10.20.0.100 (10.20.0.100) from 10.10.0.100 : 56(84) bytes of data.
+64 bytes from 10.20.0.100: icmp_seq=1 ttl=62 time=43.4 ms
+64 bytes from 10.20.0.100: icmp_seq=2 ttl=62 time=50.8 ms
+64 bytes from 10.20.0.100: icmp_seq=3 ttl=62 time=51.1 ms
+64 bytes from 10.20.0.100: icmp_seq=4 ttl=62 time=43.1 ms
+64 bytes from 10.20.0.100: icmp_seq=5 ttl=62 time=44.2 ms
+
+--- 10.20.0.100 ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4002ms
+rtt min/avg/max/mdev = 43.132/46.519/51.096/3.630 ms
+' does not match '5 packets transmitted, [45] packets received'</status>
+</test>
+<test id="s1-s1-t6" name="Host-to-host traffic is routed switch to switch, not over the OOB network" line="47">
+<for flavor="IN">
+<iter>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-11T00:51:34.833705" level="INFO">${peer} = {'mgmt': '10.0.0.22', 'switch': 'sw2', 'port': 'Gi1/0/4', 'vlan': '20', 'ip': '10.20.0.100', 'gateway': '10.20.0.1', 'mac': '5254.00c9.0401', 'peer': 'host1'}</msg>
+<var>${peer}</var>
+<arg>${HOSTS}[${host}[peer]]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-11T00:51:34.833415" elapsed="0.000316"/>
+</kw>
+<kw name="Host Command" owner="LabLib">
+<msg time="2026-09-11T00:51:34.977114" level="INFO" html="true">&lt;pre&gt;10.0.0.21$ traceroute -n -w 2 -q 1 10.20.0.100
+rc=0
+traceroute to 10.20.0.100 (10.20.0.100), 30 hops max, 60 byte packets
+ 1  10.10.0.1  13.582 ms
+ 2  10.100.0.2  46.366 ms
+ 3  10.20.0.100  51.622 ms
+&lt;/pre&gt;</msg>
+<msg time="2026-09-11T00:51:34.977270" level="INFO">${tr} = traceroute to 10.20.0.100 (10.20.0.100), 30 hops max, 60 byte packets
+ 1  10.10.0.1  13.582 ms
+ 2  10.100.0.2  46.366 ms
+ 3  10.20.0.100  51.622 ms
+</msg>
+<var>${tr}</var>
+<arg>${host}[mgmt]</arg>
+<arg>traceroute -n -w 2 -q 1 ${peer}[ip]</arg>
+<doc>Run a shell command on a CirrOS host over SSH; returns stdout+stderr, fails on non-zero rc.</doc>
+<status status="PASS" start="2026-09-11T00:51:34.833820" elapsed="0.143471"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-11T00:51:34.977732" level="INFO">${hops} = ['10.10.0.1', '10.100.0.2']</msg>
+<var>${hops}</var>
+<arg>${HOST_PATH}[${h}]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-11T00:51:34.977423" elapsed="0.000329"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${tr}</arg>
+<arg>(?m)^\\s*1\\s+${hops}[0]\\s</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-11T00:51:34.977820" elapsed="0.000422"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${tr}</arg>
+<arg>(?m)^\\s*2\\s+${hops}[1]\\s</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-11T00:51:34.978314" elapsed="0.000249"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${tr}</arg>
+<arg>(?m)^\\s*3\\s+${peer}[ip]\\s</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-11T00:51:34.978625" elapsed="0.000237"/>
+</kw>
+<kw name="Should Not Contain" owner="BuiltIn">
+<arg>${tr}</arg>
+<arg>10.0.0.</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-11T00:51:34.978922" elapsed="0.000364"/>
+</kw>
+<var name="${h}">host1</var>
+<var name="${host}">{'mgmt': '10.0.0.21', 'switch': 'sw1', 'port': 'Gi1/0/2', 'vlan': '10', 'ip': '10.10.0.100', 'gateway': '10.10.0.1', 'mac': '5254.00c9.0301', 'peer': 'host2'}</var>
+<status status="PASS" start="2026-09-11T00:51:34.833333" elapsed="0.145982"/>
+</iter>
+<iter>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-11T00:51:34.979664" level="INFO">${peer} = {'mgmt': '10.0.0.21', 'switch': 'sw1', 'port': 'Gi1/0/2', 'vlan': '10', 'ip': '10.10.0.100', 'gateway': '10.10.0.1', 'mac': '5254.00c9.0301', 'peer': 'host2'}</msg>
+<var>${peer}</var>
+<arg>${HOSTS}[${host}[peer]]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-11T00:51:34.979476" elapsed="0.000206"/>
+</kw>
+<kw name="Host Command" owner="LabLib">
+<msg time="2026-09-11T00:51:35.142713" level="INFO" html="true">&lt;pre&gt;10.0.0.22$ traceroute -n -w 2 -q 1 10.10.0.100
+rc=0
+traceroute to 10.10.0.100 (10.10.0.100), 30 hops max, 60 byte packets
+ 1  10.20.0.1  20.248 ms
+ 2  10.100.0.1  42.823 ms
+ 3  10.10.0.100  67.966 ms
+&lt;/pre&gt;</msg>
+<msg time="2026-09-11T00:51:35.142880" level="INFO">${tr} = traceroute to 10.10.0.100 (10.10.0.100), 30 hops max, 60 byte packets
+ 1  10.20.0.1  20.248 ms
+ 2  10.100.0.1  42.823 ms
+ 3  10.10.0.100  67.966 ms
+</msg>
+<var>${tr}</var>
+<arg>${host}[mgmt]</arg>
+<arg>traceroute -n -w 2 -q 1 ${peer}[ip]</arg>
+<doc>Run a shell command on a CirrOS host over SSH; returns stdout+stderr, fails on non-zero rc.</doc>
+<status status="PASS" start="2026-09-11T00:51:34.979739" elapsed="0.163163"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-11T00:51:35.143328" level="INFO">${hops} = ['10.20.0.1', '10.100.0.1']</msg>
+<var>${hops}</var>
+<arg>${HOST_PATH}[${h}]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-11T00:51:35.143042" elapsed="0.000309"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${tr}</arg>
+<arg>(?m)^\\s*1\\s+${hops}[0]\\s</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-11T00:51:35.143418" elapsed="0.000327"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${tr}</arg>
+<arg>(?m)^\\s*2\\s+${hops}[1]\\s</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-11T00:51:35.143834" elapsed="0.000260"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${tr}</arg>
+<arg>(?m)^\\s*3\\s+${peer}[ip]\\s</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-11T00:51:35.144162" elapsed="0.000235"/>
+</kw>
+<kw name="Should Not Contain" owner="BuiltIn">
+<arg>${tr}</arg>
+<arg>10.0.0.</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-11T00:51:35.144472" elapsed="0.000258"/>
+</kw>
+<var name="${h}">host2</var>
+<var name="${host}">{'mgmt': '10.0.0.22', 'switch': 'sw2', 'port': 'Gi1/0/4', 'vlan': '20', 'ip': '10.20.0.100', 'gateway': '10.20.0.1', 'mac': '5254.00c9.0401', 'peer': 'host1'}</var>
+<status status="PASS" start="2026-09-11T00:51:34.979425" elapsed="0.165332"/>
+</iter>
+<var>${h}</var>
+<var>${host}</var>
+<value>&amp;{HOSTS}</value>
+<status status="PASS" start="2026-09-11T00:51:34.833142" elapsed="0.311646"/>
+</for>
+<status status="PASS" start="2026-09-11T00:51:34.832938" elapsed="0.311925"/>
+</test>
+<test id="s1-s1-t7" name="Hosts can reach the far switch's loopback and routed VLAN gateways" line="58">
+<for flavor="IN">
+<iter>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-11T00:51:35.145592" level="INFO">${far} = sw2</msg>
+<var>${far}</var>
+<arg>${SWITCHES}[${host}[switch]][peer]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-11T00:51:35.145403" elapsed="0.000205"/>
+</kw>
+<kw name="Host Command" owner="LabLib">
+<msg time="2026-09-11T00:51:37.274169" level="INFO" html="true">&lt;pre&gt;10.0.0.21$ ping -c 3 -W 2 10.255.0.2
+rc=0
+PING 10.255.0.2 (10.255.0.2) 56(84) bytes of data.
+64 bytes from 10.255.0.2: icmp_seq=1 ttl=253 time=25.9 ms
+64 bytes from 10.255.0.2: icmp_seq=2 ttl=253 time=34.6 ms
+64 bytes from 10.255.0.2: icmp_seq=3 ttl=253 time=33.0 ms
+
+--- 10.255.0.2 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 25.879/31.164/34.585/3.791 ms
+&lt;/pre&gt;</msg>
+<msg time="2026-09-11T00:51:37.274383" level="INFO">${p} = PING 10.255.0.2 (10.255.0.2) 56(84) bytes of data.
+64 bytes from 10.255.0.2: icmp_seq=1 ttl=253 time=25.9 ms
+64 bytes from 10.255.0.2: icmp_seq=2 ttl=253 time=34.6 ms
+64 bytes from 10.255.0.2: icmp_se...</msg>
+<var>${p}</var>
+<arg>${host}[mgmt]</arg>
+<arg>ping -c 3 -W 2 ${SWITCHES}[${far}][router_id]</arg>
+<doc>Run a shell command on a CirrOS host over SSH; returns stdout+stderr, fails on non-zero rc.</doc>
+<status status="PASS" start="2026-09-11T00:51:35.145667" elapsed="2.128744"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<msg time="2026-09-11T00:51:37.274901" level="FAIL">'PING 10.255.0.2 (10.255.0.2) 56(84) bytes of data.
+64 bytes from 10.255.0.2: icmp_seq=1 ttl=253 time=25.9 ms
+64 bytes from 10.255.0.2: icmp_seq=2 ttl=253 time=34.6 ms
+64 bytes from 10.255.0.2: icmp_seq=3 ttl=253 time=33.0 ms
+
+--- 10.255.0.2 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 25.879/31.164/34.585/3.791 ms
+' does not match '3 packets transmitted, [23] packets received'</msg>
+<arg>${p}</arg>
+<arg>3 packets transmitted, [23] packets received</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="FAIL" start="2026-09-11T00:51:37.274566" elapsed="0.000421">'PING 10.255.0.2 (10.255.0.2) 56(84) bytes of data.
+64 bytes from 10.255.0.2: icmp_seq=1 ttl=253 time=25.9 ms
+64 bytes from 10.255.0.2: icmp_seq=2 ttl=253 time=34.6 ms
+64 bytes from 10.255.0.2: icmp_seq=3 ttl=253 time=33.0 ms
+
+--- 10.255.0.2 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 25.879/31.164/34.585/3.791 ms
+' does not match '3 packets transmitted, [23] packets received'</status>
+</kw>
+<var name="${h}">host1</var>
+<var name="${host}">{'mgmt': '10.0.0.21', 'switch': 'sw1', 'port': 'Gi1/0/2', 'vlan': '10', 'ip': '10.10.0.100', 'gateway': '10.10.0.1', 'mac': '5254.00c9.0301', 'peer': 'host2'}</var>
+<status status="FAIL" start="2026-09-11T00:51:35.145352" elapsed="2.129695">'PING 10.255.0.2 (10.255.0.2) 56(84) bytes of data.
+64 bytes from 10.255.0.2: icmp_seq=1 ttl=253 time=25.9 ms
+64 bytes from 10.255.0.2: icmp_seq=2 ttl=253 time=34.6 ms
+64 bytes from 10.255.0.2: icmp_seq=3 ttl=253 time=33.0 ms
+
+--- 10.255.0.2 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 25.879/31.164/34.585/3.791 ms
+' does not match '3 packets transmitted, [23] packets received'</status>
+</iter>
+<var>${h}</var>
+<var>${host}</var>
+<value>&amp;{HOSTS}</value>
+<status status="FAIL" start="2026-09-11T00:51:35.145208" elapsed="2.129889">'PING 10.255.0.2 (10.255.0.2) 56(84) bytes of data.
+64 bytes from 10.255.0.2: icmp_seq=1 ttl=253 time=25.9 ms
+64 bytes from 10.255.0.2: icmp_seq=2 ttl=253 time=34.6 ms
+64 bytes from 10.255.0.2: icmp_seq=3 ttl=253 time=33.0 ms
+
+--- 10.255.0.2 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 25.879/31.164/34.585/3.791 ms
+' does not match '3 packets transmitted, [23] packets received'</status>
+</for>
+<kw name="Host Command" owner="LabLib">
+<var>${p}</var>
+<arg>${HOSTS}[host1][mgmt]</arg>
+<arg>ping -c 3 -W 2 ${L3_VLANS}[119][gateway]</arg>
+<doc>Run a shell command on a CirrOS host over SSH; returns stdout+stderr, fails on non-zero rc.</doc>
+<status status="NOT RUN" start="2026-09-11T00:51:37.275190" elapsed="0.000022"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${p}</arg>
+<arg>3 packets transmitted, [23] packets received</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="NOT RUN" start="2026-09-11T00:51:37.275283" elapsed="0.000020"/>
+</kw>
+<kw name="Host Command" owner="LabLib">
+<var>${p}</var>
+<arg>${HOSTS}[host2][mgmt]</arg>
+<arg>ping -c 3 -W 2 ${L3_VLANS}[110][gateway]</arg>
+<doc>Run a shell command on a CirrOS host over SSH; returns stdout+stderr, fails on non-zero rc.</doc>
+<status status="NOT RUN" start="2026-09-11T00:51:37.275392" elapsed="0.000016"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${p}</arg>
+<arg>3 packets transmitted, [23] packets received</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="NOT RUN" start="2026-09-11T00:51:37.275472" elapsed="0.000017"/>
+</kw>
+<status status="FAIL" start="2026-09-11T00:51:35.145018" elapsed="2.130568">'PING 10.255.0.2 (10.255.0.2) 56(84) bytes of data.
+64 bytes from 10.255.0.2: icmp_seq=1 ttl=253 time=25.9 ms
+64 bytes from 10.255.0.2: icmp_seq=2 ttl=253 time=34.6 ms
+64 bytes from 10.255.0.2: icmp_seq=3 ttl=253 time=33.0 ms
+
+--- 10.255.0.2 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 25.879/31.164/34.585/3.791 ms
+' does not match '3 packets transmitted, [23] packets received'</status>
+</test>
+<kw name="Suite Teardown Close Connections" owner="common" type="TEARDOWN">
+<kw name="Close All Connections" owner="LabLib">
+<status status="PASS" start="2026-09-11T00:51:37.276141" elapsed="0.021153"/>
+</kw>
+<status status="PASS" start="2026-09-11T00:51:37.276002" elapsed="0.021391"/>
+</kw>
+<doc>CirrOS end hosts on switch access ports in different VLANs: attachment, gateway, and
+host-to-host reachability routed through both switches (OSPF over the trunk).</doc>
+<status status="FAIL" start="2026-09-11T00:51:16.468585" elapsed="20.828841"/>
+</suite>
+<status status="FAIL" start="2026-09-11T00:51:16.446589" elapsed="20.851552"/>
+</suite>
+<statistics>
+<total>
+<stat pass="4" fail="3" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat name="cat9000v lab" id="s1" pass="4" fail="3" skip="0">cat9000v lab</stat>
+<stat name="07 Hosts" id="s1-s1" pass="4" fail="3" skip="0">cat9000v lab.07 Hosts</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

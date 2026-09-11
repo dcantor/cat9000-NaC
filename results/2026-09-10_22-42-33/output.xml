@@ -1,0 +1,4523 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.4.2 (Python 3.14.4 on linux)" generated="2026-09-10T22:42:38.469775" rpa="false" schemaversion="5">
+<suite id="s1" name="cat9000v lab" source="/home/dcantor/cat9000v/tests/suites">
+<suite id="s1-s1" name="01 Management" source="/home/dcantor/cat9000v/tests/suites/01_management.robot">
+<test id="s1-s1-t1" name="sw1 management plane" line="8">
+<kw name="Verify Management Access">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:42:38.641279" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:42:38.640970" elapsed="0.000343"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:42:38.641367" elapsed="0.000039"/>
+</return>
+<msg time="2026-09-10T22:42:38.641502" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:42:38.640595" elapsed="0.000932"/>
+</kw>
+<kw name="Host Ping" owner="LabLib">
+<msg time="2026-09-10T22:42:40.686848" level="INFO">PING 10.0.0.11 (10.0.0.11) 56(84) bytes of data.
+64 bytes from 10.0.0.11: icmp_seq=1 ttl=255 time=0.590 ms
+64 bytes from 10.0.0.11: icmp_seq=2 ttl=255 time=0.454 ms
+64 bytes from 10.0.0.11: icmp_seq=3 ttl=255 time=0.447 ms
+
+--- 10.0.0.11 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2043ms
+rtt min/avg/max/mdev = 0.447/0.497/0.590/0.065 ms
+</msg>
+<arg>${host}</arg>
+<doc>ICMP ping from the host; fails unless at least one reply.</doc>
+<status status="PASS" start="2026-09-10T22:42:38.641598" elapsed="2.045370"/>
+</kw>
+<kw name="Tcp Port Should Be Open" owner="LabLib">
+<arg>${host}</arg>
+<arg>22</arg>
+<status status="PASS" start="2026-09-10T22:42:40.687121" elapsed="0.000699"/>
+</kw>
+<kw name="Tcp Port Should Be Open" owner="LabLib">
+<arg>${host}</arg>
+<arg>830</arg>
+<status status="PASS" start="2026-09-10T22:42:40.687900" elapsed="0.000336"/>
+</kw>
+<kw name="Tcp Port Should Be Open" owner="LabLib">
+<arg>${host}</arg>
+<arg>443</arg>
+<status status="PASS" start="2026-09-10T22:42:40.688310" elapsed="0.000290"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:42:40.689577" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:42:40.689321" elapsed="0.000276"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:42:40.689641" elapsed="0.000038"/>
+</return>
+<msg time="2026-09-10T22:42:40.689772" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:42:40.689113" elapsed="0.000675"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:42:42.189486" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show version | include uptime
+sw1 uptime is 56 minutes&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:42.189669" level="INFO">${out} = sw1 uptime is 56 minutes</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:42:40.689852" elapsed="1.499841"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:42:42.189774" elapsed="0.000051"/>
+</return>
+<msg time="2026-09-10T22:42:42.189957" level="INFO">${ver} = sw1 uptime is 56 minutes</msg>
+<var>${ver}</var>
+<arg>${sw}</arg>
+<arg>show version | include uptime</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:42:40.688757" elapsed="1.501230"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${ver}</arg>
+<arg>${sw} uptime</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:42:42.190115" elapsed="0.000564"/>
+</kw>
+<kw name="Restconf Get" owner="LabLib">
+<msg time="2026-09-10T22:42:42.233025" level="INFO">GET https://10.0.0.11/restconf/data/Cisco-IOS-XE-native:native/hostname -&gt; 200
+{
+  "Cisco-IOS-XE-native:hostname": "sw1"
+}
+</msg>
+<msg time="2026-09-10T22:42:42.233888" level="INFO">${json} = {'Cisco-IOS-XE-native:hostname': 'sw1'}</msg>
+<var>${json}</var>
+<arg>${host}</arg>
+<arg>Cisco-IOS-XE-native:native/hostname</arg>
+<doc>GET /restconf/data/&lt;path&gt; and return the parsed JSON.</doc>
+<status status="PASS" start="2026-09-10T22:42:42.190770" elapsed="0.043149"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${json}[Cisco-IOS-XE-native:hostname]</arg>
+<arg>${sw}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-10T22:42:42.234078" elapsed="0.000296"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:42:42.235154" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:42:42.234931" elapsed="0.000240"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:42:42.235204" elapsed="0.000031"/>
+</return>
+<msg time="2026-09-10T22:42:42.235312" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:42:42.234766" elapsed="0.000564"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:42:42.762194" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show ip interface brief | include GigabitEthernet0/0
+GigabitEthernet0/0     10.0.0.11       YES NVRAM  up                    up      &lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:42.762342" level="INFO">${out} = GigabitEthernet0/0     10.0.0.11       YES NVRAM  up                    up      </msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:42:42.235388" elapsed="0.526973"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:42:42.762424" elapsed="0.000039"/>
+</return>
+<msg time="2026-09-10T22:42:42.762584" level="INFO">${mgmt} = GigabitEthernet0/0     10.0.0.11       YES NVRAM  up                    up      </msg>
+<var>${mgmt}</var>
+<arg>${sw}</arg>
+<arg>show ip interface brief | include GigabitEthernet0/0</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:42:42.234497" elapsed="0.528105"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${mgmt}</arg>
+<arg>GigabitEthernet0/0\\s+${host}\\s+YES\\s+\\S+\\s+up\\s+up</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:42.762751" elapsed="0.000459"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:42:42.763992" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:42:42.763773" elapsed="0.000243"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:42:42.764048" elapsed="0.000021"/>
+</return>
+<msg time="2026-09-10T22:42:42.764145" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:42:42.763590" elapsed="0.000570"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:42:43.270823" level="INFO" html="true">&lt;pre&gt;10.0.0.11# ping vrf Mgmt-vrf 10.0.0.10 repeat 3
+Type escape sequence to abort.
+Sending 3, 100-byte ICMP Echos to 10.0.0.10, timeout is 2 seconds:
+!!!
+Success rate is 100 percent (3/3), round-trip min/avg/max = 1/1/1 ms&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:43.271023" level="INFO">${out} = Type escape sequence to abort.
+Sending 3, 100-byte ICMP Echos to 10.0.0.10, timeout is 2 seconds:
+!!!
+Success rate is 100 percent (3/3), round-trip min/avg/max = 1/1/1 ms</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:42:42.764217" elapsed="0.506831"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:42:43.271126" elapsed="0.000041"/>
+</return>
+<msg time="2026-09-10T22:42:43.271303" level="INFO">${ping} = Type escape sequence to abort.
+Sending 3, 100-byte ICMP Echos to 10.0.0.10, timeout is 2 seconds:
+!!!
+Success rate is 100 percent (3/3), round-trip min/avg/max = 1/1/1 ms</msg>
+<var>${ping}</var>
+<arg>${sw}</arg>
+<arg>ping vrf Mgmt-vrf ${NMS}[host] repeat 3</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:42:42.763339" elapsed="0.507983"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${ping}</arg>
+<arg>Success rate is (100|66) percent</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:43.271440" elapsed="0.000360"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:42:43.272603" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:42:43.272374" elapsed="0.000246"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:42:43.272650" elapsed="0.000022"/>
+</return>
+<msg time="2026-09-10T22:42:43.272741" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:42:43.272211" elapsed="0.000545"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:42:43.804419" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show run | include ^ip domain name
+ip domain name lab.local&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:43.804591" level="INFO">${out} = ip domain name lab.local</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:42:43.272817" elapsed="0.531801"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:42:43.804679" elapsed="0.000038"/>
+</return>
+<msg time="2026-09-10T22:42:43.804825" level="INFO">${dom} = ip domain name lab.local</msg>
+<var>${dom}</var>
+<arg>${sw}</arg>
+<arg>show run | include ^ip domain name</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:42:43.271932" elapsed="0.532914"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${dom}</arg>
+<arg>${DOMAIN_NAME}</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:42:43.804957" elapsed="0.000306"/>
+</kw>
+<arg>sw1</arg>
+<status status="PASS" start="2026-09-10T22:42:38.640261" elapsed="5.165045"/>
+</kw>
+<status status="PASS" start="2026-09-10T22:42:38.639775" elapsed="5.165613"/>
+</test>
+<test id="s1-s1-t2" name="sw2 management plane" line="9">
+<kw name="Verify Management Access">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:42:43.806463" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:42:43.806235" elapsed="0.000247"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:42:43.806512" elapsed="0.000021"/>
+</return>
+<msg time="2026-09-10T22:42:43.806611" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:42:43.806052" elapsed="0.000575"/>
+</kw>
+<kw name="Host Ping" owner="LabLib">
+<msg time="2026-09-10T22:42:45.870739" level="INFO">PING 10.0.0.12 (10.0.0.12) 56(84) bytes of data.
+64 bytes from 10.0.0.12: icmp_seq=1 ttl=255 time=0.453 ms
+64 bytes from 10.0.0.12: icmp_seq=2 ttl=255 time=0.509 ms
+64 bytes from 10.0.0.12: icmp_seq=3 ttl=255 time=0.384 ms
+
+--- 10.0.0.12 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2062ms
+rtt min/avg/max/mdev = 0.384/0.448/0.509/0.051 ms
+</msg>
+<arg>${host}</arg>
+<doc>ICMP ping from the host; fails unless at least one reply.</doc>
+<status status="PASS" start="2026-09-10T22:42:43.806685" elapsed="2.064151"/>
+</kw>
+<kw name="Tcp Port Should Be Open" owner="LabLib">
+<arg>${host}</arg>
+<arg>22</arg>
+<status status="PASS" start="2026-09-10T22:42:45.870982" elapsed="0.000636"/>
+</kw>
+<kw name="Tcp Port Should Be Open" owner="LabLib">
+<arg>${host}</arg>
+<arg>830</arg>
+<status status="PASS" start="2026-09-10T22:42:45.871709" elapsed="0.000331"/>
+</kw>
+<kw name="Tcp Port Should Be Open" owner="LabLib">
+<arg>${host}</arg>
+<arg>443</arg>
+<status status="PASS" start="2026-09-10T22:42:45.872103" elapsed="0.000205"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:42:45.873133" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:42:45.872875" elapsed="0.000279"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:42:45.873187" elapsed="0.000031"/>
+</return>
+<msg time="2026-09-10T22:42:45.873317" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:42:45.872685" elapsed="0.000649"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:42:47.374743" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show version | include uptime
+sw2 uptime is 19 minutes&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:47.374911" level="INFO">${out} = sw2 uptime is 19 minutes</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:42:45.873393" elapsed="1.501542"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:42:47.375020" elapsed="0.000045"/>
+</return>
+<msg time="2026-09-10T22:42:47.375174" level="INFO">${ver} = sw2 uptime is 19 minutes</msg>
+<var>${ver}</var>
+<arg>${sw}</arg>
+<arg>show version | include uptime</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:42:45.872437" elapsed="1.502753"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${ver}</arg>
+<arg>${sw} uptime</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:42:47.375293" elapsed="0.000322"/>
+</kw>
+<kw name="Restconf Get" owner="LabLib">
+<msg time="2026-09-10T22:42:47.415480" level="INFO">GET https://10.0.0.12/restconf/data/Cisco-IOS-XE-native:native/hostname -&gt; 200
+{
+  "Cisco-IOS-XE-native:hostname": "sw2"
+}
+</msg>
+<msg time="2026-09-10T22:42:47.416380" level="INFO">${json} = {'Cisco-IOS-XE-native:hostname': 'sw2'}</msg>
+<var>${json}</var>
+<arg>${host}</arg>
+<arg>Cisco-IOS-XE-native:native/hostname</arg>
+<doc>GET /restconf/data/&lt;path&gt; and return the parsed JSON.</doc>
+<status status="PASS" start="2026-09-10T22:42:47.375685" elapsed="0.040721"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${json}[Cisco-IOS-XE-native:hostname]</arg>
+<arg>${sw}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-10T22:42:47.416528" elapsed="0.000285"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:42:47.417564" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:42:47.417371" elapsed="0.000211"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:42:47.417615" elapsed="0.000030"/>
+</return>
+<msg time="2026-09-10T22:42:47.417719" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:42:47.417189" elapsed="0.000545"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:42:47.914137" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show ip interface brief | include GigabitEthernet0/0
+GigabitEthernet0/0     10.0.0.12       YES NVRAM  up                    up      &lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:47.914292" level="INFO">${out} = GigabitEthernet0/0     10.0.0.12       YES NVRAM  up                    up      </msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:42:47.417789" elapsed="0.496524"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:42:47.914374" elapsed="0.000039"/>
+</return>
+<msg time="2026-09-10T22:42:47.914549" level="INFO">${mgmt} = GigabitEthernet0/0     10.0.0.12       YES NVRAM  up                    up      </msg>
+<var>${mgmt}</var>
+<arg>${sw}</arg>
+<arg>show ip interface brief | include GigabitEthernet0/0</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:42:47.416950" elapsed="0.497623"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${mgmt}</arg>
+<arg>GigabitEthernet0/0\\s+${host}\\s+YES\\s+\\S+\\s+up\\s+up</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:47.914713" elapsed="0.000417"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:42:47.915830" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:42:47.915646" elapsed="0.000200"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:42:47.915878" elapsed="0.000020"/>
+</return>
+<msg time="2026-09-10T22:42:47.915968" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:42:47.915493" elapsed="0.000502"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:42:48.402206" level="INFO" html="true">&lt;pre&gt;10.0.0.12# ping vrf Mgmt-vrf 10.0.0.10 repeat 3
+Type escape sequence to abort.
+Sending 3, 100-byte ICMP Echos to 10.0.0.10, timeout is 2 seconds:
+!!!
+Success rate is 100 percent (3/3), round-trip min/avg/max = 1/1/1 ms&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:48.402356" level="INFO">${out} = Type escape sequence to abort.
+Sending 3, 100-byte ICMP Echos to 10.0.0.10, timeout is 2 seconds:
+!!!
+Success rate is 100 percent (3/3), round-trip min/avg/max = 1/1/1 ms</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:42:47.916050" elapsed="0.486326"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:42:48.402436" elapsed="0.000037"/>
+</return>
+<msg time="2026-09-10T22:42:48.402581" level="INFO">${ping} = Type escape sequence to abort.
+Sending 3, 100-byte ICMP Echos to 10.0.0.10, timeout is 2 seconds:
+!!!
+Success rate is 100 percent (3/3), round-trip min/avg/max = 1/1/1 ms</msg>
+<var>${ping}</var>
+<arg>${sw}</arg>
+<arg>ping vrf Mgmt-vrf ${NMS}[host] repeat 3</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:42:47.915255" elapsed="0.487344"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${ping}</arg>
+<arg>Success rate is (100|66) percent</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:48.402741" elapsed="0.000299"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:42:48.403772" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:42:48.403561" elapsed="0.000237"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:42:48.403838" elapsed="0.000022"/>
+</return>
+<msg time="2026-09-10T22:42:48.403936" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:42:48.403410" elapsed="0.000542"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:42:48.950604" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show run | include ^ip domain name
+ip domain name lab.local&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:48.950763" level="INFO">${out} = ip domain name lab.local</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:42:48.404019" elapsed="0.546766"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:42:48.950847" elapsed="0.000037"/>
+</return>
+<msg time="2026-09-10T22:42:48.951023" level="INFO">${dom} = ip domain name lab.local</msg>
+<var>${dom}</var>
+<arg>${sw}</arg>
+<arg>show run | include ^ip domain name</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:42:48.403175" elapsed="0.547867"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${dom}</arg>
+<arg>${DOMAIN_NAME}</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:42:48.951177" elapsed="0.000344"/>
+</kw>
+<arg>sw2</arg>
+<status status="PASS" start="2026-09-10T22:42:43.805851" elapsed="5.145719"/>
+</kw>
+<status status="PASS" start="2026-09-10T22:42:43.805559" elapsed="5.146097"/>
+</test>
+<test id="s1-s1-t3" name="NMS jumphost is reachable and on both networks" line="31">
+<kw name="Host Ping" owner="LabLib">
+<msg time="2026-09-10T22:42:50.990465" level="INFO">PING 10.0.0.10 (10.0.0.10) 56(84) bytes of data.
+64 bytes from 10.0.0.10: icmp_seq=1 ttl=64 time=0.136 ms
+64 bytes from 10.0.0.10: icmp_seq=2 ttl=64 time=0.137 ms
+64 bytes from 10.0.0.10: icmp_seq=3 ttl=64 time=0.144 ms
+
+--- 10.0.0.10 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2037ms
+rtt min/avg/max/mdev = 0.136/0.139/0.144/0.003 ms
+</msg>
+<arg>${NMS}[host]</arg>
+<doc>ICMP ping from the host; fails unless at least one reply.</doc>
+<status status="PASS" start="2026-09-10T22:42:48.952038" elapsed="2.038518"/>
+</kw>
+<kw name="Nms Command" owner="LabLib">
+<msg time="2026-09-10T22:42:51.563560" level="INFO" html="true">&lt;pre&gt;nms$ ip -br addr show eth1
+rc=0
+eth1             UP             10.0.0.10/24 fe80::5054:ff:fec9:a02/64 
+&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:51.563834" level="INFO">${ip} = eth1             UP             10.0.0.10/24 fe80::5054:ff:fec9:a02/64 
+</msg>
+<var>${ip}</var>
+<arg>ip -br addr show eth1</arg>
+<doc>Run a shell command on the NMS jumphost; returns stdout (fails on non-zero rc).</doc>
+<status status="PASS" start="2026-09-10T22:42:50.990687" elapsed="0.573174"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${ip}</arg>
+<arg>${NMS}[host]/24</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:42:51.564036" elapsed="0.000391"/>
+</kw>
+<kw name="Nms Command" owner="LabLib">
+<msg time="2026-09-10T22:42:51.608642" level="INFO" html="true">&lt;pre&gt;nms$ sysctl -n net.ipv4.ip_forward
+rc=0
+1
+&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:51.608982" level="INFO">${fwd} = 1
+</msg>
+<var>${fwd}</var>
+<arg>sysctl -n net.ipv4.ip_forward</arg>
+<doc>Run a shell command on the NMS jumphost; returns stdout (fails on non-zero rc).</doc>
+<status status="PASS" start="2026-09-10T22:42:51.564558" elapsed="0.044472"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<arg>${fwd}</arg>
+<arg>1</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2026-09-10T22:42:51.609169" elapsed="0.000285"/>
+</kw>
+<status status="PASS" start="2026-09-10T22:42:48.951798" elapsed="2.657731"/>
+</test>
+<test id="s1-s1-t4" name="NMS jumphost can SSH and SNMP to the switches" line="39">
+<for flavor="IN">
+<iter>
+<kw name="Nms Command" owner="LabLib">
+<msg time="2026-09-10T22:42:52.201102" level="INFO" html="true">&lt;pre&gt;nms$ sshpass -p admin ssh -o ConnectTimeout=10 sw1 "show clock"
+rc=0
+Managed by Network-as-Code (Terraform). Manual changes will be reverted.
+
+
+*02:42:52.075 UTC Fri Sep 11 2026Connection to sw1 closed by remote host.
+&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:52.201444" level="INFO">${out} = Managed by Network-as-Code (Terraform). Manual changes will be reverted.
+
+
+*02:42:52.075 UTC Fri Sep 11 2026</msg>
+<var>${out}</var>
+<arg>sshpass -p ${PASSWORD} ssh -o ConnectTimeout=10 ${sw} "show clock"</arg>
+<doc>Run a shell command on the NMS jumphost; returns stdout (fails on non-zero rc).</doc>
+<status status="PASS" start="2026-09-10T22:42:51.610161" elapsed="0.591321"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${out}</arg>
+<arg>\\d\\d:\\d\\d:\\d\\d</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:52.201678" elapsed="0.000544"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-10T22:42:51.610102" elapsed="0.592167"/>
+</iter>
+<iter>
+<kw name="Nms Command" owner="LabLib">
+<msg time="2026-09-10T22:42:52.587428" level="INFO" html="true">&lt;pre&gt;nms$ sshpass -p admin ssh -o ConnectTimeout=10 sw2 "show clock"
+rc=0
+Managed by Network-as-Code (Terraform). Manual changes will be reverted.
+
+
+*02:42:52.447 UTC Fri Sep 11 2026Connection to sw2 closed by remote host.
+&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:52.587590" level="INFO">${out} = Managed by Network-as-Code (Terraform). Manual changes will be reverted.
+
+
+*02:42:52.447 UTC Fri Sep 11 2026</msg>
+<var>${out}</var>
+<arg>sshpass -p ${PASSWORD} ssh -o ConnectTimeout=10 ${sw} "show clock"</arg>
+<doc>Run a shell command on the NMS jumphost; returns stdout (fails on non-zero rc).</doc>
+<status status="PASS" start="2026-09-10T22:42:52.202516" elapsed="0.385093"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${out}</arg>
+<arg>\\d\\d:\\d\\d:\\d\\d</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:52.587735" elapsed="0.000322"/>
+</kw>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-10T22:42:52.202420" elapsed="0.385665"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-10T22:42:51.609955" elapsed="0.978163"/>
+</for>
+<status status="PASS" start="2026-09-10T22:42:51.609760" elapsed="0.978436"/>
+</test>
+<test id="s1-s1-t5" name="Switches reach the internet through the NMS NAT" line="46">
+<for flavor="IN">
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:42:52.589397" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:42:52.589204" elapsed="0.000211"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:42:52.589448" elapsed="0.000027"/>
+</return>
+<msg time="2026-09-10T22:42:52.589547" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:42:52.589046" elapsed="0.000516"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:42:53.161416" level="INFO" html="true">&lt;pre&gt;10.0.0.11# ping vrf Mgmt-vrf 8.8.8.8 repeat 3
+Type escape sequence to abort.
+Sending 3, 100-byte ICMP Echos to 8.8.8.8, timeout is 2 seconds:
+!!!
+Success rate is 100 percent (3/3), round-trip min/avg/max = 26/30/35 ms&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:53.161551" level="INFO">${out} = Type escape sequence to abort.
+Sending 3, 100-byte ICMP Echos to 8.8.8.8, timeout is 2 seconds:
+!!!
+Success rate is 100 percent (3/3), round-trip min/avg/max = 26/30/35 ms</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:42:52.589619" elapsed="0.571952"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:42:53.161635" elapsed="0.000037"/>
+</return>
+<msg time="2026-09-10T22:42:53.161800" level="INFO">${ping} = Type escape sequence to abort.
+Sending 3, 100-byte ICMP Echos to 8.8.8.8, timeout is 2 seconds:
+!!!
+Success rate is 100 percent (3/3), round-trip min/avg/max = 26/30/35 ms</msg>
+<var>${ping}</var>
+<arg>${sw}</arg>
+<arg>ping vrf Mgmt-vrf 8.8.8.8 repeat 3</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:42:52.588783" elapsed="0.573035"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${ping}</arg>
+<arg>Success rate is (100|66) percent</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:53.161921" elapsed="0.000291"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-10T22:42:52.588685" elapsed="0.573556"/>
+</iter>
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:42:53.163008" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:42:53.162796" elapsed="0.000231"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:42:53.163057" elapsed="0.000021"/>
+</return>
+<msg time="2026-09-10T22:42:53.163150" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:42:53.162645" elapsed="0.000520"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:42:53.709807" level="INFO" html="true">&lt;pre&gt;10.0.0.12# ping vrf Mgmt-vrf 8.8.8.8 repeat 3
+Type escape sequence to abort.
+Sending 3, 100-byte ICMP Echos to 8.8.8.8, timeout is 2 seconds:
+!!!
+Success rate is 100 percent (3/3), round-trip min/avg/max = 21/22/24 ms&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:53.709961" level="INFO">${out} = Type escape sequence to abort.
+Sending 3, 100-byte ICMP Echos to 8.8.8.8, timeout is 2 seconds:
+!!!
+Success rate is 100 percent (3/3), round-trip min/avg/max = 21/22/24 ms</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:42:53.163219" elapsed="0.546779"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:42:53.710067" elapsed="0.000041"/>
+</return>
+<msg time="2026-09-10T22:42:53.710245" level="INFO">${ping} = Type escape sequence to abort.
+Sending 3, 100-byte ICMP Echos to 8.8.8.8, timeout is 2 seconds:
+!!!
+Success rate is 100 percent (3/3), round-trip min/avg/max = 21/22/24 ms</msg>
+<var>${ping}</var>
+<arg>${sw}</arg>
+<arg>ping vrf Mgmt-vrf 8.8.8.8 repeat 3</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:42:53.162421" elapsed="0.547845"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${ping}</arg>
+<arg>Success rate is (100|66) percent</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:53.710410" elapsed="0.000294"/>
+</kw>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-10T22:42:53.162321" elapsed="0.548417"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-10T22:42:52.588579" elapsed="1.122189"/>
+</for>
+<tag>internet</tag>
+<status status="PASS" start="2026-09-10T22:42:52.588377" elapsed="1.122481"/>
+</test>
+<kw name="Suite Teardown Close Connections" owner="common" type="TEARDOWN">
+<kw name="Close All Connections" owner="LabLib">
+<status status="PASS" start="2026-09-10T22:42:53.711396" elapsed="0.021119"/>
+</kw>
+<status status="PASS" start="2026-09-10T22:42:53.711281" elapsed="0.021333"/>
+</kw>
+<doc>Out-of-band management plane: reachability, SSH, RESTCONF, NETCONF, NMS jumphost, Mgmt-vrf routing.</doc>
+<status status="PASS" start="2026-09-10T22:42:38.493195" elapsed="15.239451"/>
+</suite>
+<suite id="s1-s2" name="02 Layer2" source="/home/dcantor/cat9000v/tests/suites/02_layer2.robot">
+<test id="s1-s2-t1" name="Inter-switch link is up on both ends" line="7">
+<for flavor="IN">
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:42:53.736263" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:42:53.736028" elapsed="0.000258"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:42:53.736331" elapsed="0.000027"/>
+</return>
+<msg time="2026-09-10T22:42:53.736438" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:42:53.735843" elapsed="0.000610"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:42:55.243695" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show interfaces status | include Gi1/0/1 
+Gi1/0/1      TRUNK to peer core connected    trunk      a-full a-1000 unknown&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:55.243839" level="INFO">${out} = Gi1/0/1      TRUNK to peer core connected    trunk      a-full a-1000 unknown</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:42:53.736509" elapsed="1.507349"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:42:55.243924" elapsed="0.000041"/>
+</return>
+<msg time="2026-09-10T22:42:55.244092" level="INFO">${st} = Gi1/0/1      TRUNK to peer core connected    trunk      a-full a-1000 unknown</msg>
+<var>${st}</var>
+<arg>${sw}</arg>
+<arg>show interfaces status | include ${TRUNK_PORT}${SPACE}</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:42:53.735590" elapsed="1.508519"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${st}</arg>
+<arg>${TRUNK_PORT}\\s.*\\sconnected\\s</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:55.244210" elapsed="0.000380"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-10T22:42:53.735470" elapsed="1.509152"/>
+</iter>
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:42:55.245458" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:42:55.245244" elapsed="0.000238"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:42:55.245525" elapsed="0.000027"/>
+</return>
+<msg time="2026-09-10T22:42:55.245632" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:42:55.245099" elapsed="0.000548"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:42:56.724195" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show interfaces status | include Gi1/0/1 
+Gi1/0/1      TRUNK to peer core connected    trunk      a-full a-1000 unknown&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:56.724366" level="INFO">${out} = Gi1/0/1      TRUNK to peer core connected    trunk      a-full a-1000 unknown</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:42:55.245708" elapsed="1.478681"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:42:56.724458" elapsed="0.000040"/>
+</return>
+<msg time="2026-09-10T22:42:56.724621" level="INFO">${st} = Gi1/0/1      TRUNK to peer core connected    trunk      a-full a-1000 unknown</msg>
+<var>${st}</var>
+<arg>${sw}</arg>
+<arg>show interfaces status | include ${TRUNK_PORT}${SPACE}</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:42:55.244828" elapsed="1.479818"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${st}</arg>
+<arg>${TRUNK_PORT}\\s.*\\sconnected\\s</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:56.724759" elapsed="0.000333"/>
+</kw>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-10T22:42:55.244714" elapsed="1.480405"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-10T22:42:53.735347" elapsed="2.989799"/>
+</for>
+<status status="PASS" start="2026-09-10T22:42:53.735082" elapsed="2.990137"/>
+</test>
+<test id="s1-s2-t2" name="VLAN database matches the data model" line="13">
+<for flavor="IN">
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:42:56.726339" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:42:56.726135" elapsed="0.000221"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:42:56.726386" elapsed="0.000020"/>
+</return>
+<msg time="2026-09-10T22:42:56.726474" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:42:56.725955" elapsed="0.000533"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:42:57.223107" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show vlan brief
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Gi1/0/5, Gi1/0/6, Gi1/0/7, Gi1/0/8
+10   USERS                            active    Gi1/0/2, Gi1/0/3
+20   SERVERS                          active    Gi1/0/4
+99   NATIVE                           active    
+100  TRANSIT                          active    
+1002 fddi-default                     act/unsup 
+1003 token-ring-default               act/unsup 
+1004 fddinet-default                  act/unsup 
+1005 trnet-default                    act/unsup &lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:57.223316" level="INFO">${out} = 
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Gi1/0/5, Gi1/0/6,...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:42:56.726542" elapsed="0.496815"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:42:57.223491" elapsed="0.000054"/>
+</return>
+<msg time="2026-09-10T22:42:57.223728" level="INFO">${brief} = 
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Gi1/0/5, Gi1/0/6,...</msg>
+<var>${brief}</var>
+<arg>${sw}</arg>
+<arg>show vlan brief</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:42:56.725732" elapsed="0.498029"/>
+</kw>
+<for flavor="IN">
+<iter>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${brief}</arg>
+<arg>(?m)^${id}\\s+${name}\\s+active</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:57.224324" elapsed="0.000595"/>
+</kw>
+<var name="${id}">10</var>
+<var name="${name}">USERS</var>
+<status status="PASS" start="2026-09-10T22:42:57.224183" elapsed="0.000779"/>
+</iter>
+<iter>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${brief}</arg>
+<arg>(?m)^${id}\\s+${name}\\s+active</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:57.225181" elapsed="0.000445"/>
+</kw>
+<var name="${id}">20</var>
+<var name="${name}">SERVERS</var>
+<status status="PASS" start="2026-09-10T22:42:57.225093" elapsed="0.000576"/>
+</iter>
+<iter>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${brief}</arg>
+<arg>(?m)^${id}\\s+${name}\\s+active</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:57.225866" elapsed="0.000453"/>
+</kw>
+<var name="${id}">99</var>
+<var name="${name}">NATIVE</var>
+<status status="PASS" start="2026-09-10T22:42:57.225782" elapsed="0.000581"/>
+</iter>
+<iter>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${brief}</arg>
+<arg>(?m)^${id}\\s+${name}\\s+active</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:57.226560" elapsed="0.000442"/>
+</kw>
+<var name="${id}">100</var>
+<var name="${name}">TRANSIT</var>
+<status status="PASS" start="2026-09-10T22:42:57.226476" elapsed="0.000570"/>
+</iter>
+<var>${id}</var>
+<var>${name}</var>
+<value>&amp;{VLANS}</value>
+<status status="PASS" start="2026-09-10T22:42:57.223838" elapsed="0.003246"/>
+</for>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-10T22:42:56.725634" elapsed="0.501497"/>
+</iter>
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:42:57.228425" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:42:57.228084" elapsed="0.000372"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:42:57.228506" elapsed="0.000030"/>
+</return>
+<msg time="2026-09-10T22:42:57.228670" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:42:57.227811" elapsed="0.000888"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:42:57.715219" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show vlan brief
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Gi1/0/5, Gi1/0/6, Gi1/0/7, Gi1/0/8
+10   USERS                            active    Gi1/0/2, Gi1/0/3
+20   SERVERS                          active    Gi1/0/4
+99   NATIVE                           active    
+100  TRANSIT                          active    
+1002 fddi-default                     act/unsup 
+1003 token-ring-default               act/unsup 
+1004 fddinet-default                  act/unsup 
+1005 trnet-default                    act/unsup &lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:57.715371" level="INFO">${out} = 
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Gi1/0/5, Gi1/0/6,...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:42:57.228796" elapsed="0.486595"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:42:57.715451" elapsed="0.000040"/>
+</return>
+<msg time="2026-09-10T22:42:57.715597" level="INFO">${brief} = 
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Gi1/0/5, Gi1/0/6,...</msg>
+<var>${brief}</var>
+<arg>${sw}</arg>
+<arg>show vlan brief</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:42:57.227421" elapsed="0.488203"/>
+</kw>
+<for flavor="IN">
+<iter>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${brief}</arg>
+<arg>(?m)^${id}\\s+${name}\\s+active</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:57.715920" elapsed="0.000328"/>
+</kw>
+<var name="${id}">10</var>
+<var name="${name}">USERS</var>
+<status status="PASS" start="2026-09-10T22:42:57.715832" elapsed="0.000443"/>
+</iter>
+<iter>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${brief}</arg>
+<arg>(?m)^${id}\\s+${name}\\s+active</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:57.716399" elapsed="0.000199"/>
+</kw>
+<var name="${id}">20</var>
+<var name="${name}">SERVERS</var>
+<status status="PASS" start="2026-09-10T22:42:57.716340" elapsed="0.000287"/>
+</iter>
+<iter>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${brief}</arg>
+<arg>(?m)^${id}\\s+${name}\\s+active</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:57.716800" elapsed="0.000240"/>
+</kw>
+<var name="${id}">99</var>
+<var name="${name}">NATIVE</var>
+<status status="PASS" start="2026-09-10T22:42:57.716723" elapsed="0.000352"/>
+</iter>
+<iter>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${brief}</arg>
+<arg>(?m)^${id}\\s+${name}\\s+active</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:57.717199" elapsed="0.000197"/>
+</kw>
+<var name="${id}">100</var>
+<var name="${name}">TRANSIT</var>
+<status status="PASS" start="2026-09-10T22:42:57.717151" elapsed="0.000269"/>
+</iter>
+<var>${id}</var>
+<var>${name}</var>
+<value>&amp;{VLANS}</value>
+<status status="PASS" start="2026-09-10T22:42:57.715689" elapsed="0.001759"/>
+</for>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-10T22:42:57.227263" elapsed="0.490234"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-10T22:42:56.725515" elapsed="0.992009"/>
+</for>
+<status status="PASS" start="2026-09-10T22:42:56.725340" elapsed="0.992256"/>
+</test>
+<test id="s1-s2-t3" name="Trunk port configuration" line="21">
+<for flavor="IN">
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:42:57.718944" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:42:57.718671" elapsed="0.000312"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:42:57.719027" elapsed="0.000035"/>
+</return>
+<msg time="2026-09-10T22:42:57.719189" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:42:57.718443" elapsed="0.000792"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:42:58.225878" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show interfaces trunk
+
+Port           Mode             Encapsulation  Status        Native vlan  
+Gi1/0/1        on               802.1q         trunking      99
+
+Port           Vlans allowed on trunk
+Gi1/0/1        10,20,100
+
+Port           Vlans allowed and active in management domain
+Gi1/0/1        10,20,100
+
+Port           Vlans in spanning tree forwarding state and not pruned
+Gi1/0/1        10,20,100&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:58.226045" level="INFO">${out} = 
+Port           Mode             Encapsulation  Status        Native vlan  
+Gi1/0/1        on               802.1q         trunking      99
+
+Port           Vlans allowed on trunk
+Gi1/0/1        10,20,...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:42:57.719306" elapsed="0.506764"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:42:58.226137" elapsed="0.000042"/>
+</return>
+<msg time="2026-09-10T22:42:58.226299" level="INFO">${trunk} = 
+Port           Mode             Encapsulation  Status        Native vlan  
+Gi1/0/1        on               802.1q         trunking      99
+
+Port           Vlans allowed on trunk
+Gi1/0/1        10,20,...</msg>
+<var>${trunk}</var>
+<arg>${sw}</arg>
+<arg>show interfaces trunk</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:42:57.718197" elapsed="0.508122"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${trunk}</arg>
+<arg>(?m)^${TRUNK_PORT}\\s+on\\s+802\\.1q\\s+trunking\\s+${TRUNK_NATIVE_VLAN}\\s*$</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:58.226436" elapsed="0.000476"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${trunk}</arg>
+<arg>(?m)^${TRUNK_PORT}\\s+${TRUNK_ALLOWED_VLANS}\\s*$</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:58.226995" elapsed="0.000255"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:42:58.228031" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:42:58.227800" elapsed="0.000263"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:42:58.228105" elapsed="0.000035"/>
+</return>
+<msg time="2026-09-10T22:42:58.228244" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:42:58.227614" elapsed="0.000651"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:42:58.735108" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show run interface Gi1/0/1
+Building configuration...
+
+Current configuration : 198 bytes
+!
+interface GigabitEthernet1/0/1
+ description TRUNK to peer core switch
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 10,20,100
+ switchport mode trunk
+ switchport nonegotiate
+end
+&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:58.735276" level="INFO">${out} = Building configuration...
+
+Current configuration : 198 bytes
+!
+interface GigabitEthernet1/0/1
+ description TRUNK to peer core switch
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 10,...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:42:58.228342" elapsed="0.506961"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:42:58.735378" elapsed="0.000048"/>
+</return>
+<msg time="2026-09-10T22:42:58.735565" level="INFO">${cfg} = Building configuration...
+
+Current configuration : 198 bytes
+!
+interface GigabitEthernet1/0/1
+ description TRUNK to peer core switch
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 10,...</msg>
+<var>${cfg}</var>
+<arg>${sw}</arg>
+<arg>show run interface ${TRUNK_PORT}</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:42:58.227372" elapsed="0.508216"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${cfg}</arg>
+<arg>switchport nonegotiate</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:42:58.735729" elapsed="0.000397"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-10T22:42:57.718092" elapsed="1.018071"/>
+</iter>
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:42:58.737174" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:42:58.736905" elapsed="0.000291"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:42:58.737235" elapsed="0.000030"/>
+</return>
+<msg time="2026-09-10T22:42:58.737367" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:42:58.736705" elapsed="0.000683"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:42:59.223681" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show interfaces trunk
+
+Port           Mode             Encapsulation  Status        Native vlan  
+Gi1/0/1        on               802.1q         trunking      99
+
+Port           Vlans allowed on trunk
+Gi1/0/1        10,20,100
+
+Port           Vlans allowed and active in management domain
+Gi1/0/1        10,20,100
+
+Port           Vlans in spanning tree forwarding state and not pruned
+Gi1/0/1        10,20,100&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:59.223839" level="INFO">${out} = 
+Port           Mode             Encapsulation  Status        Native vlan  
+Gi1/0/1        on               802.1q         trunking      99
+
+Port           Vlans allowed on trunk
+Gi1/0/1        10,20,...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:42:58.737471" elapsed="0.486392"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:42:59.223930" elapsed="0.000059"/>
+</return>
+<msg time="2026-09-10T22:42:59.224161" level="INFO">${trunk} = 
+Port           Mode             Encapsulation  Status        Native vlan  
+Gi1/0/1        on               802.1q         trunking      99
+
+Port           Vlans allowed on trunk
+Gi1/0/1        10,20,...</msg>
+<var>${trunk}</var>
+<arg>${sw}</arg>
+<arg>show interfaces trunk</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:42:58.736403" elapsed="0.487784"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${trunk}</arg>
+<arg>(?m)^${TRUNK_PORT}\\s+on\\s+802\\.1q\\s+trunking\\s+${TRUNK_NATIVE_VLAN}\\s*$</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:59.224308" elapsed="0.000349"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${trunk}</arg>
+<arg>(?m)^${TRUNK_PORT}\\s+${TRUNK_ALLOWED_VLANS}\\s*$</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:42:59.224727" elapsed="0.000204"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:42:59.225736" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:42:59.225518" elapsed="0.000236"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:42:59.225784" elapsed="0.000021"/>
+</return>
+<msg time="2026-09-10T22:42:59.225877" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:42:59.225362" elapsed="0.000530"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:42:59.712089" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show run interface Gi1/0/1
+Building configuration...
+
+Current configuration : 198 bytes
+!
+interface GigabitEthernet1/0/1
+ description TRUNK to peer core switch
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 10,20,100
+ switchport mode trunk
+ switchport nonegotiate
+end
+&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:42:59.712230" level="INFO">${out} = Building configuration...
+
+Current configuration : 198 bytes
+!
+interface GigabitEthernet1/0/1
+ description TRUNK to peer core switch
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 10,...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:42:59.225950" elapsed="0.486303"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:42:59.712312" elapsed="0.000041"/>
+</return>
+<msg time="2026-09-10T22:42:59.712477" level="INFO">${cfg} = Building configuration...
+
+Current configuration : 198 bytes
+!
+interface GigabitEthernet1/0/1
+ description TRUNK to peer core switch
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 10,...</msg>
+<var>${cfg}</var>
+<arg>${sw}</arg>
+<arg>show run interface ${TRUNK_PORT}</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:42:59.225066" elapsed="0.487435"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${cfg}</arg>
+<arg>switchport nonegotiate</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:42:59.712615" elapsed="0.000273"/>
+</kw>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-10T22:42:58.736270" elapsed="0.976644"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-10T22:42:57.717962" elapsed="1.994979"/>
+</for>
+<status status="PASS" start="2026-09-10T22:42:57.717756" elapsed="1.995268"/>
+</test>
+<test id="s1-s2-t4" name="Access ports are in the right VLANs with portfast and bpduguard" line="30">
+<for flavor="IN">
+<iter>
+<for flavor="IN">
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:42:59.714412" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:42:59.714208" elapsed="0.000222"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:42:59.714460" elapsed="0.000020"/>
+</return>
+<msg time="2026-09-10T22:42:59.714552" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:42:59.714021" elapsed="0.000546"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:00.211155" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show interfaces status | include Gi1/0/2 
+Gi1/0/2      ACCESS - USERS     connected    10         a-full a-1000 unknown&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:00.211296" level="INFO">${out} = Gi1/0/2      ACCESS - USERS     connected    10         a-full a-1000 unknown</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:42:59.714623" elapsed="0.496693"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:00.211388" elapsed="0.000040"/>
+</return>
+<msg time="2026-09-10T22:43:00.211549" level="INFO">${st} = Gi1/0/2      ACCESS - USERS     connected    10         a-full a-1000 unknown</msg>
+<var>${st}</var>
+<arg>${sw}</arg>
+<arg>show interfaces status | include ${port}${SPACE}</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:42:59.713764" elapsed="0.497801"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${st}</arg>
+<arg>${port}\\s.*\\s(connected|notconnect)\\s+${vlan}\\s</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:00.211667" elapsed="0.000427"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:00.212861" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:00.212655" elapsed="0.000224"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:00.212909" elapsed="0.000021"/>
+</return>
+<msg time="2026-09-10T22:43:00.213026" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:00.212493" elapsed="0.000549"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:00.699471" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show run interface Gi1/0/2
+Building configuration...
+
+Current configuration : 173 bytes
+!
+interface GigabitEthernet1/0/2
+ description ACCESS - USERS
+ switchport access vlan 10
+ switchport mode access
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+end
+&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:00.699614" level="INFO">${out} = Building configuration...
+
+Current configuration : 173 bytes
+!
+interface GigabitEthernet1/0/2
+ description ACCESS - USERS
+ switchport access vlan 10
+ switchport mode access
+ spanning-tree portfast
+ sp...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:00.213117" elapsed="0.486518"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:00.699694" elapsed="0.000036"/>
+</return>
+<msg time="2026-09-10T22:43:00.699835" level="INFO">${cfg} = Building configuration...
+
+Current configuration : 173 bytes
+!
+interface GigabitEthernet1/0/2
+ description ACCESS - USERS
+ switchport access vlan 10
+ switchport mode access
+ spanning-tree portfast
+ sp...</msg>
+<var>${cfg}</var>
+<arg>${sw}</arg>
+<arg>show run interface ${port}</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:00.212219" elapsed="0.487633"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${cfg}</arg>
+<arg>switchport mode access</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:43:00.699960" elapsed="0.000298"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${cfg}</arg>
+<arg>switchport access vlan ${vlan}</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:43:00.700334" elapsed="0.000199"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<msg time="2026-09-10T22:43:00.700911" level="FAIL">'Building configuration...
+
+Current configuration : 173 bytes
+!
+interface GigabitEthernet1/0/2
+ description ACCESS - USERS
+ switchport access vlan 10
+ switchport mode access
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+end
+' does not match 'spanning-tree portfast( edge)?\s*$'</msg>
+<arg>${cfg}</arg>
+<arg>spanning-tree portfast( edge)?\\s*$</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="FAIL" start="2026-09-10T22:43:00.700598" elapsed="0.000481">'Building configuration...
+
+Current configuration : 173 bytes
+!
+interface GigabitEthernet1/0/2
+ description ACCESS - USERS
+ switchport access vlan 10
+ switchport mode access
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+end
+' does not match 'spanning-tree portfast( edge)?\s*$'</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${cfg}</arg>
+<arg>spanning-tree bpduguard enable</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="NOT RUN" start="2026-09-10T22:43:00.701172" elapsed="0.000015"/>
+</kw>
+<var name="${port}">Gi1/0/2</var>
+<var name="${vlan}">10</var>
+<status status="FAIL" start="2026-09-10T22:42:59.713658" elapsed="0.987571">'Building configuration...
+
+Current configuration : 173 bytes
+!
+interface GigabitEthernet1/0/2
+ description ACCESS - USERS
+ switchport access vlan 10
+ switchport mode access
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+end
+' does not match 'spanning-tree portfast( edge)?\s*$'</status>
+</iter>
+<var>${port}</var>
+<var>${vlan}</var>
+<value>&amp;{ACCESS_PORTS}</value>
+<status status="FAIL" start="2026-09-10T22:42:59.713513" elapsed="0.987765">'Building configuration...
+
+Current configuration : 173 bytes
+!
+interface GigabitEthernet1/0/2
+ description ACCESS - USERS
+ switchport access vlan 10
+ switchport mode access
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+end
+' does not match 'spanning-tree portfast( edge)?\s*$'</status>
+</for>
+<var name="${sw}">sw1</var>
+<status status="FAIL" start="2026-09-10T22:42:59.713493" elapsed="0.987831">'Building configuration...
+
+Current configuration : 173 bytes
+!
+interface GigabitEthernet1/0/2
+ description ACCESS - USERS
+ switchport access vlan 10
+ switchport mode access
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+end
+' does not match 'spanning-tree portfast( edge)?\s*$'</status>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="FAIL" start="2026-09-10T22:42:59.713365" elapsed="0.988004">'Building configuration...
+
+Current configuration : 173 bytes
+!
+interface GigabitEthernet1/0/2
+ description ACCESS - USERS
+ switchport access vlan 10
+ switchport mode access
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+end
+' does not match 'spanning-tree portfast( edge)?\s*$'</status>
+</for>
+<status status="FAIL" start="2026-09-10T22:42:59.713182" elapsed="0.988291">'Building configuration...
+
+Current configuration : 173 bytes
+!
+interface GigabitEthernet1/0/2
+ description ACCESS - USERS
+ switchport access vlan 10
+ switchport mode access
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+end
+' does not match 'spanning-tree portfast( edge)?\s*$'</status>
+</test>
+<test id="s1-s2-t5" name="Spanning tree runs in rapid-pvst and the trunk is forwarding" line="43">
+<for flavor="IN">
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:00.702678" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:00.702440" elapsed="0.000257"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:00.702731" elapsed="0.000027"/>
+</return>
+<msg time="2026-09-10T22:43:00.702833" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:00.702259" elapsed="0.000588"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:01.199467" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show spanning-tree summary | include mode
+Switch is in rapid-pvst mode&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:01.199638" level="INFO">${out} = Switch is in rapid-pvst mode</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:00.702904" elapsed="0.496758"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:01.199740" elapsed="0.000046"/>
+</return>
+<msg time="2026-09-10T22:43:01.199918" level="INFO">${sum} = Switch is in rapid-pvst mode</msg>
+<var>${sum}</var>
+<arg>${sw}</arg>
+<arg>show spanning-tree summary | include mode</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:00.702030" elapsed="0.497908"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${sum}</arg>
+<arg>${STP_MODE}</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:43:01.200078" elapsed="0.000369"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:01.201379" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:01.201138" elapsed="0.000262"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:01.201438" elapsed="0.000026"/>
+</return>
+<msg time="2026-09-10T22:43:01.201555" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:01.200924" elapsed="0.000651"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:01.698279" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show spanning-tree vlan 100 | include Gi1/0/1
+Gi1/0/1             Desg FWD 4         128.1    P2p &lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:01.698421" level="INFO">${out} = Gi1/0/1             Desg FWD 4         128.1    P2p </msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:01.201646" elapsed="0.496794"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:01.698503" elapsed="0.000044"/>
+</return>
+<msg time="2026-09-10T22:43:01.698686" level="INFO">${stp} = Gi1/0/1             Desg FWD 4         128.1    P2p </msg>
+<var>${stp}</var>
+<arg>${sw}</arg>
+<arg>show spanning-tree vlan 100 | include ${TRUNK_PORT}</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:01.200605" elapsed="0.498101"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${stp}</arg>
+<arg>${TRUNK_PORT}\\s+(Root|Desg)\\s+FWD</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:01.698821" elapsed="0.000423"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-10T22:43:00.701924" elapsed="0.997350"/>
+</iter>
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:01.700137" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:01.699894" elapsed="0.000263"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:01.700187" elapsed="0.000020"/>
+</return>
+<msg time="2026-09-10T22:43:01.700311" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:01.699692" elapsed="0.000637"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:02.196763" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show spanning-tree summary | include mode
+Switch is in rapid-pvst mode&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:02.196982" level="INFO">${out} = Switch is in rapid-pvst mode</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:01.700392" elapsed="0.496668"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:02.197157" elapsed="0.000058"/>
+</return>
+<msg time="2026-09-10T22:43:02.197397" level="INFO">${sum} = Switch is in rapid-pvst mode</msg>
+<var>${sum}</var>
+<arg>${sw}</arg>
+<arg>show spanning-tree summary | include mode</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:01.699458" elapsed="0.497969"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${sum}</arg>
+<arg>${STP_MODE}</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:43:02.197588" elapsed="0.000468"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:02.199286" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:02.198937" elapsed="0.000380"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:02.199370" elapsed="0.000030"/>
+</return>
+<msg time="2026-09-10T22:43:02.199530" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:02.198673" elapsed="0.000886"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:02.696098" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show spanning-tree vlan 100 | include Gi1/0/1
+Gi1/0/1             Root FWD 4         128.1    P2p &lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:02.696310" level="INFO">${out} = Gi1/0/1             Root FWD 4         128.1    P2p </msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:02.199659" elapsed="0.496684"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:02.696435" elapsed="0.000057"/>
+</return>
+<msg time="2026-09-10T22:43:02.696666" level="INFO">${stp} = Gi1/0/1             Root FWD 4         128.1    P2p </msg>
+<var>${stp}</var>
+<arg>${sw}</arg>
+<arg>show spanning-tree vlan 100 | include ${TRUNK_PORT}</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:02.198251" elapsed="0.498446"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${stp}</arg>
+<arg>${TRUNK_PORT}\\s+(Root|Desg)\\s+FWD</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:02.696883" elapsed="0.000479"/>
+</kw>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-10T22:43:01.699359" elapsed="0.998047"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-10T22:43:00.701818" elapsed="1.995633"/>
+</for>
+<status status="PASS" start="2026-09-10T22:43:00.701644" elapsed="1.995930"/>
+</test>
+<test id="s1-s2-t6" name="CDP and LLDP see the peer switch on the trunk" line="51">
+<for flavor="IN">
+<iter>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:02.698716" level="INFO">${peer} = sw2</msg>
+<var>${peer}</var>
+<arg>${SWITCHES}[${sw}][peer]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:02.698363" elapsed="0.000384"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:02.699908" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:02.699571" elapsed="0.000366"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:02.699999" elapsed="0.000034"/>
+</return>
+<msg time="2026-09-10T22:43:02.700165" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:02.699298" elapsed="0.000896"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:03.187072" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show cdp neighbors
+Capability Codes: R - Router, T - Trans Bridge, B - Source Route Bridge
+                  S - Switch, H - Host, I - IGMP, r - Repeater, P - Phone, 
+                  D - Remote, C - CVTA, M - Two-port Mac Relay 
+
+Device ID        Local Intrfce     Holdtme    Capability  Platform  Port ID
+sw2.lab.local    Gig 1/0/1         174             R S I  C9KV-UADP Gig 1/0/1
+sw2.lab.local    Gig 0/0           156             R S I  C9KV-UADP Gig 0/0
+
+Total cdp entries displayed : 2&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:03.187251" level="INFO">${out} = Capability Codes: R - Router, T - Trans Bridge, B - Source Route Bridge
+                  S - Switch, H - Host, I - IGMP, r - Repeater, P - Phone, 
+                  D - Remote, C - CVTA, M - Two-port...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:02.700302" elapsed="0.486974"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:03.187357" elapsed="0.000047"/>
+</return>
+<msg time="2026-09-10T22:43:03.187559" level="INFO">${cdp} = Capability Codes: R - Router, T - Trans Bridge, B - Source Route Bridge
+                  S - Switch, H - Host, I - IGMP, r - Repeater, P - Phone, 
+                  D - Remote, C - CVTA, M - Two-port...</msg>
+<var>${cdp}</var>
+<arg>${sw}</arg>
+<arg>show cdp neighbors</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:02.698931" elapsed="0.488652"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${cdp}</arg>
+<arg>${peer}\\.${DOMAIN_NAME}\\s+Gig 1/0/1\\s.*Gig 1/0/1</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:03.187712" elapsed="0.000537"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:03.189264" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:03.188967" elapsed="0.000323"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:03.189337" elapsed="0.000035"/>
+</return>
+<msg time="2026-09-10T22:43:03.189472" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:03.188762" elapsed="0.000731"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:03.676050" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show lldp neighbors
+Capability codes:
+    (R) Router, (B) Bridge, (T) Telephone, (C) DOCSIS Cable Device
+    (W) WLAN Access Point, (P) Repeater, (S) Station, (O) Other
+
+Device ID           Local Intf     Hold-time  Capability      Port ID
+sw2.lab.local       Gi1/0/1        120        B,R             Gi1/0/1
+
+Total entries displayed: 1
+&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:03.676224" level="INFO">${out} = Capability codes:
+    (R) Router, (B) Bridge, (T) Telephone, (C) DOCSIS Cable Device
+    (W) WLAN Access Point, (P) Repeater, (S) Station, (O) Other
+
+Device ID           Local Intf     Hold-time  Capa...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:03.189572" elapsed="0.486678"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:03.676359" elapsed="0.000046"/>
+</return>
+<msg time="2026-09-10T22:43:03.676539" level="INFO">${lldp} = Capability codes:
+    (R) Router, (B) Bridge, (T) Telephone, (C) DOCSIS Cable Device
+    (W) WLAN Access Point, (P) Repeater, (S) Station, (O) Other
+
+Device ID           Local Intf     Hold-time  Capa...</msg>
+<var>${lldp}</var>
+<arg>${sw}</arg>
+<arg>show lldp neighbors</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:03.188443" elapsed="0.488120"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${lldp}</arg>
+<arg>${peer}\\.${DOMAIN_NAME}\\s+${TRUNK_PORT}\\s.*${TRUNK_PORT}</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:03.676689" elapsed="0.000529"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-10T22:43:02.698268" elapsed="0.978985"/>
+</iter>
+<iter>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:03.677675" level="INFO">${peer} = sw1</msg>
+<var>${peer}</var>
+<arg>${SWITCHES}[${sw}][peer]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:03.677434" elapsed="0.000262"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:03.678557" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:03.678322" elapsed="0.000257"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:03.678616" elapsed="0.000025"/>
+</return>
+<msg time="2026-09-10T22:43:03.678735" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:03.678122" elapsed="0.000634"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:04.165031" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show cdp neighbors
+Capability Codes: R - Router, T - Trans Bridge, B - Source Route Bridge
+                  S - Switch, H - Host, I - IGMP, r - Repeater, P - Phone, 
+                  D - Remote, C - CVTA, M - Two-port Mac Relay 
+
+Device ID        Local Intrfce     Holdtme    Capability  Platform  Port ID
+sw1.lab.local    Gig 1/0/1         148             R S I  C9KV-UADP Gig 1/0/1
+sw1.lab.local    Gig 0/0           163             R S I  C9KV-UADP Gig 0/0
+
+Total cdp entries displayed : 2&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:04.165240" level="INFO">${out} = Capability Codes: R - Router, T - Trans Bridge, B - Source Route Bridge
+                  S - Switch, H - Host, I - IGMP, r - Repeater, P - Phone, 
+                  D - Remote, C - CVTA, M - Two-port...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:03.678829" elapsed="0.486447"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:04.165367" elapsed="0.000057"/>
+</return>
+<msg time="2026-09-10T22:43:04.165594" level="INFO">${cdp} = Capability Codes: R - Router, T - Trans Bridge, B - Source Route Bridge
+                  S - Switch, H - Host, I - IGMP, r - Repeater, P - Phone, 
+                  D - Remote, C - CVTA, M - Two-port...</msg>
+<var>${cdp}</var>
+<arg>${sw}</arg>
+<arg>show cdp neighbors</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:03.677835" elapsed="0.487789"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${cdp}</arg>
+<arg>${peer}\\.${DOMAIN_NAME}\\s+Gig 1/0/1\\s.*Gig 1/0/1</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:04.165789" elapsed="0.000628"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:04.167423" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:04.167222" elapsed="0.000220"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:04.167472" elapsed="0.000021"/>
+</return>
+<msg time="2026-09-10T22:43:04.167576" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:04.167045" elapsed="0.000549"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:04.653843" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show lldp neighbors
+Capability codes:
+    (R) Router, (B) Bridge, (T) Telephone, (C) DOCSIS Cable Device
+    (W) WLAN Access Point, (P) Repeater, (S) Station, (O) Other
+
+Device ID           Local Intf     Hold-time  Capability      Port ID
+sw1.lab.local       Gi1/0/1        120        B,R             Gi1/0/1
+
+Total entries displayed: 1
+&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:04.654024" level="INFO">${out} = Capability codes:
+    (R) Router, (B) Bridge, (T) Telephone, (C) DOCSIS Cable Device
+    (W) WLAN Access Point, (P) Repeater, (S) Station, (O) Other
+
+Device ID           Local Intf     Hold-time  Capa...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:04.167681" elapsed="0.486366"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:04.654110" elapsed="0.000044"/>
+</return>
+<msg time="2026-09-10T22:43:04.654268" level="INFO">${lldp} = Capability codes:
+    (R) Router, (B) Bridge, (T) Telephone, (C) DOCSIS Cable Device
+    (W) WLAN Access Point, (P) Repeater, (S) Station, (O) Other
+
+Device ID           Local Intf     Hold-time  Capa...</msg>
+<var>${lldp}</var>
+<arg>${sw}</arg>
+<arg>show lldp neighbors</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:04.166628" elapsed="0.487657"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${lldp}</arg>
+<arg>${peer}\\.${DOMAIN_NAME}\\s+${TRUNK_PORT}\\s.*${TRUNK_PORT}</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:04.654394" elapsed="0.000512"/>
+</kw>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-10T22:43:03.677359" elapsed="0.977594"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-10T22:43:02.698079" elapsed="1.956923"/>
+</for>
+<status status="PASS" start="2026-09-10T22:43:02.697775" elapsed="1.957312"/>
+</test>
+<kw name="Suite Teardown Close Connections" owner="common" type="TEARDOWN">
+<kw name="Close All Connections" owner="LabLib">
+<status status="PASS" start="2026-09-10T22:43:04.655568" elapsed="0.021026"/>
+</kw>
+<status status="PASS" start="2026-09-10T22:43:04.655423" elapsed="0.021269"/>
+</kw>
+<doc>Layer 2: VLAN database, inter-switch trunk, access ports, spanning tree, CDP/LLDP.</doc>
+<status status="FAIL" start="2026-09-10T22:42:53.733241" elapsed="10.943488"/>
+</suite>
+<suite id="s1-s3" name="03 Layer3" source="/home/dcantor/cat9000v/tests/suites/03_layer3.robot">
+<test id="s1-s3-t1" name="SVIs and loopbacks are up with the modelled addresses" line="7">
+<for flavor="IN">
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:04.679965" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:04.679743" elapsed="0.000256"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:04.680059" elapsed="0.000028"/>
+</return>
+<msg time="2026-09-10T22:43:04.680174" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:04.679549" elapsed="0.000642"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:06.175528" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show ip interface brief
+Interface              IP-Address      OK? Method Status                Protocol
+Vlan1                  unassigned      YES NVRAM  administratively down down    
+Vlan10                 10.10.0.1       YES other  up                    up      
+Vlan100                10.100.0.1      YES other  up                    up      
+GigabitEthernet0/0     10.0.0.11       YES NVRAM  up                    up      
+GigabitEthernet1/0/1   unassigned      YES unset  up                    up      
+GigabitEthernet1/0/2   unassigned      YES unset  up                    up      
+GigabitEthernet1/0/3   unassigned      YES unset  up                    up      
+GigabitEthernet1/0/4   unassigned      YES unset  up                    up      
+GigabitEthernet1/0/5   unassigned      YES unset  up                    up      
+GigabitEthernet1/0/6   unassigned      YES unset  up                    up      
+GigabitEthernet1/0/7   unassigned      YES unset  up                    up      
+GigabitEthernet1/0/8   unassigned      YES unset  up                    up      
+Loopback0              10.255.0.1      YES other  up                    up      &lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:06.175695" level="INFO">${out} = Interface              IP-Address      OK? Method Status                Protocol
+Vlan1                  unassigned      YES NVRAM  administratively down down    
+Vlan10                 10.10.0.1      ...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:04.680255" elapsed="1.495464"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:06.175787" elapsed="0.000045"/>
+</return>
+<msg time="2026-09-10T22:43:06.175946" level="INFO">${brief} = Interface              IP-Address      OK? Method Status                Protocol
+Vlan1                  unassigned      YES NVRAM  administratively down down    
+Vlan10                 10.10.0.1      ...</msg>
+<var>${brief}</var>
+<arg>${sw}</arg>
+<arg>show ip interface brief</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:04.679338" elapsed="1.496626"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${brief}</arg>
+<arg>(?m)^Loopback0\\s+${SWITCHES}[${sw}][router_id]\\s+YES\\s+\\S+\\s+up\\s+up</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:06.176087" elapsed="0.000413"/>
+</kw>
+<for flavor="IN">
+<iter>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${brief}</arg>
+<arg>(?m)^${svi}\\s+${ip}\\s+YES\\s+\\S+\\s+up\\s+up</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:06.176737" elapsed="0.000287"/>
+</kw>
+<var name="${svi}">Vlan10</var>
+<var name="${ip}">10.10.0.1</var>
+<status status="PASS" start="2026-09-10T22:43:06.176681" elapsed="0.000369"/>
+</iter>
+<iter>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${brief}</arg>
+<arg>(?m)^${svi}\\s+${ip}\\s+YES\\s+\\S+\\s+up\\s+up</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:06.177170" elapsed="0.000261"/>
+</kw>
+<var name="${svi}">Vlan100</var>
+<var name="${ip}">10.100.0.1</var>
+<status status="PASS" start="2026-09-10T22:43:06.177122" elapsed="0.000334"/>
+</iter>
+<var>${svi}</var>
+<var>${ip}</var>
+<value>&amp;{SWITCHES}[${sw}][svis]</value>
+<status status="PASS" start="2026-09-10T22:43:06.176548" elapsed="0.000930"/>
+</for>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-10T22:43:04.679226" elapsed="1.498274"/>
+</iter>
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:06.178244" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:06.178059" elapsed="0.000202"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:06.178288" elapsed="0.000021"/>
+</return>
+<msg time="2026-09-10T22:43:06.178379" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:06.177881" elapsed="0.000513"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:07.662125" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show ip interface brief
+Interface              IP-Address      OK? Method Status                Protocol
+Vlan1                  unassigned      YES NVRAM  administratively down down    
+Vlan20                 10.20.0.1       YES other  up                    up      
+Vlan100                10.100.0.2      YES other  up                    up      
+GigabitEthernet0/0     10.0.0.12       YES NVRAM  up                    up      
+GigabitEthernet1/0/1   unassigned      YES unset  up                    up      
+GigabitEthernet1/0/2   unassigned      YES unset  up                    up      
+GigabitEthernet1/0/3   unassigned      YES unset  up                    up      
+GigabitEthernet1/0/4   unassigned      YES unset  up                    up      
+GigabitEthernet1/0/5   unassigned      YES unset  up                    up      
+GigabitEthernet1/0/6   unassigned      YES unset  up                    up      
+GigabitEthernet1/0/7   unassigned      YES unset  up                    up      
+GigabitEthernet1/0/8   unassigned      YES unset  up                    up      
+Loopback0              10.255.0.2      YES other  up                    up      &lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:07.662302" level="INFO">${out} = Interface              IP-Address      OK? Method Status                Protocol
+Vlan1                  unassigned      YES NVRAM  administratively down down    
+Vlan20                 10.20.0.1      ...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:06.178446" elapsed="1.483886"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:07.662405" elapsed="0.000048"/>
+</return>
+<msg time="2026-09-10T22:43:07.662592" level="INFO">${brief} = Interface              IP-Address      OK? Method Status                Protocol
+Vlan1                  unassigned      YES NVRAM  administratively down down    
+Vlan20                 10.20.0.1      ...</msg>
+<var>${brief}</var>
+<arg>${sw}</arg>
+<arg>show ip interface brief</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:06.177665" elapsed="1.484950"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${brief}</arg>
+<arg>(?m)^Loopback0\\s+${SWITCHES}[${sw}][router_id]\\s+YES\\s+\\S+\\s+up\\s+up</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:07.662743" elapsed="0.000544"/>
+</kw>
+<for flavor="IN">
+<iter>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${brief}</arg>
+<arg>(?m)^${svi}\\s+${ip}\\s+YES\\s+\\S+\\s+up\\s+up</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:07.663595" elapsed="0.000364"/>
+</kw>
+<var name="${svi}">Vlan20</var>
+<var name="${ip}">10.20.0.1</var>
+<status status="PASS" start="2026-09-10T22:43:07.663518" elapsed="0.000485"/>
+</iter>
+<iter>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${brief}</arg>
+<arg>(?m)^${svi}\\s+${ip}\\s+YES\\s+\\S+\\s+up\\s+up</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:07.664179" elapsed="0.000368"/>
+</kw>
+<var name="${svi}">Vlan100</var>
+<var name="${ip}">10.100.0.2</var>
+<status status="PASS" start="2026-09-10T22:43:07.664115" elapsed="0.000464"/>
+</iter>
+<var>${svi}</var>
+<var>${ip}</var>
+<value>&amp;{SWITCHES}[${sw}][svis]</value>
+<status status="PASS" start="2026-09-10T22:43:07.663346" elapsed="0.001264"/>
+</for>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-10T22:43:06.177573" elapsed="1.487068"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-10T22:43:04.679084" elapsed="2.985579"/>
+</for>
+<status status="PASS" start="2026-09-10T22:43:04.678877" elapsed="2.985871"/>
+</test>
+<test id="s1-s3-t2" name="IP routing is enabled" line="16">
+<for flavor="IN">
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:07.666101" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:07.665842" elapsed="0.000283"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:07.666165" elapsed="0.000030"/>
+</return>
+<msg time="2026-09-10T22:43:07.666292" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:07.665647" elapsed="0.000665"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:08.233358" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show run | include ^ip routing|^no ip routing
+ip routing&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:08.233527" level="INFO">${out} = ip routing</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:07.666386" elapsed="0.567161"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:08.233606" elapsed="0.000037"/>
+</return>
+<msg time="2026-09-10T22:43:08.233774" level="INFO">${cfg} = ip routing</msg>
+<var>${cfg}</var>
+<arg>${sw}</arg>
+<arg>show run | include ^ip routing|^no ip routing</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:07.665363" elapsed="0.568436"/>
+</kw>
+<kw name="Should Not Contain" owner="BuiltIn">
+<arg>${cfg}</arg>
+<arg>no ip routing</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:43:08.233914" elapsed="0.000316"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-10T22:43:07.665233" elapsed="0.569032"/>
+</iter>
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:08.235100" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:08.234880" elapsed="0.000239"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:08.235149" elapsed="0.000022"/>
+</return>
+<msg time="2026-09-10T22:43:08.235274" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:08.234721" elapsed="0.000581"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:08.802162" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show run | include ^ip routing|^no ip routing
+ip routing&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:08.802336" level="INFO">${out} = ip routing</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:08.235389" elapsed="0.566972"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:08.802436" elapsed="0.000048"/>
+</return>
+<msg time="2026-09-10T22:43:08.802618" level="INFO">${cfg} = ip routing</msg>
+<var>${cfg}</var>
+<arg>${sw}</arg>
+<arg>show run | include ^ip routing|^no ip routing</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:08.234462" elapsed="0.568177"/>
+</kw>
+<kw name="Should Not Contain" owner="BuiltIn">
+<arg>${cfg}</arg>
+<arg>no ip routing</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:43:08.802775" elapsed="0.000345"/>
+</kw>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-10T22:43:08.234362" elapsed="0.568791"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-10T22:43:07.665122" elapsed="1.138065"/>
+</for>
+<status status="PASS" start="2026-09-10T22:43:07.664903" elapsed="1.138381"/>
+</test>
+<test id="s1-s3-t3" name="OSPF process has the modelled router-id and passive interfaces" line="22">
+<for flavor="IN">
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:08.804684" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:08.804421" elapsed="0.000284"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:08.804744" elapsed="0.000026"/>
+</return>
+<msg time="2026-09-10T22:43:08.804863" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:08.804221" elapsed="0.000662"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:09.291611" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show ip protocols | section ospf
+Routing Protocol is "ospf 1"
+  Outgoing update filter list for all interfaces is not set
+  Incoming update filter list for all interfaces is not set
+  Router ID 10.255.0.1
+  Number of areas in this router is 1. 1 normal 0 stub 0 nssa
+  Maximum path: 4
+  Routing for Networks:
+  Routing on Interfaces Configured Explicitly (Area 0):
+    Loopback0
+    Vlan10
+    Vlan100
+  Passive Interface(s):
+    Vlan10
+    Loopback0
+
+  Routing Information Sources:
+    Gateway         Distance      Last Update
+    10.255.0.2           110      00:09:45
+  Distance: (default is 110)&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:09.291820" level="INFO">${out} = Routing Protocol is "ospf 1"
+  Outgoing update filter list for all interfaces is not set
+  Incoming update filter list for all interfaces is not set
+  Router ID 10.255.0.1
+  Number of areas in this ro...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:08.804960" elapsed="0.486897"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:09.291956" elapsed="0.000072"/>
+</return>
+<msg time="2026-09-10T22:43:09.292200" level="INFO">${ospf} = Routing Protocol is "ospf 1"
+  Outgoing update filter list for all interfaces is not set
+  Incoming update filter list for all interfaces is not set
+  Router ID 10.255.0.1
+  Number of areas in this ro...</msg>
+<var>${ospf}</var>
+<arg>${sw}</arg>
+<arg>show ip protocols | section ospf</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:08.803925" elapsed="0.488309"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${ospf}</arg>
+<arg>Router ID ${SWITCHES}[${sw}][router_id]</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:43:09.292395" elapsed="0.000541"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${ospf}</arg>
+<arg>Loopback0</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:43:09.293108" elapsed="0.000298"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:09.294596" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:09.294263" elapsed="0.000365"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:09.294682" elapsed="0.000044"/>
+</return>
+<msg time="2026-09-10T22:43:09.294864" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:09.294001" elapsed="0.000894"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:09.781672" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show ip ospf interface brief
+Interface    PID   Area            IP Address/Mask    Cost  State Nbrs F/C
+Lo0          1     0               10.255.0.1/32      1     LOOP  0/0
+Vl10         1     0               10.10.0.1/24       1     DR    0/0
+Vl100        1     0               10.100.0.1/30      1     P2P   1/1&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:09.781879" level="INFO">${out} = Interface    PID   Area            IP Address/Mask    Cost  State Nbrs F/C
+Lo0          1     0               10.255.0.1/32      1     LOOP  0/0
+Vl10         1     0               10.10.0.1/24       1...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:09.295008" elapsed="0.486906"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:09.782025" elapsed="0.000059"/>
+</return>
+<msg time="2026-09-10T22:43:09.782259" level="INFO">${ifs} = Interface    PID   Area            IP Address/Mask    Cost  State Nbrs F/C
+Lo0          1     0               10.255.0.1/32      1     LOOP  0/0
+Vl10         1     0               10.10.0.1/24       1...</msg>
+<var>${ifs}</var>
+<arg>${sw}</arg>
+<arg>show ip ospf interface brief</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:09.293609" elapsed="0.488680"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${ifs}</arg>
+<arg>(?m)^Vl100\\s+1\\s+0\\s+${SWITCHES}[${sw}][transit_ip]/30\\s+\\d+\\s+P2P\\s+1/1</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:09.782454" elapsed="0.000705"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-10T22:43:08.803807" elapsed="0.979400"/>
+</iter>
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:09.784505" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:09.784161" elapsed="0.000401"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:09.784614" elapsed="0.000034"/>
+</return>
+<msg time="2026-09-10T22:43:09.784779" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:09.783899" elapsed="0.000910"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:10.281353" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show ip protocols | section ospf
+Routing Protocol is "ospf 1"
+  Outgoing update filter list for all interfaces is not set
+  Incoming update filter list for all interfaces is not set
+  Router ID 10.255.0.2
+  Number of areas in this router is 1. 1 normal 0 stub 0 nssa
+  Maximum path: 4
+  Routing for Networks:
+  Routing on Interfaces Configured Explicitly (Area 0):
+    Loopback0
+    Vlan20
+    Vlan100
+  Passive Interface(s):
+    Vlan20
+    Loopback0
+
+  Routing Information Sources:
+    Gateway         Distance      Last Update
+    10.255.0.1           110      00:09:46
+  Distance: (default is 110)&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:10.281540" level="INFO">${out} = Routing Protocol is "ospf 1"
+  Outgoing update filter list for all interfaces is not set
+  Incoming update filter list for all interfaces is not set
+  Router ID 10.255.0.2
+  Number of areas in this ro...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:09.784917" elapsed="0.496651"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:10.281639" elapsed="0.000046"/>
+</return>
+<msg time="2026-09-10T22:43:10.281820" level="INFO">${ospf} = Routing Protocol is "ospf 1"
+  Outgoing update filter list for all interfaces is not set
+  Incoming update filter list for all interfaces is not set
+  Router ID 10.255.0.2
+  Number of areas in this ro...</msg>
+<var>${ospf}</var>
+<arg>${sw}</arg>
+<arg>show ip protocols | section ospf</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:09.783510" elapsed="0.498334"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${ospf}</arg>
+<arg>Router ID ${SWITCHES}[${sw}][router_id]</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:43:10.281970" elapsed="0.000410"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${ospf}</arg>
+<arg>Loopback0</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:43:10.282464" elapsed="0.000216"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:10.283585" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:10.283342" elapsed="0.000266"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:10.283646" elapsed="0.000029"/>
+</return>
+<msg time="2026-09-10T22:43:10.283777" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:10.283124" elapsed="0.000673"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:10.770161" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show ip ospf interface brief
+Interface    PID   Area            IP Address/Mask    Cost  State Nbrs F/C
+Lo0          1     0               10.255.0.2/32      1     LOOP  0/0
+Vl20         1     0               10.20.0.1/24       1     DR    0/0
+Vl100        1     0               10.100.0.2/30      1     P2P   1/1&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:10.770346" level="INFO">${out} = Interface    PID   Area            IP Address/Mask    Cost  State Nbrs F/C
+Lo0          1     0               10.255.0.2/32      1     LOOP  0/0
+Vl20         1     0               10.20.0.1/24       1...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:10.283869" elapsed="0.486504"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:10.770449" elapsed="0.000045"/>
+</return>
+<msg time="2026-09-10T22:43:10.770627" level="INFO">${ifs} = Interface    PID   Area            IP Address/Mask    Cost  State Nbrs F/C
+Lo0          1     0               10.255.0.2/32      1     LOOP  0/0
+Vl20         1     0               10.20.0.1/24       1...</msg>
+<var>${ifs}</var>
+<arg>${sw}</arg>
+<arg>show ip ospf interface brief</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:10.282824" elapsed="0.487855"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${ifs}</arg>
+<arg>(?m)^Vl100\\s+1\\s+0\\s+${SWITCHES}[${sw}][transit_ip]/30\\s+\\d+\\s+P2P\\s+1/1</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:10.770804" elapsed="0.000536"/>
+</kw>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-10T22:43:09.783347" elapsed="0.988028"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-10T22:43:08.803678" elapsed="1.967731"/>
+</for>
+<status status="PASS" start="2026-09-10T22:43:08.803439" elapsed="1.968061"/>
+</test>
+<test id="s1-s3-t4" name="OSPF adjacency is FULL over the transit VLAN" line="31">
+<for flavor="IN">
+<iter>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:10.772367" level="INFO">${peer} = sw2</msg>
+<var>${peer}</var>
+<arg>${SWITCHES}[${sw}][peer]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:10.772101" elapsed="0.000288"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:10.773244" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:10.772998" elapsed="0.000271"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:10.773310" elapsed="0.000028"/>
+</return>
+<msg time="2026-09-10T22:43:10.773433" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:10.772788" elapsed="0.000666"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:11.259910" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show ip ospf neighbor
+
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+10.255.0.2        0   FULL/  -        00:00:33    10.100.0.2      Vlan100&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:11.260070" level="INFO">${out} = 
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+10.255.0.2        0   FULL/  -        00:00:33    10.100.0.2      Vlan100</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:10.773526" elapsed="0.486564"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:11.260150" elapsed="0.000039"/>
+</return>
+<msg time="2026-09-10T22:43:11.260303" level="INFO">${nbr} = 
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+10.255.0.2        0   FULL/  -        00:00:33    10.100.0.2      Vlan100</msg>
+<var>${nbr}</var>
+<arg>${sw}</arg>
+<arg>show ip ospf neighbor</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:10.772519" elapsed="0.487801"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${nbr}</arg>
+<arg>(?m)^${SWITCHES}[${peer}][router_id]\\s+\\d+\\s+FULL/\\s+-\\s+\\S+\\s+${SWITCHES}[${peer}][transit_ip]\\s+Vlan100</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:11.260423" elapsed="0.000448"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-10T22:43:10.772025" elapsed="0.488875"/>
+</iter>
+<iter>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:11.261283" level="INFO">${peer} = sw1</msg>
+<var>${peer}</var>
+<arg>${SWITCHES}[${sw}][peer]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:11.261055" elapsed="0.000247"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:11.262015" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:11.261811" elapsed="0.000223"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:11.262064" elapsed="0.000022"/>
+</return>
+<msg time="2026-09-10T22:43:11.262158" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:11.261654" elapsed="0.000519"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:11.748372" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show ip ospf neighbor
+
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+10.255.0.1        0   FULL/  -        00:00:33    10.100.0.1      Vlan100&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:11.748513" level="INFO">${out} = 
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+10.255.0.1        0   FULL/  -        00:00:33    10.100.0.1      Vlan100</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:11.262232" elapsed="0.486304"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:11.748604" elapsed="0.000039"/>
+</return>
+<msg time="2026-09-10T22:43:11.748779" level="INFO">${nbr} = 
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+10.255.0.1        0   FULL/  -        00:00:33    10.100.0.1      Vlan100</msg>
+<var>${nbr}</var>
+<arg>${sw}</arg>
+<arg>show ip ospf neighbor</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:11.261418" elapsed="0.487383"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${nbr}</arg>
+<arg>(?m)^${SWITCHES}[${peer}][router_id]\\s+\\d+\\s+FULL/\\s+-\\s+\\S+\\s+${SWITCHES}[${peer}][transit_ip]\\s+Vlan100</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:11.748937" elapsed="0.000563"/>
+</kw>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-10T22:43:11.260994" elapsed="0.488545"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-10T22:43:10.771883" elapsed="0.977684"/>
+</for>
+<status status="PASS" start="2026-09-10T22:43:10.771653" elapsed="0.977987"/>
+</test>
+<test id="s1-s3-t5" name="OSPF routes to the peer loopback and VLAN are installed" line="38">
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:11.750598" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:11.750403" elapsed="0.000212"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:11.750646" elapsed="0.000021"/>
+</return>
+<msg time="2026-09-10T22:43:11.750739" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:11.750249" elapsed="0.000505"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:12.237081" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show ip route ospf
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2, m - OMP
+       n - NAT, Ni - NAT inside, No - NAT outside, Nd - NAT DIA
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       H - NHRP, G - NHRP registered, g - NHRP registration summary
+       o - ODR, P - periodic downloaded static route, l - LISP
+       a - application route
+       + - replicated route, % - next hop override, p - overrides from PfR
+       &amp; - replicated local route overrides by connected
+
+Gateway of last resort is not set
+
+      10.0.0.0/8 is variably subnetted, 7 subnets, 3 masks
+O        10.20.0.0/24 [110/2] via 10.100.0.2, 00:09:49, Vlan100
+O        10.255.0.2/32 [110/2] via 10.100.0.2, 00:09:49, Vlan100&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:12.237276" level="INFO">${out} = Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA e...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:11.750809" elapsed="0.486489"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:12.237358" elapsed="0.000037"/>
+</return>
+<msg time="2026-09-10T22:43:12.237501" level="INFO">${r1} = Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA e...</msg>
+<var>${r1}</var>
+<arg>sw1</arg>
+<arg>show ip route ospf</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:11.750042" elapsed="0.487477"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${r1}</arg>
+<arg>(?m)^O\\s+10\\.255\\.0\\.2/32 \\[110/\\d+\\] via 10\\.100\\.0\\.2, .*Vlan100</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:12.237635" elapsed="0.000448"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${r1}</arg>
+<arg>(?m)^O\\s+10\\.20\\.0\\.0/24 \\[110/\\d+\\] via 10\\.100\\.0\\.2, .*Vlan100</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:12.238156" elapsed="0.000277"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:12.239232" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:12.239038" elapsed="0.000213"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:12.239281" elapsed="0.000022"/>
+</return>
+<msg time="2026-09-10T22:43:12.239377" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:12.238834" elapsed="0.000559"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:12.725610" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show ip route ospf
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2, m - OMP
+       n - NAT, Ni - NAT inside, No - NAT outside, Nd - NAT DIA
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       H - NHRP, G - NHRP registered, g - NHRP registration summary
+       o - ODR, P - periodic downloaded static route, l - LISP
+       a - application route
+       + - replicated route, % - next hop override, p - overrides from PfR
+       &amp; - replicated local route overrides by connected
+
+Gateway of last resort is not set
+
+      10.0.0.0/8 is variably subnetted, 7 subnets, 3 masks
+O        10.10.0.0/24 [110/2] via 10.100.0.1, 00:09:50, Vlan100
+O        10.255.0.1/32 [110/2] via 10.100.0.1, 00:09:50, Vlan100&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:12.725768" level="INFO">${out} = Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA e...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:12.239449" elapsed="0.486340"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:12.725870" elapsed="0.000037"/>
+</return>
+<msg time="2026-09-10T22:43:12.726047" level="INFO">${r2} = Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA e...</msg>
+<var>${r2}</var>
+<arg>sw2</arg>
+<arg>show ip route ospf</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:12.238556" elapsed="0.487510"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${r2}</arg>
+<arg>(?m)^O\\s+10\\.255\\.0\\.1/32 \\[110/\\d+\\] via 10\\.100\\.0\\.1, .*Vlan100</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:12.726195" elapsed="0.000463"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${r2}</arg>
+<arg>(?m)^O\\s+10\\.10\\.0\\.0/24 \\[110/\\d+\\] via 10\\.100\\.0\\.1, .*Vlan100</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:12.726734" elapsed="0.000306"/>
+</kw>
+<status status="PASS" start="2026-09-10T22:43:11.749760" elapsed="0.977360"/>
+</test>
+<test id="s1-s3-t6" name="Inter-VLAN and loopback reachability across the trunk" line="46">
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:12.728136" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:12.727916" elapsed="0.000239"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:12.728185" elapsed="0.000023"/>
+</return>
+<msg time="2026-09-10T22:43:12.728302" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:12.727769" elapsed="0.000551"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:13.375729" level="INFO" html="true">&lt;pre&gt;10.0.0.11# ping 10.20.0.1 source 10.10.0.1 repeat 5
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 10.20.0.1, timeout is 2 seconds:
+Packet sent with a source address of 10.10.0.1 
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 33/34/40 ms&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:13.375907" level="INFO">${out} = Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 10.20.0.1, timeout is 2 seconds:
+Packet sent with a source address of 10.10.0.1 
+!!!!!
+Success rate is 100 percent (5/5), round-trip mi...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:12.728379" elapsed="0.647563"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:13.376041" elapsed="0.000040"/>
+</return>
+<msg time="2026-09-10T22:43:13.376201" level="INFO">${p} = Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 10.20.0.1, timeout is 2 seconds:
+Packet sent with a source address of 10.10.0.1 
+!!!!!
+Success rate is 100 percent (5/5), round-trip mi...</msg>
+<var>${p}</var>
+<arg>sw1</arg>
+<arg>ping 10.20.0.1 source 10.10.0.1 repeat 5</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:12.727566" elapsed="0.648653"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${p}</arg>
+<arg>Success rate is (100|80) percent</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:13.376317" elapsed="0.000324"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:13.377478" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:13.377169" elapsed="0.000328"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:13.377527" elapsed="0.000022"/>
+</return>
+<msg time="2026-09-10T22:43:13.377622" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:13.377010" elapsed="0.000627"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:13.974702" level="INFO" html="true">&lt;pre&gt;10.0.0.12# ping 10.10.0.1 source 10.20.0.1 repeat 5
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 10.10.0.1, timeout is 2 seconds:
+Packet sent with a source address of 10.20.0.1 
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 22/25/35 ms&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:13.974876" level="INFO">${out} = Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 10.10.0.1, timeout is 2 seconds:
+Packet sent with a source address of 10.20.0.1 
+!!!!!
+Success rate is 100 percent (5/5), round-trip mi...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:13.377694" elapsed="0.597209"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:13.974988" elapsed="0.000054"/>
+</return>
+<msg time="2026-09-10T22:43:13.975179" level="INFO">${p} = Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 10.10.0.1, timeout is 2 seconds:
+Packet sent with a source address of 10.20.0.1 
+!!!!!
+Success rate is 100 percent (5/5), round-trip mi...</msg>
+<var>${p}</var>
+<arg>sw2</arg>
+<arg>ping 10.10.0.1 source 10.20.0.1 repeat 5</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:13.376762" elapsed="0.598441"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${p}</arg>
+<arg>Success rate is (100|80) percent</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:13.975339" elapsed="0.000305"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:13.976426" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:13.976219" elapsed="0.000227"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:13.976480" elapsed="0.000030"/>
+</return>
+<msg time="2026-09-10T22:43:13.976588" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:13.976054" elapsed="0.000551"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:14.624096" level="INFO" html="true">&lt;pre&gt;10.0.0.11# ping 10.255.0.2 source Loopback0 repeat 5
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 10.255.0.2, timeout is 2 seconds:
+Packet sent with a source address of 10.255.0.1 
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 22/32/38 ms&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:14.624253" level="INFO">${out} = Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 10.255.0.2, timeout is 2 seconds:
+Packet sent with a source address of 10.255.0.1 
+!!!!!
+Success rate is 100 percent (5/5), round-trip ...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:13.976663" elapsed="0.647613"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:14.624336" elapsed="0.000037"/>
+</return>
+<msg time="2026-09-10T22:43:14.624486" level="INFO">${p} = Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 10.255.0.2, timeout is 2 seconds:
+Packet sent with a source address of 10.255.0.1 
+!!!!!
+Success rate is 100 percent (5/5), round-trip ...</msg>
+<var>${p}</var>
+<arg>sw1</arg>
+<arg>ping 10.255.0.2 source Loopback0 repeat 5</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:13.975773" elapsed="0.648731"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${p}</arg>
+<arg>Success rate is (100|80) percent</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:14.624610" elapsed="0.000257"/>
+</kw>
+<status status="PASS" start="2026-09-10T22:43:12.727266" elapsed="1.897679"/>
+</test>
+<kw name="Suite Teardown Close Connections" owner="common" type="TEARDOWN">
+<kw name="Close All Connections" owner="LabLib">
+<status status="PASS" start="2026-09-10T22:43:14.625419" elapsed="0.020914"/>
+</kw>
+<status status="PASS" start="2026-09-10T22:43:14.625276" elapsed="0.021138"/>
+</kw>
+<doc>Layer 3: SVIs, loopbacks, OSPF adjacency and routing, inter-VLAN reachability.</doc>
+<status status="PASS" start="2026-09-10T22:43:04.677209" elapsed="9.969231"/>
+</suite>
+<suite id="s1-s4" name="04 Services" source="/home/dcantor/cat9000v/tests/suites/04_services.robot">
+<test id="s1-s4-t1" name="NTP is configured against the NMS and the NMS serves time" line="7">
+<kw name="Nms Command" owner="LabLib">
+<msg time="2026-09-10T22:43:14.959163" level="INFO" html="true">&lt;pre&gt;nms$ sudo ss -ulnp | grep ':123 '
+rc=0
+UNCONN 0      0                  0.0.0.0:123       0.0.0.0:*    users:(("chronyd",pid=7082,fd=7))        
+&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:14.959418" level="INFO">${srv} = UNCONN 0      0                  0.0.0.0:123       0.0.0.0:*    users:(("chronyd",pid=7082,fd=7))        
+</msg>
+<var>${srv}</var>
+<arg>sudo ss -ulnp | grep ':123 '</arg>
+<doc>Run a shell command on the NMS jumphost; returns stdout (fails on non-zero rc).</doc>
+<status status="PASS" start="2026-09-10T22:43:14.648828" elapsed="0.310614"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${srv}</arg>
+<arg>chronyd</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:43:14.959583" elapsed="0.000429"/>
+</kw>
+<for flavor="IN">
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:14.961073" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:14.960850" elapsed="0.000245"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:14.961131" elapsed="0.000029"/>
+</return>
+<msg time="2026-09-10T22:43:14.961238" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:14.960687" elapsed="0.000566"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:16.507050" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show run | include ^ntp server
+ntp server vrf Mgmt-vrf 10.0.0.10 prefer&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:16.507259" level="INFO">${out} = ntp server vrf Mgmt-vrf 10.0.0.10 prefer</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:14.961315" elapsed="1.545979"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:16.507388" elapsed="0.000058"/>
+</return>
+<msg time="2026-09-10T22:43:16.507640" level="INFO">${cfg} = ntp server vrf Mgmt-vrf 10.0.0.10 prefer</msg>
+<var>${cfg}</var>
+<arg>${sw}</arg>
+<arg>show run | include ^ntp server</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:14.960422" elapsed="1.547250"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${cfg}</arg>
+<arg>ntp server vrf Mgmt-vrf ${NTP_SERVER}( prefer)?</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:16.507866" elapsed="0.000590"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:16.509663" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:16.509324" elapsed="0.000369"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:16.509744" elapsed="0.000038"/>
+</return>
+<msg time="2026-09-10T22:43:16.509916" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:16.509054" elapsed="0.000894"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:16.996616" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show ntp associations
+
+  address         ref clock       st   when   poll reach  delay  offset   disp
+*~10.0.0.10       23.149.208.12    3     47     64   377  0.108  22.776  1.939
+ * sys.peer, # selected, + candidate, - outlyer, x falseticker, ~ configured&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:16.996779" level="INFO">${out} = 
+  address         ref clock       st   when   poll reach  delay  offset   disp
+*~10.0.0.10       23.149.208.12    3     47     64   377  0.108  22.776  1.939
+ * sys.peer, # selected, + candidate, - o...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:16.510068" elapsed="0.486735"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:16.996870" elapsed="0.000053"/>
+</return>
+<msg time="2026-09-10T22:43:16.997085" level="INFO">${assoc} = 
+  address         ref clock       st   when   poll reach  delay  offset   disp
+*~10.0.0.10       23.149.208.12    3     47     64   377  0.108  22.776  1.939
+ * sys.peer, # selected, + candidate, - o...</msg>
+<var>${assoc}</var>
+<arg>${sw}</arg>
+<arg>show ntp associations</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:16.508658" elapsed="0.488449"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${assoc}</arg>
+<arg>(?m)^[ *+#x.o~-]*${NTP_SERVER}\\s</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:16.997234" elapsed="0.000432"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-10T22:43:14.960278" elapsed="2.037420"/>
+</iter>
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:16.998503" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:16.998304" elapsed="0.000220"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:16.998564" elapsed="0.000026"/>
+</return>
+<msg time="2026-09-10T22:43:16.998672" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:16.998156" elapsed="0.000531"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:18.519489" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show run | include ^ntp server
+ntp server vrf Mgmt-vrf 10.0.0.10 prefer&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:18.519705" level="INFO">${out} = ntp server vrf Mgmt-vrf 10.0.0.10 prefer</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:16.998743" elapsed="1.520996"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:18.519831" elapsed="0.000058"/>
+</return>
+<msg time="2026-09-10T22:43:18.520077" level="INFO">${cfg} = ntp server vrf Mgmt-vrf 10.0.0.10 prefer</msg>
+<var>${cfg}</var>
+<arg>${sw}</arg>
+<arg>show run | include ^ntp server</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:16.997886" elapsed="1.522220"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${cfg}</arg>
+<arg>ntp server vrf Mgmt-vrf ${NTP_SERVER}( prefer)?</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:18.520274" elapsed="0.000458"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:18.521949" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:18.521596" elapsed="0.000401"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:18.522049" elapsed="0.000034"/>
+</return>
+<msg time="2026-09-10T22:43:18.522215" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:18.521337" elapsed="0.000906"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:19.008748" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show ntp associations
+
+  address         ref clock       st   when   poll reach  delay  offset   disp
+*~10.0.0.10       23.149.208.12    3     51     64   377  0.891  39.084  1.939
+ * sys.peer, # selected, + candidate, - outlyer, x falseticker, ~ configured&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:19.008980" level="INFO">${out} = 
+  address         ref clock       st   when   poll reach  delay  offset   disp
+*~10.0.0.10       23.149.208.12    3     51     64   377  0.891  39.084  1.939
+ * sys.peer, # selected, + candidate, - o...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:18.522344" elapsed="0.486671"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:19.009108" elapsed="0.000056"/>
+</return>
+<msg time="2026-09-10T22:43:19.009339" level="INFO">${assoc} = 
+  address         ref clock       st   when   poll reach  delay  offset   disp
+*~10.0.0.10       23.149.208.12    3     51     64   377  0.891  39.084  1.939
+ * sys.peer, # selected, + candidate, - o...</msg>
+<var>${assoc}</var>
+<arg>${sw}</arg>
+<arg>show ntp associations</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:18.520930" elapsed="0.488439"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${assoc}</arg>
+<arg>(?m)^[ *+#x.o~-]*${NTP_SERVER}\\s</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:19.009528" elapsed="0.000480"/>
+</kw>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-10T22:43:16.997784" elapsed="2.012273"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-10T22:43:14.960090" elapsed="4.050014"/>
+</for>
+<status status="PASS" start="2026-09-10T22:43:14.648586" elapsed="4.361645"/>
+</test>
+<test id="s1-s4-t2" name="NTP clock is synchronized to the NMS" line="17">
+<for flavor="IN">
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:19.012331" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:19.011909" elapsed="0.000457"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:19.012429" elapsed="0.000039"/>
+</return>
+<msg time="2026-09-10T22:43:19.012604" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:19.011617" elapsed="0.001016"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:19.499419" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show ntp status | include Clock
+Clock is unsynchronized, stratum 4, reference is 10.0.0.10      &lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:19.499631" level="INFO">${out} = Clock is unsynchronized, stratum 4, reference is 10.0.0.10      </msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:19.012737" elapsed="0.486926"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:19.499756" elapsed="0.000058"/>
+</return>
+<msg time="2026-09-10T22:43:19.499997" level="INFO">${st} = Clock is unsynchronized, stratum 4, reference is 10.0.0.10      </msg>
+<var>${st}</var>
+<arg>${sw}</arg>
+<arg>show ntp status | include Clock</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:19.011195" elapsed="0.488834"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<msg time="2026-09-10T22:43:19.500697" level="FAIL">'Clock is unsynchronized, stratum 4, reference is 10.0.0.10      ' does not contain 'Clock is synchronized'</msg>
+<arg>${st}</arg>
+<arg>Clock is synchronized</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="FAIL" start="2026-09-10T22:43:19.500194" elapsed="0.000627">'Clock is unsynchronized, stratum 4, reference is 10.0.0.10      ' does not contain 'Clock is synchronized'</status>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${st}</arg>
+<arg>reference is ${NTP_SERVER}</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="NOT RUN" start="2026-09-10T22:43:19.500963" elapsed="0.000062"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="FAIL" start="2026-09-10T22:43:19.011016" elapsed="0.490077">'Clock is unsynchronized, stratum 4, reference is 10.0.0.10      ' does not contain 'Clock is synchronized'</status>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="FAIL" start="2026-09-10T22:43:19.010831" elapsed="0.490313">'Clock is unsynchronized, stratum 4, reference is 10.0.0.10      ' does not contain 'Clock is synchronized'</status>
+</for>
+<doc>Takes several minutes after the first apply; tagged so it can be excluded on a fresh lab.</doc>
+<tag>slow</tag>
+<status status="FAIL" start="2026-09-10T22:43:19.010440" elapsed="0.490826">'Clock is unsynchronized, stratum 4, reference is 10.0.0.10      ' does not contain 'Clock is synchronized'</status>
+</test>
+<test id="s1-s4-t3" name="Syslog messages from the switches arrive on the NMS" line="26">
+<for flavor="IN">
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:19.502351" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:19.502164" elapsed="0.000204"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:19.502397" elapsed="0.000020"/>
+</return>
+<msg time="2026-09-10T22:43:19.502493" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:19.502014" elapsed="0.000494"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:20.039204" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show run | include ^logging host
+logging host 10.0.0.10 vrf Mgmt-vrf&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:20.039361" level="INFO">${out} = logging host 10.0.0.10 vrf Mgmt-vrf</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:19.502567" elapsed="0.536818"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:20.039452" elapsed="0.000043"/>
+</return>
+<msg time="2026-09-10T22:43:20.039616" level="INFO">${cfg} = logging host 10.0.0.10 vrf Mgmt-vrf</msg>
+<var>${cfg}</var>
+<arg>${sw}</arg>
+<arg>show run | include ^logging host</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:19.501793" elapsed="0.537848"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${cfg}</arg>
+<arg>logging host ${SYSLOG_HOST} vrf Mgmt-vrf</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:43:20.039774" elapsed="0.000354"/>
+</kw>
+<kw name="Unique Marker" owner="LabLib">
+<msg time="2026-09-10T22:43:20.040365" level="INFO">${marker} = robot-sw1-1789094600</msg>
+<var>${marker}</var>
+<arg>robot-${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:20.040223" elapsed="0.000159"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:20.041107" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:20.040909" elapsed="0.000215"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:20.041155" elapsed="0.000029"/>
+</return>
+<msg time="2026-09-10T22:43:20.041259" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:20.040743" elapsed="0.000531"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:20.537695" level="INFO" html="true">&lt;pre&gt;10.0.0.11# send log robot-sw1-1789094600
+&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:20.537841" level="INFO">${out} = </msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:20.041330" elapsed="0.496530"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:20.537924" elapsed="0.000036"/>
+</return>
+<arg>${sw}</arg>
+<arg>send log ${marker}</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:20.040499" elapsed="0.497572"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2026-09-10T22:43:22.538532" level="INFO">Slept 2 seconds.</msg>
+<arg>2s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2026-09-10T22:43:20.538170" elapsed="2.000491"/>
+</kw>
+<kw name="Nms Command" owner="LabLib">
+<msg time="2026-09-10T22:43:22.543441" level="INFO" html="true">&lt;pre&gt;nms$ grep -c robot-sw1-1789094600 /var/log/lab/sw1.log
+rc=1
+0
+&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:22.543556" level="FAIL">'grep -c robot-sw1-1789094600 /var/log/lab/sw1.log' on NMS failed rc=1: 0</msg>
+<var>${log}</var>
+<arg>grep -c ${marker} /var/log/lab/${sw}.log</arg>
+<doc>Run a shell command on the NMS jumphost; returns stdout (fails on non-zero rc).</doc>
+<status status="FAIL" start="2026-09-10T22:43:22.538808" elapsed="0.005318">'grep -c robot-sw1-1789094600 /var/log/lab/sw1.log' on NMS failed rc=1: 0</status>
+</kw>
+<kw name="Should Be True" owner="BuiltIn">
+<arg>int('''${log}'''.strip()) &gt;= 1</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="NOT RUN" start="2026-09-10T22:43:22.544276" elapsed="0.000024"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="FAIL" start="2026-09-10T22:43:19.501694" elapsed="3.042670">'grep -c robot-sw1-1789094600 /var/log/lab/sw1.log' on NMS failed rc=1: 0</status>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="FAIL" start="2026-09-10T22:43:19.501580" elapsed="3.042828">'grep -c robot-sw1-1789094600 /var/log/lab/sw1.log' on NMS failed rc=1: 0</status>
+</for>
+<status status="FAIL" start="2026-09-10T22:43:19.501403" elapsed="3.043120">'grep -c robot-sw1-1789094600 /var/log/lab/sw1.log' on NMS failed rc=1: 0</status>
+</test>
+<test id="s1-s4-t4" name="SNMP answers the NMS with the modelled identity" line="37">
+<for flavor="IN">
+<iter>
+<kw name="Nms Command" owner="LabLib">
+<msg time="2026-09-10T22:43:22.602606" level="INFO" html="true">&lt;pre&gt;nms$ snmpget -v2c -c lab -t 5 -r 2 sw1 sysName.0 sysLocation.0 sysContact.0
+rc=0
+SNMPv2-MIB::sysName.0 = STRING: sw1.lab.local
+SNMPv2-MIB::sysLocation.0 = STRING: cat9000v-lab
+SNMPv2-MIB::sysContact.0 = STRING: netops@lab.local
+&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:22.602843" level="INFO">${out} = SNMPv2-MIB::sysName.0 = STRING: sw1.lab.local
+SNMPv2-MIB::sysLocation.0 = STRING: cat9000v-lab
+SNMPv2-MIB::sysContact.0 = STRING: netops@lab.local
+</msg>
+<var>${out}</var>
+<arg>snmpget -v2c -c ${SNMP_COMMUNITY} -t 5 -r 2 ${sw} sysName.0 sysLocation.0 sysContact.0</arg>
+<doc>Run a shell command on the NMS jumphost; returns stdout (fails on non-zero rc).</doc>
+<status status="PASS" start="2026-09-10T22:43:22.545140" elapsed="0.057725"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${out}</arg>
+<arg>sysName.0 = STRING: ${sw}.${DOMAIN_NAME}</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:43:22.603010" elapsed="0.000336"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${out}</arg>
+<arg>sysLocation.0 = STRING: ${SNMP_LOCATION}</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:43:22.603411" elapsed="0.000231"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${out}</arg>
+<arg>sysContact.0 = STRING: ${SNMP_CONTACT}</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:43:22.603708" elapsed="0.000190"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:22.604599" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:22.604395" elapsed="0.000226"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:22.604654" elapsed="0.000035"/>
+</return>
+<msg time="2026-09-10T22:43:22.604769" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:22.604246" elapsed="0.000538"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:23.126448" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show run | include ^snmp-server host
+snmp-server host 10.0.0.10 vrf Mgmt-vrf version 2c lab &lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:23.126606" level="INFO">${out} = snmp-server host 10.0.0.10 vrf Mgmt-vrf version 2c lab </msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:22.604840" elapsed="0.521786"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:23.126689" elapsed="0.000038"/>
+</return>
+<msg time="2026-09-10T22:43:23.126852" level="INFO">${cfg} = snmp-server host 10.0.0.10 vrf Mgmt-vrf version 2c lab </msg>
+<var>${cfg}</var>
+<arg>${sw}</arg>
+<arg>show run | include ^snmp-server host</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:22.604032" elapsed="0.522837"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${cfg}</arg>
+<arg>snmp-server host ${SYSLOG_HOST} vrf Mgmt-vrf version 2c \\S+</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:23.126984" elapsed="0.000365"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-10T22:43:22.545071" elapsed="0.582306"/>
+</iter>
+<iter>
+<kw name="Nms Command" owner="LabLib">
+<msg time="2026-09-10T22:43:23.146116" level="INFO" html="true">&lt;pre&gt;nms$ snmpget -v2c -c lab -t 5 -r 2 sw2 sysName.0 sysLocation.0 sysContact.0
+rc=0
+SNMPv2-MIB::sysName.0 = STRING: sw2.lab.local
+SNMPv2-MIB::sysLocation.0 = STRING: cat9000v-lab
+SNMPv2-MIB::sysContact.0 = STRING: netops@lab.local
+&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:23.146300" level="INFO">${out} = SNMPv2-MIB::sysName.0 = STRING: sw2.lab.local
+SNMPv2-MIB::sysLocation.0 = STRING: cat9000v-lab
+SNMPv2-MIB::sysContact.0 = STRING: netops@lab.local
+</msg>
+<var>${out}</var>
+<arg>snmpget -v2c -c ${SNMP_COMMUNITY} -t 5 -r 2 ${sw} sysName.0 sysLocation.0 sysContact.0</arg>
+<doc>Run a shell command on the NMS jumphost; returns stdout (fails on non-zero rc).</doc>
+<status status="PASS" start="2026-09-10T22:43:23.127525" elapsed="0.018806"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${out}</arg>
+<arg>sysName.0 = STRING: ${sw}.${DOMAIN_NAME}</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:43:23.146481" elapsed="0.000449"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${out}</arg>
+<arg>sysLocation.0 = STRING: ${SNMP_LOCATION}</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:43:23.147067" elapsed="0.000295"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${out}</arg>
+<arg>sysContact.0 = STRING: ${SNMP_CONTACT}</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:43:23.147434" elapsed="0.000200"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:23.148518" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:23.148321" elapsed="0.000216"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:23.148569" elapsed="0.000031"/>
+</return>
+<msg time="2026-09-10T22:43:23.148677" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:23.148149" elapsed="0.000542"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:23.660038" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show run | include ^snmp-server host
+snmp-server host 10.0.0.10 vrf Mgmt-vrf version 2c lab &lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:23.660239" level="INFO">${out} = snmp-server host 10.0.0.10 vrf Mgmt-vrf version 2c lab </msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:23.148748" elapsed="0.511527"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:23.660363" elapsed="0.000073"/>
+</return>
+<msg time="2026-09-10T22:43:23.660621" level="INFO">${cfg} = snmp-server host 10.0.0.10 vrf Mgmt-vrf version 2c lab </msg>
+<var>${cfg}</var>
+<arg>${sw}</arg>
+<arg>show run | include ^snmp-server host</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:23.147781" elapsed="0.512870"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${cfg}</arg>
+<arg>snmp-server host ${SYSLOG_HOST} vrf Mgmt-vrf version 2c \\S+</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-10T22:43:23.660817" elapsed="0.000498"/>
+</kw>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-10T22:43:23.127467" elapsed="0.533893"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-10T22:43:22.544901" elapsed="1.116504"/>
+</for>
+<status status="PASS" start="2026-09-10T22:43:22.544705" elapsed="1.116829"/>
+</test>
+<test id="s1-s4-t5" name="Banner, CDP and LLDP are enabled" line="47">
+<for flavor="IN">
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:23.663427" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:23.663059" elapsed="0.000401"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:23.663526" elapsed="0.000041"/>
+</return>
+<msg time="2026-09-10T22:43:23.663713" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:23.662767" elapsed="0.000977"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:24.200669" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show run | section ^banner motd
+banner motd ^CManaged by Network-as-Code (Terraform). Manual changes will be reverted.^C&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:24.200872" level="INFO">${out} = banner motd ^CManaged by Network-as-Code (Terraform). Manual changes will be reverted.^C</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:23.663865" elapsed="0.537041"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:24.201011" elapsed="0.000057"/>
+</return>
+<msg time="2026-09-10T22:43:24.201247" level="INFO">${banner} = banner motd ^CManaged by Network-as-Code (Terraform). Manual changes will be reverted.^C</msg>
+<var>${banner}</var>
+<arg>${sw}</arg>
+<arg>show run | section ^banner motd</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:23.662389" elapsed="0.538890"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${banner}</arg>
+<arg>${BANNER_TEXT}</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-10T22:43:24.201442" elapsed="0.000467"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-10T22:43:24.203136" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-10T22:43:24.202786" elapsed="0.000382"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-10T22:43:24.203219" elapsed="0.000032"/>
+</return>
+<msg time="2026-09-10T22:43:24.203384" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-10T22:43:24.202517" elapsed="0.000895"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-10T22:43:24.690055" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show cdp | include enabled
+	Sending CDPv2 advertisements is enabled&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:24.690220" level="INFO">${out} = 	Sending CDPv2 advertisements is enabled</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-10T22:43:24.203513" elapsed="0.486732"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-10T22:43:24.690310" elapsed="0.000041"/>
+</return>
+<msg time="2026-09-10T22:43:24.690474" level="INFO">${cdp} = 	Sending CDPv2 advertisements is enabled</msg>
+<var>${cdp}</var>
+<arg>${sw}</arg>
+<arg>show cdp | include enabled</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-10T22:43:24.202114" elapsed="0.488379"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<msg time="2026-09-10T22:43:24.690964" level="FAIL">'	Sending CDPv2 advertisements is enabled' does not contain 'Global CDP information'</msg>
+<arg>${cdp}</arg>
+<arg>Global CDP information</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="FAIL" start="2026-09-10T22:43:24.690606" elapsed="0.000450">'	Sending CDPv2 advertisements is enabled' does not contain 'Global CDP information'</status>
+</kw>
+<kw name="Show" owner="common">
+<var>${lldp}</var>
+<arg>${sw}</arg>
+<arg>show lldp | include Status</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="NOT RUN" start="2026-09-10T22:43:24.691207" elapsed="0.000019"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${lldp}</arg>
+<arg>Status: ACTIVE</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="NOT RUN" start="2026-09-10T22:43:24.691286" elapsed="0.000015"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="FAIL" start="2026-09-10T22:43:23.662217" elapsed="1.029120">'	Sending CDPv2 advertisements is enabled' does not contain 'Global CDP information'</status>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="FAIL" start="2026-09-10T22:43:23.662027" elapsed="1.029354">'	Sending CDPv2 advertisements is enabled' does not contain 'Global CDP information'</status>
+</for>
+<status status="FAIL" start="2026-09-10T22:43:23.661737" elapsed="1.029738">'	Sending CDPv2 advertisements is enabled' does not contain 'Global CDP information'</status>
+</test>
+<kw name="Suite Teardown Close Connections" owner="common" type="TEARDOWN">
+<kw name="Close All Connections" owner="LabLib">
+<status status="PASS" start="2026-09-10T22:43:24.691831" elapsed="0.021053"/>
+</kw>
+<status status="PASS" start="2026-09-10T22:43:24.691723" elapsed="0.021278"/>
+</kw>
+<doc>Management services delivered to/from the NMS: NTP, syslog, SNMP, banner, CDP/LLDP globals.</doc>
+<status status="FAIL" start="2026-09-10T22:43:14.646907" elapsed="10.066124"/>
+</suite>
+<suite id="s1-s5" name="05 Nac Compliance" source="/home/dcantor/cat9000v/tests/suites/05_nac_compliance.robot">
+<test id="s1-s5-t1" name="Terraform plan reports no drift from the NAC data model" line="7">
+<kw name="Terraform Plan Exit Code" owner="LabLib">
+<msg time="2026-09-10T22:43:27.487681" level="INFO" html="true">&lt;pre&gt;0"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/Vlan=100]
+module.iosxe.iosxe_vlan.vlan["sw1/100"]: Refreshing state... [id=Cisco-IOS-XE-native:native/vlan/Cisco-IOS-XE-vlan:vlan-list=100]
+module.iosxe.iosxe_interface_vlan.vlan["sw2/Vlan20"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/Vlan=20]
+module.iosxe.iosxe_interface_vlan.vlan["sw1/Vlan10"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/Vlan=10]
+module.iosxe.iosxe_interface_loopback.loopback["sw2/Loopback0"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/Loopback=0]
+module.iosxe.iosxe_interface_loopback.loopback["sw1/Loopback0"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/Loopback=0]
+module.iosxe.iosxe_interface_ethernet.ethernet["sw1/GigabitEthernet1/0/3"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F3]
+module.iosxe.iosxe_interface_ethernet.ethernet["sw1/GigabitEthernet1/0/4"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F4]
+module.iosxe.iosxe_interface_ethernet.ethernet["sw2/GigabitEthernet1/0/3"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F3]
+module.iosxe.iosxe_interface_ethernet.ethernet["sw2/GigabitEthernet1/0/2"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F2]
+module.iosxe.iosxe_interface_ethernet.ethernet["sw1/GigabitEthernet1/0/1"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F1]
+module.iosxe.iosxe_interface_ethernet.ethernet["sw2/GigabitEthernet1/0/1"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F1]
+module.iosxe.iosxe_interface_ethernet.ethernet["sw1/GigabitEthernet1/0/2"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F2]
+module.iosxe.iosxe_interface_ethernet.ethernet["sw2/GigabitEthernet1/0/4"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F4]
+module.iosxe.iosxe_ntp.ntp["sw2"]: Refreshing state... [id=Cisco-IOS-XE-native:native/ntp]
+module.iosxe.iosxe_interface_switchport.ethernet_switchport["sw1/GigabitEthernet1/0/3"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F3/switchport-config/switchport]
+module.iosxe.iosxe_interface_switchport.ethernet_switchport["sw2/GigabitEthernet1/0/3"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F3/switchport-config/switchport]
+module.iosxe.iosxe_logging.logging["sw2"]: Refreshing state... [id=Cisco-IOS-XE-native:native/logging]
+module.iosxe.iosxe_logging.logging["sw1"]: Refreshing state... [id=Cisco-IOS-XE-native:native/logging]
+module.iosxe.iosxe_ntp.ntp["sw1"]: Refreshing state... [id=Cisco-IOS-XE-native:native/ntp]
+module.iosxe.iosxe_system.system["sw2"]: Refreshing state... [id=Cisco-IOS-XE-native:native]
+module.iosxe.iosxe_system.system["sw1"]: Refreshing state... [id=Cisco-IOS-XE-native:native]
+module.iosxe.iosxe_snmp_server.snmp_server["sw2"]: Refreshing state... [id=Cisco-IOS-XE-native:native/snmp-server]
+module.iosxe.iosxe_snmp_server.snmp_server["sw1"]: Refreshing state... [id=Cisco-IOS-XE-native:native/snmp-server]
+module.iosxe.iosxe_interface_switchport.ethernet_switchport["sw2/GigabitEthernet1/0/2"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F2/switchport-config/switchport]
+module.iosxe.iosxe_interface_switchport.ethernet_switchport["sw2/GigabitEthernet1/0/4"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F4/switchport-config/switchport]
+module.iosxe.iosxe_interface_switchport.ethernet_switchport["sw1/GigabitEthernet1/0/1"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F1/switchport-config/switchport]
+module.iosxe.iosxe_interface_switchport.ethernet_switchport["sw2/GigabitEthernet1/0/1"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F1/switchport-config/switchport]
+module.iosxe.iosxe_interface_switchport.ethernet_switchport["sw1/GigabitEthernet1/0/4"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F4/switchport-config/switchport]
+module.iosxe.iosxe_interface_switchport.ethernet_switchport["sw1/GigabitEthernet1/0/2"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F2/switchport-config/switchport]
+module.iosxe.iosxe_ospf.ospf["sw1/1"]: Refreshing state... [id=Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id=1]
+module.iosxe.iosxe_ospf.ospf["sw2/1"]: Refreshing state... [id=Cisco-IOS-XE-native:native/router/Cisco-IOS-XE-ospf:router-ospf/ospf/process-id=1]
+module.iosxe.iosxe_interface_ospf.vlan_ospf["sw2/Vlan100"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/Vlan=100/ip/Cisco-IOS-XE-ospf:router-ospf/ospf]
+module.iosxe.iosxe_interface_ospf.vlan_ospf["sw1/Vlan100"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/Vlan=100/ip/Cisco-IOS-XE-ospf:router-ospf/ospf]
+module.iosxe.iosxe_interface_ospf.vlan_ospf["sw2/Vlan20"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/Vlan=20/ip/Cisco-IOS-XE-ospf:router-ospf/ospf]
+module.iosxe.iosxe_interface_ospf.vlan_ospf["sw1/Vlan10"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/Vlan=10/ip/Cisco-IOS-XE-ospf:router-ospf/ospf]
+module.iosxe.iosxe_interface_ospf.loopback_ospf["sw2/Loopback0"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/Loopback=0/ip/Cisco-IOS-XE-ospf:router-ospf/ospf]
+module.iosxe.iosxe_interface_ospf.loopback_ospf["sw1/Loopback0"]: Refreshing state... [id=Cisco-IOS-XE-native:native/interface/Loopback=0/ip/Cisco-IOS-XE-ospf:router-ospf/ospf]
+
+No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your configuration
+and found no differences, so no changes are needed.
+
+&lt;/pre&gt;</msg>
+<msg time="2026-09-10T22:43:27.487986" level="INFO">${rc} = 0</msg>
+<var>${rc}</var>
+<doc>Run `terraform plan -detailed-exitcode` via lab.sh nac: 0 = no drift, 2 = changes.</doc>
+<status status="PASS" start="2026-09-10T22:43:24.723260" elapsed="2.764759"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2026-09-10T22:43:27.488504" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${rc}</arg>
+<arg>0</arg>
+<arg>msg=terraform plan exit code ${rc} (0 = in sync, 2 = drift, 1 = error)</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2026-09-10T22:43:27.488190" elapsed="0.000358"/>
+</kw>
+<tag>nac</tag>
+<status status="PASS" start="2026-09-10T22:43:24.722920" elapsed="2.765701"/>
+</test>
+<test id="s1-s5-t2" name="Rendered model was produced by the last plan" line="12">
+<kw name="File Should Exist" owner="OperatingSystem">
+<msg time="2026-09-10T22:43:27.489054" level="INFO" html="true">File '&lt;a href="file:///home/dcantor/cat9000v/nac/rendered-model.yaml"&gt;/home/dcantor/cat9000v/nac/rendered-model.yaml&lt;/a&gt;' exists.</msg>
+<arg>/home/dcantor/cat9000v/tests/suites/../../nac/rendered-model.yaml</arg>
+<doc>Fails unless the given ``path`` points to an existing file.</doc>
+<status status="PASS" start="2026-09-10T22:43:27.488946" elapsed="0.000144"/>
+</kw>
+<kw name="Get File" owner="OperatingSystem">
+<msg time="2026-09-10T22:43:27.489214" level="INFO" html="true">Getting file '&lt;a href="file:///home/dcantor/cat9000v/nac/rendered-model.yaml"&gt;/home/dcantor/cat9000v/nac/rendered-model.yaml&lt;/a&gt;'.</msg>
+<msg time="2026-09-10T22:43:27.489325" level="INFO">${model} = "iosxe":
+  "devices":
+  - "cli_templates": []
+    "configuration":
+      "banner":
+        "motd": "Managed by Network-as-Code (Terraform). Manual changes will be reverted."
+      "cdp":
+        "run"...</msg>
+<var>${model}</var>
+<arg>/home/dcantor/cat9000v/tests/suites/../../nac/rendered-model.yaml</arg>
+<doc>Returns the contents of a specified file.</doc>
+<status status="PASS" start="2026-09-10T22:43:27.489153" elapsed="0.000191"/>
+</kw>
+<for flavor="IN">
+<iter>
+<kw name="Should Contain" owner="BuiltIn">
+<msg time="2026-09-10T22:43:27.489898" level="FAIL">'"iosxe":
+  "devices":
+  - "cli_templates": []
+    "configuration":
+      "banner":
+        "motd": "Managed by Network-as-Code (Terraform). Manual changes will be reverted."
+      "cdp":
+        "run": true
+      "interfaces":
+        "ethernets":
+        - "description": "TRUNK to peer core switch"
+          "id": "1/0/1"
+          "shutdown": false
+          "switchport":
+            "enable": true
+            "mode": "trunk"
+            "nonegotiate": true
+            "trunk_allowed_vlans":
+              "vlans":
+                "ids":
+                - 10
+                - 20
+                - 100
+            "trunk_native_vlan_id": 99
+          "type": "GigabitEthernet"
+        - "description": "ACCESS - USERS"
+          "id": "1/0/2"
+          "shutdown": false
+          "spanning_tree":
+            "bpduguard": true
+            "portfast": true
+          "switchport":
+            "access_vlan": 10
+            "enable": true
+            "mode": "access"
+          "type": "GigabitEthernet"
+        - "description": "ACCESS - USERS"
+          "id": "1/0/3"
+          "shutdown": false
+          "spanning_tree":
+            "bpduguard": true
+            "portfast": true
+          "switchport":
+            "access_vlan": 10
+            "enable": true
+            "mode": "access"
+          "type": "GigabitEthernet"
+        - "description": "ACCESS - SERVERS"
+          "id": "1/0/4"
+          "shutdown": false
+          "spanning_tree":
+            "bpduguard": true
+            "portfast": true
+          "switchport":
+            "access_vlan": 20
+            "enable": true
+            "mode": "access"
+          "type": "GigabitEthernet"
+        "loopbacks":
+        - "description": "Router ID"
+          "id": 0
+          "ipv4":
+            "address": "10.255.0.1"
+            "address_mask": "255.255.255.255"
+          "ospf":
+            "process_ids":
+            - "areas":
+              - 0
+              "id": 1
+        "vlans":
+        - "description": "TRANSIT sw1-sw2"
+          "id": 100
+          "ipv4":
+            "address": "10.100.0.1"
+            "address_mask": "255.255.255.252"
+          "ospf":
+            "network_type": "point-to-point"
+            "process_ids":
+            - "areas":
+              - 0
+              "id": 1
+          "shutdown": false
+        - "description": "USERS gateway"
+          "id": 10
+          "ipv4":
+            "address": "10.10.0.1"
+            "address_mask": "255.255.255.0"
+          "ospf":
+            "process_ids":
+            - "areas":
+              - 0
+              "id": 1
+          "shutdown": false
+      "lldp":
+        "run": true
+      "logging":
+        "buffered_severity": "informational"
+        "buffered_size": 64000
+        "hosts":
+        - "ip": "10.0.0.10"
+          "vrf": "Mgmt-vrf"
+        "trap_severity": "informational"
+      "ntp":
+        "servers":
+        - "ip": "10.0.0.10"
+          "prefer": true
+          "vrf": "Mgmt-vrf"
+      "routing":
+        "ospf_processes":
+        - "id": 1
+          "log_adjacency_changes": true
+          "passive_interfaces":
+          - "interface_id": 0
+            "interface_type": "Loopback"
+          - "interface_id": 10
+            "interface_type": "Vlan"
+          "router_id": "10.255.0.1"
+      "snmp_server":
+        "contact": "netops@lab.local"
+        "enable_traps": true
+        "hosts":
+        - "community": "lab"
+          "ip": "10.0.0.10"
+          "version": "2c"
+          "vrf": "Mgmt-vrf"
+        "location": "cat9000v-lab"
+        "snmp_communities":
+        - "name": "lab"
+          "permission": "ro"
+      "spanning_tree":
+        "extend_system_id": true
+        "mode": "rapid-pvst"
+      "system":
+        "hostname": "sw1"
+        "ip_domain_lookup": false
+        "ip_domain_name": "lab.local"
+        "ip_routing": true
+      "vlan":
+        "vlans":
+        - "id": 10
+          "name": "USERS"
+        - "id": 20
+          "name": "SERVERS"
+        - "id": 99
+          "name": "NATIVE"
+        - "id": 100
+          "name": "TRANSIT"
+    "host": "10.0.0.11"
+    "managed": true
+    "name": "sw1"
+    "protocol": "restconf"
+    "url": null
+  - "cli_templates": []
+    "configuration":
+      "banner":
+        "motd": "Managed by Network-as-Code (Terraform). Manual changes will be reverted."
+      "cdp":
+        "run": true
+      "interfaces":
+        "ethernets":
+        - "description": "TRUNK to peer core switch"
+          "id": "1/0/1"
+          "shutdown": false
+          "switchport":
+            "enable": true
+            "mode": "trunk"
+            "nonegotiate": true
+            "trunk_allowed_vlans":
+              "vlans":
+                "ids":
+                - 10
+                - 20
+                - 100
+            "trunk_native_vlan_id": 99
+          "type": "GigabitEthernet"
+        - "description": "ACCESS - USERS"
+          "id": "1/0/2"
+          "shutdown": false
+          "spanning_tree":
+            "bpduguard": true
+            "portfast": true
+          "switchport":
+            "access_vlan": 10
+            "enable": true
+            "mode": "access"
+          "type": "GigabitEthernet"
+        - "description": "ACCESS - USERS"
+          "id": "1/0/3"
+          "shutdown": false
+          "spanning_tree":
+            "bpduguard": true
+            "portfast": true
+          "switchport":
+            "access_vlan": 10
+            "enable": true
+            "mode": "access"
+          "type": "GigabitEthernet"
+        - "description": "ACCESS - SERVERS"
+          "id": "1/0/4"
+          "shutdown": false
+          "spanning_tree":
+            "bpduguard": true
+            "portfast": true
+          "switchport":
+            "access_vlan": 20
+            "enable": true
+            "mode": "access"
+          "type": "GigabitEthernet"
+        "loopbacks":
+        - "description": "Router ID"
+          "id": 0
+          "ipv4":
+            "address": "10.255.0.2"
+            "address_mask": "255.255.255.255"
+          "ospf":
+            "process_ids":
+            - "areas":
+              - 0
+              "id": 1
+        "vlans":
+        - "description": "TRANSIT sw1-sw2"
+          "id": 100
+          "ipv4":
+            "address": "10.100.0.2"
+            "address_mask": "255.255.255.252"
+          "ospf":
+            "network_type": "point-to-point"
+            "process_ids":
+            - "areas":
+              - 0
+              "id": 1
+          "shutdown": false
+        - "description": "SERVERS gateway"
+          "id": 20
+          "ipv4":
+            "address": "10.20.0.1"
+            "address_mask": "255.255.255.0"
+          "ospf":
+            "process_ids":
+            - "areas":
+              - 0
+              "id": 1
+          "shutdown": false
+      "lldp":
+        "run": true
+      "logging":
+        "buffered_severity": "informational"
+        "buffered_size": 64000
+        "hosts":
+        - "ip": "10.0.0.10"
+          "vrf": "Mgmt-vrf"
+        "trap_severity": "informational"
+      "ntp":
+        "servers":
+        - "ip": "10.0.0.10"
+          "prefer": true
+          "vrf": "Mgmt-vrf"
+      "routing":
+        "ospf_processes":
+        - "id": 1
+          "log_adjacency_changes": true
+          "passive_interfaces":
+          - "interface_id": 0
+            "interface_type": "Loopback"
+          - "interface_id": 20
+            "interface_type": "Vlan"
+          "router_id": "10.255.0.2"
+      "snmp_server":
+        "contact": "netops@lab.local"
+        "enable_traps": true
+        "hosts":
+        - "community": "lab"
+          "ip": "10.0.0.10"
+          "version": "2c"
+          "vrf": "Mgmt-vrf"
+        "location": "cat9000v-lab"
+        "snmp_communities":
+        - "name": "lab"
+          "permission": "ro"
+      "spanning_tree":
+        "extend_system_id": true
+        "mode": "rapid-pvst"
+      "system":
+        "hostname": "sw2"
+        "ip_domain_lookup": false
+        "ip_domain_name": "lab.local"
+        "ip_routing": true
+      "vlan":
+        "vlans":
+        - "id": 10
+          "name": "USERS"
+        - "id": 20
+          "name": "SERVERS"
+        - "id": 99
+          "name": "NATIVE"
+        - "id": 100
+          "name": "TRANSIT"
+    "host": "10.0.0.12"
+    "managed": true
+    "name": "sw2"
+    "protocol": "restconf"
+    "url": null
+' does not contain 'name: sw1'</msg>
+<arg>${model}</arg>
+<arg>name: ${sw}</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="FAIL" start="2026-09-10T22:43:27.489539" elapsed="0.000475">'"iosxe":
+  "devices":
+  - "cli_templates": []
+    "configuration":
+      "banner":
+        "motd": "Managed by Network-as-Code (Terraform). Manual changes will be reverted."
+      "cdp":
+        "run": true
+      "interfaces":
+        "ethernets":
+        - "description": "TRUNK to peer core switch"
+          "id": "1/0/1"
+          "shutdown": false
+          "switchport":
+            "enable": true
+            "mode": "trunk"
+            "nonegotiate": true
+            "trunk_allowed_vlans":
+              "vlans":
+    [ Message content over the limit has been removed. ]
+        "hostname": "sw2"
+        "ip_domain_lookup": false
+        "ip_domain_name": "lab.local"
+        "ip_routing": true
+      "vlan":
+        "vlans":
+        - "id": 10
+          "name": "USERS"
+        - "id": 20
+          "name": "SERVERS"
+        - "id": 99
+          "name": "NATIVE"
+        - "id": 100
+          "name": "TRANSIT"
+    "host": "10.0.0.12"
+    "managed": true
+    "name": "sw2"
+    "protocol": "restconf"
+    "url": null
+' does not contain 'name: sw1'</status>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="FAIL" start="2026-09-10T22:43:27.489491" elapsed="0.000585">'"iosxe":
+  "devices":
+  - "cli_templates": []
+    "configuration":
+      "banner":
+        "motd": "Managed by Network-as-Code (Terraform). Manual changes will be reverted."
+      "cdp":
+        "run": true
+      "interfaces":
+        "ethernets":
+        - "description": "TRUNK to peer core switch"
+          "id": "1/0/1"
+          "shutdown": false
+          "switchport":
+            "enable": true
+            "mode": "trunk"
+            "nonegotiate": true
+            "trunk_allowed_vlans":
+              "vlans":
+    [ Message content over the limit has been removed. ]
+        "hostname": "sw2"
+        "ip_domain_lookup": false
+        "ip_domain_name": "lab.local"
+        "ip_routing": true
+      "vlan":
+        "vlans":
+        - "id": 10
+          "name": "USERS"
+        - "id": 20
+          "name": "SERVERS"
+        - "id": 99
+          "name": "NATIVE"
+        - "id": 100
+          "name": "TRANSIT"
+    "host": "10.0.0.12"
+    "managed": true
+    "name": "sw2"
+    "protocol": "restconf"
+    "url": null
+' does not contain 'name: sw1'</status>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="FAIL" start="2026-09-10T22:43:27.489388" elapsed="0.000738">'"iosxe":
+  "devices":
+  - "cli_templates": []
+    "configuration":
+      "banner":
+        "motd": "Managed by Network-as-Code (Terraform). Manual changes will be reverted."
+      "cdp":
+        "run": true
+      "interfaces":
+        "ethernets":
+        - "description": "TRUNK to peer core switch"
+          "id": "1/0/1"
+          "shutdown": false
+          "switchport":
+            "enable": true
+            "mode": "trunk"
+            "nonegotiate": true
+            "trunk_allowed_vlans":
+              "vlans":
+    [ Message content over the limit has been removed. ]
+        "hostname": "sw2"
+        "ip_domain_lookup": false
+        "ip_domain_name": "lab.local"
+        "ip_routing": true
+      "vlan":
+        "vlans":
+        - "id": 10
+          "name": "USERS"
+        - "id": 20
+          "name": "SERVERS"
+        - "id": 99
+          "name": "NATIVE"
+        - "id": 100
+          "name": "TRANSIT"
+    "host": "10.0.0.12"
+    "managed": true
+    "name": "sw2"
+    "protocol": "restconf"
+    "url": null
+' does not contain 'name: sw1'</status>
+</for>
+<tag>nac</tag>
+<status status="FAIL" start="2026-09-10T22:43:27.488740" elapsed="0.001478">'"iosxe":
+  "devices":
+  - "cli_templates": []
+    "configuration":
+      "banner":
+        "motd": "Managed by Network-as-Code (Terraform). Manual changes will be reverted."
+      "cdp":
+        "run": true
+      "interfaces":
+        "ethernets":
+        - "description": "TRUNK to peer core switch"
+          "id": "1/0/1"
+          "shutdown": false
+          "switchport":
+            "enable": true
+            "mode": "trunk"
+            "nonegotiate": true
+            "trunk_allowed_vlans":
+              "vlans":
+    [ Message content over the limit has been removed. ]
+        "hostname": "sw2"
+        "ip_domain_lookup": false
+        "ip_domain_name": "lab.local"
+        "ip_routing": true
+      "vlan":
+        "vlans":
+        - "id": 10
+          "name": "USERS"
+        - "id": 20
+          "name": "SERVERS"
+        - "id": 99
+          "name": "NATIVE"
+        - "id": 100
+          "name": "TRANSIT"
+    "host": "10.0.0.12"
+    "managed": true
+    "name": "sw2"
+    "protocol": "restconf"
+    "url": null
+' does not contain 'name: sw1'</status>
+</test>
+<doc>Configuration compliance: the switches match the Network-as-Code data model (no Terraform drift).</doc>
+<status status="FAIL" start="2026-09-10T22:43:24.713498" elapsed="2.776916"/>
+</suite>
+<status status="FAIL" start="2026-09-10T22:42:38.470351" elapsed="49.020433"/>
+</suite>
+<statistics>
+<total>
+<stat pass="19" fail="5" skip="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="1" fail="0" skip="0">internet</stat>
+<stat pass="1" fail="1" skip="0">nac</stat>
+<stat pass="0" fail="1" skip="0">slow</stat>
+</tag>
+<suite>
+<stat name="cat9000v lab" id="s1" pass="19" fail="5" skip="0">cat9000v lab</stat>
+<stat name="01 Management" id="s1-s1" pass="5" fail="0" skip="0">cat9000v lab.01 Management</stat>
+<stat name="02 Layer2" id="s1-s2" pass="5" fail="1" skip="0">cat9000v lab.02 Layer2</stat>
+<stat name="03 Layer3" id="s1-s3" pass="6" fail="0" skip="0">cat9000v lab.03 Layer3</stat>
+<stat name="04 Services" id="s1-s4" pass="2" fail="3" skip="0">cat9000v lab.04 Services</stat>
+<stat name="05 Nac Compliance" id="s1-s5" pass="1" fail="1" skip="0">cat9000v lab.05 Nac Compliance</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
