@@ -381,7 +381,7 @@ cmd_bootstrap() {  # wait for a switch to finish booting, then generate SSH keys
 
 cmd_log() { tail -n "${2:-50}" -f "$(node_dir "${1:?node}")/console.log"; }
 
-cmd_test() {       # run the Robot Framework suite; results in results/results-<timestamp>/
+cmd_test() {       # run the Robot Framework suite; results in results/<date>_<time>/
   [[ -x "$LAB_DIR/tests/.venv/bin/robot" ]] || "$LAB_DIR/tests/setup.sh"
   exec "$LAB_DIR/tests/run.sh" "$@"
 }

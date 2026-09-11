@@ -18,12 +18,12 @@ and can be overridden with `IOSXE_USERNAME` / `IOSXE_PASSWORD`.
 
 ## Results
 
-Every run gets its own timestamped folder, and `results/latest` points at the
-most recent one:
+All results live in `results/`. Every run gets its own sub-folder named by
+date and time, and `results/latest` points at the most recent one:
 
 ```
 results/
-└── results-20260910-224457/
+└── 2026-09-11_06-42-52/
     ├── configs/
     │   ├── sw1.running-config.txt   captured before the tests run
     │   ├── sw1.startup-config.txt

@@ -121,7 +121,7 @@ belongs in `nac/data/`.
 Robot Framework suites validate every enabled feature end to end
 (management plane, L2, L3/BGP, NTP/syslog/SNMP via the NMS, end hosts, NAC drift).
 Each run captures the switches' running/startup configs and writes
-everything to `results/results-<date>-<time>/` (`results/latest` symlink).
+everything to `results/<date>_<time>/` (`results/latest` symlink).
 See [tests/README.md](tests/README.md).
 
 ```bash
