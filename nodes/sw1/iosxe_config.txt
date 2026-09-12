@@ -1,6 +1,8 @@
 hostname sw1
 !
-no aaa new-model
+aaa new-model
+aaa authentication login default local
+aaa authorization exec default local
 username admin privilege 15 secret admin
 enable secret admin
 ip domain name lab.local
@@ -33,8 +35,6 @@ line con 0
  exec-timeout 0 0
  logging synchronous
 line vty 0 15
- exec-timeout 0 0
- login local
  transport input ssh
 !
 end

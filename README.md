@@ -103,8 +103,8 @@ traverse into this directory (`setfacl -m u:libvirt-qemu:x /home/$USER`).
 
 ## Switch configuration as code
 
-The switches' feature config (VLANs, trunk, SVIs, iBGP, NTP/syslog/SNMP to
-the NMS) is managed with Cisco Network-as-Code — a YAML data model rendered
+The switches' feature config (VLANs, trunk, SVIs, iBGP, AAA/SSH/VTY
+hardening, STP, NTP/syslog/SNMP to the NMS) is managed with Cisco Network-as-Code — a YAML data model rendered
 by the `netascode/nac-iosxe` Terraform module. See [nac/README.md](nac/README.md).
 
 ```bash
@@ -119,7 +119,7 @@ belongs in `nac/data/`.
 ## Tests
 
 Robot Framework suites validate every enabled feature end to end
-(management plane, L2, L3/BGP, NTP/syslog/SNMP via the NMS, end hosts, NAC drift).
+(management plane, L2, L3/BGP, NTP/syslog/SNMP via the NMS, end hosts, hardening, NAC drift).
 Each run backs up the switches' running/startup configs (before and after) and writes
 everything to `results/<date>_<time>/` (`results/latest` symlink).
 See [tests/README.md](tests/README.md).

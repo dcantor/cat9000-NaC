@@ -1,0 +1,2036 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.4.2 (Python 3.14.4 on linux)" generated="2026-09-12T10:51:21.211311" rpa="false" schemaversion="5">
+<suite id="s1" name="cat9000v lab" source="/home/dcantor/cat9000v/tests/suites">
+<suite id="s1-s1" name="08 Hardening" source="/home/dcantor/cat9000v/tests/suites/08_hardening.robot">
+<test id="s1-s1-t1" name="AAA is identical on both switches: local login and exec authorization" line="8">
+<for flavor="IN">
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T10:51:21.394341" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T10:51:21.394029" elapsed="0.000345"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T10:51:21.394432" elapsed="0.000041"/>
+</return>
+<msg time="2026-09-12T10:51:21.394577" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T10:51:21.393589" elapsed="0.001008"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-12T10:51:22.925096" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show run | include ^aaa
+aaa new-model
+aaa authentication login default local
+aaa authorization exec default local 
+aaa session-id common&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:22.925241" level="INFO">${out} = aaa new-model
+aaa authentication login default local
+aaa authorization exec default local 
+aaa session-id common</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-12T10:51:21.394689" elapsed="1.530573"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-12T10:51:22.925327" elapsed="0.000046"/>
+</return>
+<msg time="2026-09-12T10:51:22.925504" level="INFO">${aaa} = aaa new-model
+aaa authentication login default local
+aaa authorization exec default local 
+aaa session-id common</msg>
+<var>${aaa}</var>
+<arg>${sw}</arg>
+<arg>show run | include ^aaa</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-12T10:51:21.393218" elapsed="1.532304"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${aaa}</arg>
+<arg>(?m)^aaa new-model$</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-12T10:51:22.925629" elapsed="0.000354"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${aaa}</arg>
+<arg>(?m)^aaa authentication login default local$</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-12T10:51:22.926055" elapsed="0.000226"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${aaa}</arg>
+<arg>(?m)^aaa authorization exec default local\\s*$</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-12T10:51:22.926343" elapsed="0.000225"/>
+</kw>
+<kw name="Should Not Contain" owner="BuiltIn">
+<arg>${aaa}</arg>
+<arg>no aaa new-model</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:22.926630" elapsed="0.000327"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-12T10:51:21.392883" elapsed="1.534117"/>
+</iter>
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T10:51:22.927784" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T10:51:22.927591" elapsed="0.000211"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T10:51:22.927834" elapsed="0.000024"/>
+</return>
+<msg time="2026-09-12T10:51:22.927949" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T10:51:22.927436" elapsed="0.000535"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-12T10:51:24.473100" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show run | include ^aaa
+aaa new-model
+aaa authentication login default local
+aaa authorization exec default local 
+aaa session-id common&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:24.473258" level="INFO">${out} = aaa new-model
+aaa authentication login default local
+aaa authorization exec default local 
+aaa session-id common</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-12T10:51:22.928062" elapsed="1.545220"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-12T10:51:24.473351" elapsed="0.000046"/>
+</return>
+<msg time="2026-09-12T10:51:24.473531" level="INFO">${aaa} = aaa new-model
+aaa authentication login default local
+aaa authorization exec default local 
+aaa session-id common</msg>
+<var>${aaa}</var>
+<arg>${sw}</arg>
+<arg>show run | include ^aaa</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-12T10:51:22.927196" elapsed="1.546356"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${aaa}</arg>
+<arg>(?m)^aaa new-model$</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-12T10:51:24.473671" elapsed="0.000269"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${aaa}</arg>
+<arg>(?m)^aaa authentication login default local$</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-12T10:51:24.474031" elapsed="0.000169"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${aaa}</arg>
+<arg>(?m)^aaa authorization exec default local\\s*$</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-12T10:51:24.474261" elapsed="0.000213"/>
+</kw>
+<kw name="Should Not Contain" owner="BuiltIn">
+<arg>${aaa}</arg>
+<arg>no aaa new-model</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:24.474555" elapsed="0.000211"/>
+</kw>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-12T10:51:22.927094" elapsed="1.547699"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-12T10:51:21.392696" elapsed="3.082127"/>
+</for>
+<status status="PASS" start="2026-09-12T10:51:21.392416" elapsed="3.082502"/>
+</test>
+<test id="s1-s1-t2" name="SSH server is hardened" line="17">
+<for flavor="IN">
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T10:51:24.476038" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T10:51:24.475833" elapsed="0.000223"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T10:51:24.476089" elapsed="0.000024"/>
+</return>
+<msg time="2026-09-12T10:51:24.476184" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T10:51:24.475683" elapsed="0.000517"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-12T10:51:24.962579" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show ip ssh
+SSH Enabled - version 2.0
+Authentication methods:publickey,keyboard-interactive,password
+Authentication Publickey Algorithms:ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,ssh-ed25519,x509v3-ecdsa-sha2-nistp256,x509v3-ecdsa-sha2-nistp384,x509v3-ecdsa-sha2-nistp521,rsa-sha2-256,rsa-sha2-512,x509v3-rsa2048-sha256
+Hostkey Algorithms:ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,rsa-sha2-512,rsa-sha2-256
+Encryption Algorithms:chacha20-poly1305@openssh.com,aes128-gcm@openssh.com,aes256-gcm@openssh.com,aes128-gcm,aes256-gcm,aes128-ctr,aes192-ctr,aes256-ctr
+MAC Algorithms:hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com,hmac-sha2-256,hmac-sha2-512
+KEX Algorithms:curve25519-sha256,curve25519-sha256@libssh.org,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512
+Authentication timeout: 60 secs; Authentication retries: 3
+Minimum expected Diffie Hellman key size : 2048 bits
+IOS Keys in SECSH format(ssh-rsa, base64 encoded): SSH-KEY
+Modulus Size : 2048 bits
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDFJw5SC53ZUHP/e82RFMQyQQDi/OdHC1bEUcKfxYLl
+fAqZFV6VncVj8RZduJFbrtlfpVb1nmwB5m3NH9L8AqDj3rgZdcmrkmBoipmAVcu9dbiSMyBHsl3mmb3Z
+0PlBo5hh6NL59YSsnOKbOnmgILhvlgHZxB34oGUwxe4vf5bN21z4QOaFmH7LsbNDA6nITarpVDk+ARt5
+oUm0ZVYJwwf6mlb5XY/G8doXBXQVEfGx3W1TyxWrqP2VE8xi2Ndxlg2tbgsAg3rD1ktLG5ljTsis1imk
+pR0FRJQ3rfmGkPdZBb6cGxShzDpFFoGwiqdEqUKE2Sax9tI4WhnbImoH+Rxn                    
+IOS Keys in SECSH format(ssh-ec, base64 encoded): NONE&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:24.962864" level="INFO">${out} = SSH Enabled - version 2.0
+Authentication methods:publickey,keyboard-interactive,password
+Authentication Publickey Algorithms:ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,ssh-ed25519,x50...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-12T10:51:24.476256" elapsed="0.486645"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-12T10:51:24.963005" elapsed="0.000057"/>
+</return>
+<msg time="2026-09-12T10:51:24.963240" level="INFO">${ssh} = SSH Enabled - version 2.0
+Authentication methods:publickey,keyboard-interactive,password
+Authentication Publickey Algorithms:ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,ssh-ed25519,x50...</msg>
+<var>${ssh}</var>
+<arg>${sw}</arg>
+<arg>show ip ssh</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-12T10:51:24.475464" elapsed="0.487808"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${ssh}</arg>
+<arg>SSH Enabled - version 2.0</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:24.963422" elapsed="0.000444"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${ssh}</arg>
+<arg>Authentication timeout: 60 secs; Authentication retries: 3</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:24.964016" elapsed="0.000210"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T10:51:24.965031" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T10:51:24.964817" elapsed="0.000238"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T10:51:24.965087" elapsed="0.000022"/>
+</return>
+<msg time="2026-09-12T10:51:24.965186" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T10:51:24.964616" elapsed="0.000586"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-12T10:51:25.501799" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show run | include ^ip ssh
+ip ssh bulk-mode 131072
+ip ssh time-out 60
+ip ssh rsa keypair-name SSH-KEY&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:25.501937" level="INFO">${out} = ip ssh bulk-mode 131072
+ip ssh time-out 60
+ip ssh rsa keypair-name SSH-KEY</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-12T10:51:24.965262" elapsed="0.536694"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-12T10:51:25.502038" elapsed="0.000047"/>
+</return>
+<msg time="2026-09-12T10:51:25.502216" level="INFO">${cfg} = ip ssh bulk-mode 131072
+ip ssh time-out 60
+ip ssh rsa keypair-name SSH-KEY</msg>
+<var>${cfg}</var>
+<arg>${sw}</arg>
+<arg>show run | include ^ip ssh</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-12T10:51:24.964361" elapsed="0.537879"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${cfg}</arg>
+<arg>ip ssh time-out 60</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:25.502340" elapsed="0.000328"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-12T10:51:24.475368" elapsed="1.027338"/>
+</iter>
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T10:51:25.503527" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T10:51:25.503334" elapsed="0.000211"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T10:51:25.503577" elapsed="0.000021"/>
+</return>
+<msg time="2026-09-12T10:51:25.503703" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T10:51:25.503154" elapsed="0.000572"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-12T10:51:25.989949" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show ip ssh
+SSH Enabled - version 2.0
+Authentication methods:publickey,keyboard-interactive,password
+Authentication Publickey Algorithms:ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,ssh-ed25519,x509v3-ecdsa-sha2-nistp256,x509v3-ecdsa-sha2-nistp384,x509v3-ecdsa-sha2-nistp521,rsa-sha2-256,rsa-sha2-512,x509v3-rsa2048-sha256
+Hostkey Algorithms:ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,rsa-sha2-512,rsa-sha2-256
+Encryption Algorithms:chacha20-poly1305@openssh.com,aes128-gcm@openssh.com,aes256-gcm@openssh.com,aes128-gcm,aes256-gcm,aes128-ctr,aes192-ctr,aes256-ctr
+MAC Algorithms:hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com,hmac-sha2-256,hmac-sha2-512
+KEX Algorithms:curve25519-sha256,curve25519-sha256@libssh.org,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512
+Authentication timeout: 60 secs; Authentication retries: 3
+Minimum expected Diffie Hellman key size : 2048 bits
+IOS Keys in SECSH format(ssh-rsa, base64 encoded): SSH-KEY
+Modulus Size : 2048 bits
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCin/Zo29BVh91z2M2UrhR/17tM9sSWOdNuamP5bWF9
+4P6VOfI+LvBmE9NLFcBoNq4SyK6K/SCdHTbcAQ21Qgm1ix6dkquFyrGTdYVuEDs9m8dZ8fXfZj7hNJLQ
+kt0JNd1bMpGA8gmChuND/woJe8tqelnvvuS9oO24WkR11uRBdSSdUgC2Wa3VhExqMyZLoLTlrvglc0u+
+wIYc+DS4hVznhTOmXBiHNZqR/8Eg0j8wZj3WoXVUi7HlkyXH9dun86w7fXAP3Uob1rRX1Qu66GdqvKcB
+jhhhaESPRIs+KnvnPuDVVNTsBHujtM6uGr+++uW5M7HDAXpIM9ec0aJL6ReJ                    
+IOS Keys in SECSH format(ssh-ec, base64 encoded): NONE&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:25.990121" level="INFO">${out} = SSH Enabled - version 2.0
+Authentication methods:publickey,keyboard-interactive,password
+Authentication Publickey Algorithms:ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,ssh-ed25519,x50...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-12T10:51:25.503788" elapsed="0.486369"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-12T10:51:25.990221" elapsed="0.000041"/>
+</return>
+<msg time="2026-09-12T10:51:25.990370" level="INFO">${ssh} = SSH Enabled - version 2.0
+Authentication methods:publickey,keyboard-interactive,password
+Authentication Publickey Algorithms:ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,ssh-ed25519,x50...</msg>
+<var>${ssh}</var>
+<arg>${sw}</arg>
+<arg>show ip ssh</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-12T10:51:25.502902" elapsed="0.487486"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${ssh}</arg>
+<arg>SSH Enabled - version 2.0</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:25.990512" elapsed="0.000278"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${ssh}</arg>
+<arg>Authentication timeout: 60 secs; Authentication retries: 3</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:25.990860" elapsed="0.000188"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T10:51:25.991755" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T10:51:25.991549" elapsed="0.000224"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T10:51:25.991822" elapsed="0.000021"/>
+</return>
+<msg time="2026-09-12T10:51:25.991916" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T10:51:25.991384" elapsed="0.000547"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-12T10:51:26.528414" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show run | include ^ip ssh
+ip ssh bulk-mode 131072
+ip ssh time-out 60
+ip ssh rsa keypair-name SSH-KEY&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:26.528572" level="INFO">${out} = ip ssh bulk-mode 131072
+ip ssh time-out 60
+ip ssh rsa keypair-name SSH-KEY</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-12T10:51:25.992003" elapsed="0.536599"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-12T10:51:26.528678" elapsed="0.000050"/>
+</return>
+<msg time="2026-09-12T10:51:26.528857" level="INFO">${cfg} = ip ssh bulk-mode 131072
+ip ssh time-out 60
+ip ssh rsa keypair-name SSH-KEY</msg>
+<var>${cfg}</var>
+<arg>${sw}</arg>
+<arg>show run | include ^ip ssh</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-12T10:51:25.991165" elapsed="0.537710"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${cfg}</arg>
+<arg>ip ssh time-out 60</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:26.528997" elapsed="0.000333"/>
+</kw>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-12T10:51:25.502794" elapsed="1.026567"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-12T10:51:24.475251" elapsed="2.054137"/>
+</for>
+<status status="PASS" start="2026-09-12T10:51:24.475075" elapsed="2.054409"/>
+</test>
+<test id="s1-s1-t3" name="VTY lines accept SSH only, authenticate via AAA and carry the management ACL" line="26">
+<for flavor="IN">
+<iter>
+<for flavor="IN">
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T10:51:26.531086" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T10:51:26.530837" elapsed="0.000268"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T10:51:26.531139" elapsed="0.000026"/>
+</return>
+<msg time="2026-09-12T10:51:26.531243" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T10:51:26.530634" elapsed="0.000627"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-12T10:51:27.068016" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show run | section ^line vty 0 4
+line vty 0 4
+ access-class MGMT-ACCESS in vrf-also
+ logging synchronous
+ transport input ssh&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:27.068159" level="INFO">${out} = line vty 0 4
+ access-class MGMT-ACCESS in vrf-also
+ logging synchronous
+ transport input ssh</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-12T10:51:26.531321" elapsed="0.536858"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-12T10:51:27.068239" elapsed="0.000038"/>
+</return>
+<msg time="2026-09-12T10:51:27.068382" level="INFO">${vty} = line vty 0 4
+ access-class MGMT-ACCESS in vrf-also
+ logging synchronous
+ transport input ssh</msg>
+<var>${vty}</var>
+<arg>${sw}</arg>
+<arg>show run | section ^${block}</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-12T10:51:26.530291" elapsed="0.538107"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${vty}</arg>
+<arg>transport input ssh</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:27.068500" elapsed="0.000314"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${vty}</arg>
+<arg>access-class ${MGMT_ACL} in vrf-also</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:27.068881" elapsed="0.000217"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${vty}</arg>
+<arg>logging synchronous</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:27.069160" elapsed="0.000161"/>
+</kw>
+<kw name="Should Not Contain" owner="BuiltIn">
+<arg>${vty}</arg>
+<arg>login local</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:27.069380" elapsed="0.000159"/>
+</kw>
+<kw name="Should Not Contain" owner="BuiltIn">
+<arg>${vty}</arg>
+<arg>exec-timeout 0 0</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:27.069595" elapsed="0.000191"/>
+</kw>
+<var name="${block}">line vty 0 4</var>
+<status status="PASS" start="2026-09-12T10:51:26.530165" elapsed="0.539647"/>
+</iter>
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T10:51:27.070620" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T10:51:27.070424" elapsed="0.000220"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T10:51:27.070683" elapsed="0.000031"/>
+</return>
+<msg time="2026-09-12T10:51:27.070796" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T10:51:27.070248" elapsed="0.000564"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-12T10:51:27.607691" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show run | section ^line vty 5 15
+line vty 5 15
+ access-class MGMT-ACCESS in vrf-also
+ logging synchronous
+ transport input ssh&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:27.607844" level="INFO">${out} = line vty 5 15
+ access-class MGMT-ACCESS in vrf-also
+ logging synchronous
+ transport input ssh</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-12T10:51:27.070867" elapsed="0.536998"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-12T10:51:27.607926" elapsed="0.000039"/>
+</return>
+<msg time="2026-09-12T10:51:27.608083" level="INFO">${vty} = line vty 5 15
+ access-class MGMT-ACCESS in vrf-also
+ logging synchronous
+ transport input ssh</msg>
+<var>${vty}</var>
+<arg>${sw}</arg>
+<arg>show run | section ^${block}</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-12T10:51:27.070010" elapsed="0.538090"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${vty}</arg>
+<arg>transport input ssh</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:27.608213" elapsed="0.000276"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${vty}</arg>
+<arg>access-class ${MGMT_ACL} in vrf-also</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:27.608554" elapsed="0.000188"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${vty}</arg>
+<arg>logging synchronous</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:27.608816" elapsed="0.000208"/>
+</kw>
+<kw name="Should Not Contain" owner="BuiltIn">
+<arg>${vty}</arg>
+<arg>login local</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:27.609110" elapsed="0.000182"/>
+</kw>
+<kw name="Should Not Contain" owner="BuiltIn">
+<arg>${vty}</arg>
+<arg>exec-timeout 0 0</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:27.609353" elapsed="0.000158"/>
+</kw>
+<var name="${block}">line vty 5 15</var>
+<status status="PASS" start="2026-09-12T10:51:27.069900" elapsed="0.539635"/>
+</iter>
+<var>${block}</var>
+<value>line vty 0 4</value>
+<value>line vty 5 15</value>
+<status status="PASS" start="2026-09-12T10:51:26.530084" elapsed="1.079476"/>
+</for>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T10:51:27.610422" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T10:51:27.610186" elapsed="0.000255"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T10:51:27.610471" elapsed="0.000022"/>
+</return>
+<msg time="2026-09-12T10:51:27.610588" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T10:51:27.610023" elapsed="0.000580"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-12T10:51:28.097177" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show ip access-lists MGMT-ACCESS
+Standard IP access list MGMT-ACCESS
+    20 permit 10.0.0.0, wildcard bits 0.0.0.255 (16 matches)
+    30 deny   any log&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:28.097410" level="INFO">${out} = Standard IP access list MGMT-ACCESS
+    20 permit 10.0.0.0, wildcard bits 0.0.0.255 (16 matches)
+    30 deny   any log</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-12T10:51:27.610663" elapsed="0.486785"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-12T10:51:28.097542" elapsed="0.000065"/>
+</return>
+<msg time="2026-09-12T10:51:28.097787" level="INFO">${acl} = Standard IP access list MGMT-ACCESS
+    20 permit 10.0.0.0, wildcard bits 0.0.0.255 (16 matches)
+    30 deny   any log</msg>
+<var>${acl}</var>
+<arg>${sw}</arg>
+<arg>show ip access-lists ${MGMT_ACL}</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-12T10:51:27.609709" elapsed="0.488108"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${acl}</arg>
+<arg>20 permit 10\\.0\\.0\\.0, wildcard bits 0\\.0\\.0\\.255</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-12T10:51:28.098010" elapsed="0.000544"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${acl}</arg>
+<arg>30 deny\\s+any log</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-12T10:51:28.098670" elapsed="0.000386"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-12T10:51:26.530061" elapsed="1.569038"/>
+</iter>
+<iter>
+<for flavor="IN">
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T10:51:28.100689" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T10:51:28.100347" elapsed="0.000374"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T10:51:28.100774" elapsed="0.000042"/>
+</return>
+<msg time="2026-09-12T10:51:28.100953" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T10:51:28.100061" elapsed="0.000940"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-12T10:51:28.637803" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show run | section ^line vty 0 4
+line vty 0 4
+ access-class MGMT-ACCESS in vrf-also
+ logging synchronous
+ transport input ssh&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:28.637958" level="INFO">${out} = line vty 0 4
+ access-class MGMT-ACCESS in vrf-also
+ logging synchronous
+ transport input ssh</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-12T10:51:28.101109" elapsed="0.536890"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-12T10:51:28.638088" elapsed="0.000043"/>
+</return>
+<msg time="2026-09-12T10:51:28.638256" level="INFO">${vty} = line vty 0 4
+ access-class MGMT-ACCESS in vrf-also
+ logging synchronous
+ transport input ssh</msg>
+<var>${vty}</var>
+<arg>${sw}</arg>
+<arg>show run | section ^${block}</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-12T10:51:28.099643" elapsed="0.538634"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${vty}</arg>
+<arg>transport input ssh</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:28.638399" elapsed="0.000304"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${vty}</arg>
+<arg>access-class ${MGMT_ACL} in vrf-also</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:28.638774" elapsed="0.000193"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${vty}</arg>
+<arg>logging synchronous</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:28.639039" elapsed="0.000249"/>
+</kw>
+<kw name="Should Not Contain" owner="BuiltIn">
+<arg>${vty}</arg>
+<arg>login local</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:28.639377" elapsed="0.000267"/>
+</kw>
+<kw name="Should Not Contain" owner="BuiltIn">
+<arg>${vty}</arg>
+<arg>exec-timeout 0 0</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:28.639710" elapsed="0.000165"/>
+</kw>
+<var name="${block}">line vty 0 4</var>
+<status status="PASS" start="2026-09-12T10:51:28.099490" elapsed="0.540410"/>
+</iter>
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T10:51:28.640735" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T10:51:28.640525" elapsed="0.000230"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T10:51:28.640789" elapsed="0.000027"/>
+</return>
+<msg time="2026-09-12T10:51:28.640893" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T10:51:28.640363" elapsed="0.000546"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-12T10:51:29.177355" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show run | section ^line vty 5 15
+line vty 5 15
+ access-class MGMT-ACCESS in vrf-also
+ logging synchronous
+ transport input ssh&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:29.177495" level="INFO">${out} = line vty 5 15
+ access-class MGMT-ACCESS in vrf-also
+ logging synchronous
+ transport input ssh</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-12T10:51:28.640965" elapsed="0.536548"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-12T10:51:29.177574" elapsed="0.000043"/>
+</return>
+<msg time="2026-09-12T10:51:29.177768" level="INFO">${vty} = line vty 5 15
+ access-class MGMT-ACCESS in vrf-also
+ logging synchronous
+ transport input ssh</msg>
+<var>${vty}</var>
+<arg>${sw}</arg>
+<arg>show run | section ^${block}</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-12T10:51:28.640092" elapsed="0.537694"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${vty}</arg>
+<arg>transport input ssh</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:29.177903" elapsed="0.000356"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${vty}</arg>
+<arg>access-class ${MGMT_ACL} in vrf-also</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:29.178355" elapsed="0.000248"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${vty}</arg>
+<arg>logging synchronous</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:29.178690" elapsed="0.000220"/>
+</kw>
+<kw name="Should Not Contain" owner="BuiltIn">
+<arg>${vty}</arg>
+<arg>login local</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:29.179017" elapsed="0.000178"/>
+</kw>
+<kw name="Should Not Contain" owner="BuiltIn">
+<arg>${vty}</arg>
+<arg>exec-timeout 0 0</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:29.179260" elapsed="0.000204"/>
+</kw>
+<var name="${block}">line vty 5 15</var>
+<status status="PASS" start="2026-09-12T10:51:28.639994" elapsed="0.539497"/>
+</iter>
+<var>${block}</var>
+<value>line vty 0 4</value>
+<value>line vty 5 15</value>
+<status status="PASS" start="2026-09-12T10:51:28.099339" elapsed="1.080175"/>
+</for>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T10:51:29.180371" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T10:51:29.180168" elapsed="0.000222"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T10:51:29.180422" elapsed="0.000027"/>
+</return>
+<msg time="2026-09-12T10:51:29.180525" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T10:51:29.179961" elapsed="0.000579"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-12T10:51:29.666834" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show ip access-lists MGMT-ACCESS
+Standard IP access list MGMT-ACCESS
+    20 permit 10.0.0.0, wildcard bits 0.0.0.255 (6 matches)
+    30 deny   any log&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:29.667022" level="INFO">${out} = Standard IP access list MGMT-ACCESS
+    20 permit 10.0.0.0, wildcard bits 0.0.0.255 (6 matches)
+    30 deny   any log</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-12T10:51:29.180596" elapsed="0.486457"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-12T10:51:29.667122" elapsed="0.000042"/>
+</return>
+<msg time="2026-09-12T10:51:29.667316" level="INFO">${acl} = Standard IP access list MGMT-ACCESS
+    20 permit 10.0.0.0, wildcard bits 0.0.0.255 (6 matches)
+    30 deny   any log</msg>
+<var>${acl}</var>
+<arg>${sw}</arg>
+<arg>show ip access-lists ${MGMT_ACL}</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-12T10:51:29.179674" elapsed="0.487665"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${acl}</arg>
+<arg>20 permit 10\\.0\\.0\\.0, wildcard bits 0\\.0\\.0\\.255</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-12T10:51:29.667458" elapsed="0.000284"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${acl}</arg>
+<arg>30 deny\\s+any log</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-12T10:51:29.667813" elapsed="0.000191"/>
+</kw>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-12T10:51:28.099296" elapsed="1.568733"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-12T10:51:26.529889" elapsed="3.138166"/>
+</for>
+<status status="PASS" start="2026-09-12T10:51:26.529675" elapsed="3.138453"/>
+</test>
+<test id="s1-s1-t4" name="Management ACL admits SSH from the OOB network" line="41">
+<for flavor="IN">
+<iter>
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T10:51:29.669043" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T10:51:29.668843" elapsed="0.000218"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T10:51:29.669096" elapsed="0.000024"/>
+</return>
+<msg time="2026-09-12T10:51:29.669194" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T10:51:29.668670" elapsed="0.000539"/>
+</kw>
+<kw name="Tcp Port Should Be Open" owner="LabLib">
+<arg>${host}</arg>
+<arg>22</arg>
+<status status="PASS" start="2026-09-12T10:51:29.669263" elapsed="0.002133"/>
+</kw>
+<kw name="Nms Command" owner="LabLib">
+<msg time="2026-09-12T10:51:30.934763" level="INFO" html="true">&lt;pre&gt;nms$ sshpass -p admin ssh -o ConnectTimeout=10 sw1 "show users | include vty"
+rc=0
+Managed by Network-as-Code (Terraform). Manual changes will be reverted.
+
+   1 vty 0     admin      idle                 00:00:02 10.0.0.1
+*  2 vty 1     admin      idle                 00:00:00 10.0.0.10
+&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:30.935100" level="INFO">${out} = Managed by Network-as-Code (Terraform). Manual changes will be reverted.
+
+   1 vty 0     admin      idle                 00:00:02 10.0.0.1
+*  2 vty 1     admin      idle                 00:00:00 10...</msg>
+<var>${out}</var>
+<arg>sshpass -p ${PASSWORD} ssh -o ConnectTimeout=10 ${sw} "show users | include vty"</arg>
+<doc>Run a shell command on the NMS jumphost; returns stdout (fails on non-zero rc).</doc>
+<status status="PASS" start="2026-09-12T10:51:29.671477" elapsed="1.263651"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${out}</arg>
+<arg>admin</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:30.935256" elapsed="0.000284"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-12T10:51:29.668561" elapsed="1.267006"/>
+</iter>
+<iter>
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T10:51:30.936184" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T10:51:30.935988" elapsed="0.000213"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T10:51:30.936233" elapsed="0.000030"/>
+</return>
+<msg time="2026-09-12T10:51:30.936340" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T10:51:30.935791" elapsed="0.000564"/>
+</kw>
+<kw name="Tcp Port Should Be Open" owner="LabLib">
+<arg>${host}</arg>
+<arg>22</arg>
+<status status="PASS" start="2026-09-12T10:51:30.936409" elapsed="0.000837"/>
+</kw>
+<kw name="Nms Command" owner="LabLib">
+<msg time="2026-09-12T10:51:31.530801" level="INFO" html="true">&lt;pre&gt;nms$ sshpass -p admin ssh -o ConnectTimeout=10 sw2 "show users | include vty"
+rc=0
+Managed by Network-as-Code (Terraform). Manual changes will be reverted.
+
+   1 vty 0     admin      idle                 00:00:01 10.0.0.1
+*  3 vty 2     admin      idle                 00:00:00 10.0.0.10
+Connection to sw2 closed by remote host.
+&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:31.531081" level="INFO">${out} = Managed by Network-as-Code (Terraform). Manual changes will be reverted.
+
+   1 vty 0     admin      idle                 00:00:01 10.0.0.1
+*  3 vty 2     admin      idle                 00:00:00 10...</msg>
+<var>${out}</var>
+<arg>sshpass -p ${PASSWORD} ssh -o ConnectTimeout=10 ${sw} "show users | include vty"</arg>
+<doc>Run a shell command on the NMS jumphost; returns stdout (fails on non-zero rc).</doc>
+<status status="PASS" start="2026-09-12T10:51:30.937317" elapsed="0.593793"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${out}</arg>
+<arg>admin</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:31.531255" elapsed="0.000324"/>
+</kw>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-12T10:51:30.935674" elapsed="0.595942"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-12T10:51:29.668455" elapsed="1.863193"/>
+</for>
+<status status="PASS" start="2026-09-12T10:51:29.668251" elapsed="1.863479"/>
+</test>
+<test id="s1-s1-t5" name="Management ACL blocks SSH from a user VLAN" line="49">
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T10:51:31.533099" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T10:51:31.532861" elapsed="0.000256"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T10:51:31.533155" elapsed="0.000042"/>
+</return>
+<msg time="2026-09-12T10:51:31.533299" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T10:51:31.532652" elapsed="0.000664"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-12T10:51:32.029846" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show ip access-lists MGMT-ACCESS | include deny
+    30 deny   any log&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:32.030026" level="INFO">${out} =     30 deny   any log</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-12T10:51:31.533387" elapsed="0.496663"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-12T10:51:32.030127" elapsed="0.000042"/>
+</return>
+<msg time="2026-09-12T10:51:32.030300" level="INFO">${before} =     30 deny   any log</msg>
+<var>${before}</var>
+<arg>sw1</arg>
+<arg>show ip access-lists ${MGMT_ACL} | include deny</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-12T10:51:31.532372" elapsed="0.497960"/>
+</kw>
+<kw name="Deny Match Count">
+<kw name="Get Regexp Matches" owner="String">
+<msg time="2026-09-12T10:51:32.031266" level="INFO">${nums} = []</msg>
+<var>${nums}</var>
+<arg>${acl_lines}</arg>
+<arg>\\((\\d+) match(?:es)?\\)</arg>
+<arg>1</arg>
+<doc>Returns a list of all non-overlapping matches in the given string.</doc>
+<status status="PASS" start="2026-09-12T10:51:32.030911" elapsed="0.000378"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2026-09-12T10:51:32.031885" level="INFO">${total} = 0</msg>
+<var>${total}</var>
+<arg>sum(int(n) for n in ${nums})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2026-09-12T10:51:32.031385" elapsed="0.000520"/>
+</kw>
+<return>
+<value>${total}</value>
+<status status="PASS" start="2026-09-12T10:51:32.031939" elapsed="0.000029"/>
+</return>
+<msg time="2026-09-12T10:51:32.032063" level="INFO">${matches_before} = 0</msg>
+<var>${matches_before}</var>
+<arg>${before}</arg>
+<doc>Sum of "(N matches)" on the deny lines of an ACL listing (0 when no counters yet).</doc>
+<status status="PASS" start="2026-09-12T10:51:32.030572" elapsed="0.001507"/>
+</kw>
+<kw name="Host Command Rc" owner="LabLib">
+<msg time="2026-09-12T10:51:32.140708" level="INFO" html="true">&lt;pre&gt;10.0.0.21$ nc -w 5 -z 10.10.0.1 22
+rc=1
+&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:32.141076" level="INFO">${rc} = 1</msg>
+<var>${rc}</var>
+<arg>${HOSTS}[host1][mgmt]</arg>
+<arg>nc -w 5 -z ${HOSTS}[host1][gateway] 22</arg>
+<doc>Run a command on a CirrOS host and return its exit code (never fails).</doc>
+<status status="PASS" start="2026-09-12T10:51:32.032145" elapsed="0.108959"/>
+</kw>
+<kw name="Should Not Be Equal As Integers" owner="BuiltIn">
+<msg time="2026-09-12T10:51:32.141651" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${rc}</arg>
+<arg>0</arg>
+<arg>msg=SSH from ${HOSTS}[host1][ip] to the switch was NOT blocked</arg>
+<doc>Fails if objects are equal after converting them to integers.</doc>
+<status status="PASS" start="2026-09-12T10:51:32.141255" elapsed="0.000465"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2026-09-12T10:51:34.142213" level="INFO">Slept 2 seconds.</msg>
+<arg>2s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2026-09-12T10:51:32.141817" elapsed="2.000512"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T10:51:34.143453" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T10:51:34.143156" elapsed="0.000325"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T10:51:34.143524" elapsed="0.000036"/>
+</return>
+<msg time="2026-09-12T10:51:34.143658" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T10:51:34.142933" elapsed="0.000746"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-12T10:51:34.640078" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show ip access-lists MGMT-ACCESS | include deny
+    30 deny   any log (1 match)&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:34.640255" level="INFO">${out} =     30 deny   any log (1 match)</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-12T10:51:34.143757" elapsed="0.496523"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-12T10:51:34.640373" elapsed="0.000063"/>
+</return>
+<msg time="2026-09-12T10:51:34.640584" level="INFO">${after} =     30 deny   any log (1 match)</msg>
+<var>${after}</var>
+<arg>sw1</arg>
+<arg>show ip access-lists ${MGMT_ACL} | include deny</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-12T10:51:34.142567" elapsed="0.498045"/>
+</kw>
+<kw name="Deny Match Count">
+<kw name="Get Regexp Matches" owner="String">
+<msg time="2026-09-12T10:51:34.641195" level="INFO">${nums} = ['1']</msg>
+<var>${nums}</var>
+<arg>${acl_lines}</arg>
+<arg>\\((\\d+) match(?:es)?\\)</arg>
+<arg>1</arg>
+<doc>Returns a list of all non-overlapping matches in the given string.</doc>
+<status status="PASS" start="2026-09-12T10:51:34.641011" elapsed="0.000203"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2026-09-12T10:51:34.641653" level="INFO">${total} = 1</msg>
+<var>${total}</var>
+<arg>sum(int(n) for n in ${nums})</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2026-09-12T10:51:34.641286" elapsed="0.000385"/>
+</kw>
+<return>
+<value>${total}</value>
+<status status="PASS" start="2026-09-12T10:51:34.641702" elapsed="0.000022"/>
+</return>
+<msg time="2026-09-12T10:51:34.641820" level="INFO">${matches_after} = 1</msg>
+<var>${matches_after}</var>
+<arg>${after}</arg>
+<doc>Sum of "(N matches)" on the deny lines of an ACL listing (0 when no counters yet).</doc>
+<status status="PASS" start="2026-09-12T10:51:34.640788" elapsed="0.001050"/>
+</kw>
+<kw name="Should Be True" owner="BuiltIn">
+<arg>${matches_after} &gt; ${matches_before}</arg>
+<arg>msg=deny counter did not increase (${matches_before} -&gt; ${matches_after})</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="PASS" start="2026-09-12T10:51:34.641917" elapsed="0.000328"/>
+</kw>
+<doc>host1 (VLAN 10) tries the switch's own SVI address: TCP/22 must not open, and
+the ACL's deny counter must increase (the "deny any log" line).</doc>
+<status status="PASS" start="2026-09-12T10:51:31.531879" elapsed="3.110437"/>
+</test>
+<test id="s1-s1-t6" name="Spanning tree: sw1 is root for every VLAN, sw2 is backup root, edge defaults on" line="61">
+<kw name="Get Dictionary Keys" owner="Collections">
+<msg time="2026-09-12T10:51:34.642763" level="INFO">${vlans} = ['10', '100', '110', '111', '112', '113', '114', '115', '116', '117', '118', '119', '20', '210', '211', '212', '213', '214', '215', '216', '217', '218', '219', '99']</msg>
+<var>${vlans}</var>
+<arg>${VLANS}</arg>
+<doc>Returns keys of the given ``dictionary`` as a list.</doc>
+<status status="PASS" start="2026-09-12T10:51:34.642635" elapsed="0.000155"/>
+</kw>
+<kw name="Append To List" owner="Collections">
+<arg>${vlans}</arg>
+<arg>1</arg>
+<doc>Adds ``values`` to the end of ``list``.</doc>
+<status status="PASS" start="2026-09-12T10:51:34.642865" elapsed="0.000148"/>
+</kw>
+<for flavor="IN">
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T10:51:34.643887" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T10:51:34.643663" elapsed="0.000241"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T10:51:34.643941" elapsed="0.000022"/>
+</return>
+<msg time="2026-09-12T10:51:34.644051" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T10:51:34.643498" elapsed="0.000568"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-12T10:51:35.140601" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show spanning-tree summary
+Switch is in rapid-pvst mode
+Root bridge for: VLAN0001, VLAN0010, VLAN0020, VLAN0100, VLAN0110-VLAN0119
+  VLAN0210-VLAN0219
+Extended system ID                      is enabled
+Portfast Default                        is enabled
+PortFast BPDU Guard Default            is enabled
+Portfast BPDU Filter Default           is disabled
+Loopguard Default                      is disabled
+EtherChannel misconfig guard            is enabled
+UplinkFast                              is disabled
+BackboneFast                            is disabled
+Configured Pathcost method used is short
+
+Name                   Blocking Listening Learning Forwarding STP Active
+---------------------- -------- --------- -------- ---------- ----------
+VLAN0001                     0         0        0          4          4
+VLAN0010                     0         0        0          3          3
+VLAN0020                     0         0        0          2          2
+VLAN0100                     0         0        0          1          1
+VLAN0110                     0         0        0          1          1
+VLAN0111                     0         0        0          1          1
+VLAN0112                     0         0        0          1          1
+VLAN0113                     0         0        0          1          1
+VLAN0114                     0         0        0          1          1
+VLAN0115                     0         0        0          1          1
+VLAN0116                     0         0        0          1          1
+VLAN0117                     0         0        0          1          1
+VLAN0118                     0         0        0          1          1
+VLAN0119                     0         0        0          1          1
+VLAN0210                     0         0        0          1          1
+VLAN0211                     0         0        0          1          1
+VLAN0212                     0         0        0          1          1
+VLAN0213                     0         0        0          1          1
+VLAN0214                     0         0        0          1          1
+VLAN0215                     0         0        0          1          1
+VLAN0216                     0         0        0          1          1
+VLAN0217                     0         0        0          1          1
+VLAN0218                     0         0        0          1          1
+VLAN0219                     0         0        0          1          1
+---------------------- -------- --------- -------- ---------- ----------
+24 vlans                     0         0        0         30         30&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:35.140760" level="INFO">${out} = Switch is in rapid-pvst mode
+Root bridge for: VLAN0001, VLAN0010, VLAN0020, VLAN0100, VLAN0110-VLAN0119
+  VLAN0210-VLAN0219
+Extended system ID                      is enabled
+Portfast Default         ...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-12T10:51:34.644121" elapsed="0.496664"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-12T10:51:35.140842" elapsed="0.000039"/>
+</return>
+<msg time="2026-09-12T10:51:35.140998" level="INFO">${sum} = Switch is in rapid-pvst mode
+Root bridge for: VLAN0001, VLAN0010, VLAN0020, VLAN0100, VLAN0110-VLAN0119
+  VLAN0210-VLAN0219
+Extended system ID                      is enabled
+Portfast Default         ...</msg>
+<var>${sum}</var>
+<arg>${sw}</arg>
+<arg>show spanning-tree summary</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-12T10:51:34.643294" elapsed="0.497722"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${sum}</arg>
+<arg>Switch is in rapid-pvst mode</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:35.141131" elapsed="0.000301"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${sum}</arg>
+<arg>Portfast Default\\s+is enabled</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-12T10:51:35.141506" elapsed="0.000268"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<msg time="2026-09-12T10:51:35.142170" level="FAIL">'Switch is in rapid-pvst mode
+Root bridge for: VLAN0001, VLAN0010, VLAN0020, VLAN0100, VLAN0110-VLAN0119
+  VLAN0210-VLAN0219
+Extended system ID                      is enabled
+Portfast Default                        is enabled
+PortFast BPDU Guard Default            is enabled
+Portfast BPDU Filter Default           is disabled
+Loopguard Default                      is disabled
+EtherChannel misconfig guard            is enabled
+UplinkFast                              is disabled
+BackboneFast                            is disabled
+Configured Pathcost method used is short
+
+Name                   Blocking Listening Learning Forwarding STP Active
+---------------------- -------- --------- -------- ---------- ----------
+VLAN0001                     0         0        0          4          4
+VLAN0010                     0         0        0          3          3
+VLAN0020                     0         0        0          2          2
+VLAN0100                     0         0        0          1          1
+VLAN0110                     0         0        0          1          1
+VLAN0111                     0         0        0          1          1
+VLAN0112                     0         0        0          1          1
+VLAN0113                     0         0        0          1          1
+VLAN0114                     0         0        0          1          1
+VLAN0115                     0         0        0          1          1
+VLAN0116                     0         0        0          1          1
+VLAN0117                     0         0        0          1          1
+VLAN0118                     0         0        0          1          1
+VLAN0119                     0         0        0          1          1
+VLAN0210                     0         0        0          1          1
+VLAN0211                     0         0        0          1          1
+VLAN0212                     0         0        0          1          1
+VLAN0213                     0         0        0          1          1
+VLAN0214                     0         0        0          1          1
+VLAN0215                     0         0        0          1          1
+VLAN0216                     0         0        0          1          1
+VLAN0217                     0         0        0          1          1
+VLAN0218                     0         0        0          1          1
+VLAN0219                     0         0        0          1          1
+---------------------- -------- --------- -------- ---------- ----------
+24 vlans                     0         0        0         30         30' does not match 'Portfast Edge BPDU Guard Default\s+is enabled'</msg>
+<arg>${sum}</arg>
+<arg>Portfast Edge BPDU Guard Default\\s+is enabled</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="FAIL" start="2026-09-12T10:51:35.141838" elapsed="0.000512">'Switch is in rapid-pvst mode
+Root bridge for: VLAN0001, VLAN0010, VLAN0020, VLAN0100, VLAN0110-VLAN0119
+  VLAN0210-VLAN0219
+Extended system ID                      is enabled
+Portfast Default                        is enabled
+PortFast BPDU Guard Default            is enabled
+Portfast BPDU Filter Default           is disabled
+Loopguard Default                      is disabled
+EtherChannel misconfig guard            is enabled
+UplinkFast                              is disabled
+BackboneFast                            is disabled
+Configured Pathcost method used is short
+
+Name                   Blocking Listening Learning Forwarding STP Active
+---------------------- -------- --------- -------- ---------- ----------
+VLAN0001                     0         0        0          4          4
+VLAN0010                     0         0        0          3          3
+VLAN0020                     0         0        0          2          2
+VLAN0100                     0         0        0          1          1
+VLAN0110                     0         0        0          1          1
+    [ Message content over the limit has been removed. ]
+VLAN0113                     0         0        0          1          1
+VLAN0114                     0         0        0          1          1
+VLAN0115                     0         0        0          1          1
+VLAN0116                     0         0        0          1          1
+VLAN0117                     0         0        0          1          1
+VLAN0118                     0         0        0          1          1
+VLAN0119                     0         0        0          1          1
+VLAN0210                     0         0        0          1          1
+VLAN0211                     0         0        0          1          1
+VLAN0212                     0         0        0          1          1
+VLAN0213                     0         0        0          1          1
+VLAN0214                     0         0        0          1          1
+VLAN0215                     0         0        0          1          1
+VLAN0216                     0         0        0          1          1
+VLAN0217                     0         0        0          1          1
+VLAN0218                     0         0        0          1          1
+VLAN0219                     0         0        0          1          1
+---------------------- -------- --------- -------- ---------- ----------
+24 vlans                     0         0        0         30         30' does not match 'Portfast Edge BPDU Guard Default\s+is enabled'</status>
+</kw>
+<kw name="Show" owner="common">
+<var>${root}</var>
+<arg>${sw}</arg>
+<arg>show spanning-tree root</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="NOT RUN" start="2026-09-12T10:51:35.142499" elapsed="0.000025"/>
+</kw>
+<for flavor="IN">
+<iter>
+<kw name="Evaluate" owner="BuiltIn">
+<var>${prio}</var>
+<arg>4096 + ${id}</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2026-09-12T10:51:35.142662" elapsed="0.000013"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${root}</arg>
+<arg>(?m)^VLAN0*${id}\\s+${prio}\\s+${STP_ROOT_MAC}\\s</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="NOT RUN" start="2026-09-12T10:51:35.142725" elapsed="0.000016"/>
+</kw>
+<var name="${id}"/>
+<status status="NOT RUN" start="2026-09-12T10:51:35.142614" elapsed="0.000159"/>
+</iter>
+<var>${id}</var>
+<value>@{vlans}</value>
+<status status="NOT RUN" start="2026-09-12T10:51:35.142565" elapsed="0.000234"/>
+</for>
+<kw name="Show" owner="common">
+<var>${bridge}</var>
+<arg>${sw}</arg>
+<arg>show spanning-tree bridge priority</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="NOT RUN" start="2026-09-12T10:51:35.142886" elapsed="0.000014"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<var>${own}</var>
+<arg>${STP_PRIORITY}[${sw}] + 10</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="NOT RUN" start="2026-09-12T10:51:35.142953" elapsed="0.000012"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${bridge}</arg>
+<arg>(?m)^VLAN0010\\s+${own}\\s*$</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="NOT RUN" start="2026-09-12T10:51:35.143025" elapsed="0.000012"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="FAIL" start="2026-09-12T10:51:34.643200" elapsed="0.499888">'Switch is in rapid-pvst mode
+Root bridge for: VLAN0001, VLAN0010, VLAN0020, VLAN0100, VLAN0110-VLAN0119
+  VLAN0210-VLAN0219
+Extended system ID                      is enabled
+Portfast Default                        is enabled
+PortFast BPDU Guard Default            is enabled
+Portfast BPDU Filter Default           is disabled
+Loopguard Default                      is disabled
+EtherChannel misconfig guard            is enabled
+UplinkFast                              is disabled
+BackboneFast                            is disabled
+Configured Pathcost method used is short
+
+Name                   Blocking Listening Learning Forwarding STP Active
+---------------------- -------- --------- -------- ---------- ----------
+VLAN0001                     0         0        0          4          4
+VLAN0010                     0         0        0          3          3
+VLAN0020                     0         0        0          2          2
+VLAN0100                     0         0        0          1          1
+VLAN0110                     0         0        0          1          1
+    [ Message content over the limit has been removed. ]
+VLAN0113                     0         0        0          1          1
+VLAN0114                     0         0        0          1          1
+VLAN0115                     0         0        0          1          1
+VLAN0116                     0         0        0          1          1
+VLAN0117                     0         0        0          1          1
+VLAN0118                     0         0        0          1          1
+VLAN0119                     0         0        0          1          1
+VLAN0210                     0         0        0          1          1
+VLAN0211                     0         0        0          1          1
+VLAN0212                     0         0        0          1          1
+VLAN0213                     0         0        0          1          1
+VLAN0214                     0         0        0          1          1
+VLAN0215                     0         0        0          1          1
+VLAN0216                     0         0        0          1          1
+VLAN0217                     0         0        0          1          1
+VLAN0218                     0         0        0          1          1
+VLAN0219                     0         0        0          1          1
+---------------------- -------- --------- -------- ---------- ----------
+24 vlans                     0         0        0         30         30' does not match 'Portfast Edge BPDU Guard Default\s+is enabled'</status>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="FAIL" start="2026-09-12T10:51:34.643058" elapsed="0.500090">'Switch is in rapid-pvst mode
+Root bridge for: VLAN0001, VLAN0010, VLAN0020, VLAN0100, VLAN0110-VLAN0119
+  VLAN0210-VLAN0219
+Extended system ID                      is enabled
+Portfast Default                        is enabled
+PortFast BPDU Guard Default            is enabled
+Portfast BPDU Filter Default           is disabled
+Loopguard Default                      is disabled
+EtherChannel misconfig guard            is enabled
+UplinkFast                              is disabled
+BackboneFast                            is disabled
+Configured Pathcost method used is short
+
+Name                   Blocking Listening Learning Forwarding STP Active
+---------------------- -------- --------- -------- ---------- ----------
+VLAN0001                     0         0        0          4          4
+VLAN0010                     0         0        0          3          3
+VLAN0020                     0         0        0          2          2
+VLAN0100                     0         0        0          1          1
+VLAN0110                     0         0        0          1          1
+    [ Message content over the limit has been removed. ]
+VLAN0113                     0         0        0          1          1
+VLAN0114                     0         0        0          1          1
+VLAN0115                     0         0        0          1          1
+VLAN0116                     0         0        0          1          1
+VLAN0117                     0         0        0          1          1
+VLAN0118                     0         0        0          1          1
+VLAN0119                     0         0        0          1          1
+VLAN0210                     0         0        0          1          1
+VLAN0211                     0         0        0          1          1
+VLAN0212                     0         0        0          1          1
+VLAN0213                     0         0        0          1          1
+VLAN0214                     0         0        0          1          1
+VLAN0215                     0         0        0          1          1
+VLAN0216                     0         0        0          1          1
+VLAN0217                     0         0        0          1          1
+VLAN0218                     0         0        0          1          1
+VLAN0219                     0         0        0          1          1
+---------------------- -------- --------- -------- ---------- ----------
+24 vlans                     0         0        0         30         30' does not match 'Portfast Edge BPDU Guard Default\s+is enabled'</status>
+</for>
+<status status="FAIL" start="2026-09-12T10:51:34.642433" elapsed="0.500863">'Switch is in rapid-pvst mode
+Root bridge for: VLAN0001, VLAN0010, VLAN0020, VLAN0100, VLAN0110-VLAN0119
+  VLAN0210-VLAN0219
+Extended system ID                      is enabled
+Portfast Default                        is enabled
+PortFast BPDU Guard Default            is enabled
+Portfast BPDU Filter Default           is disabled
+Loopguard Default                      is disabled
+EtherChannel misconfig guard            is enabled
+UplinkFast                              is disabled
+BackboneFast                            is disabled
+Configured Pathcost method used is short
+
+Name                   Blocking Listening Learning Forwarding STP Active
+---------------------- -------- --------- -------- ---------- ----------
+VLAN0001                     0         0        0          4          4
+VLAN0010                     0         0        0          3          3
+VLAN0020                     0         0        0          2          2
+VLAN0100                     0         0        0          1          1
+VLAN0110                     0         0        0          1          1
+    [ Message content over the limit has been removed. ]
+VLAN0113                     0         0        0          1          1
+VLAN0114                     0         0        0          1          1
+VLAN0115                     0         0        0          1          1
+VLAN0116                     0         0        0          1          1
+VLAN0117                     0         0        0          1          1
+VLAN0118                     0         0        0          1          1
+VLAN0119                     0         0        0          1          1
+VLAN0210                     0         0        0          1          1
+VLAN0211                     0         0        0          1          1
+VLAN0212                     0         0        0          1          1
+VLAN0213                     0         0        0          1          1
+VLAN0214                     0         0        0          1          1
+VLAN0215                     0         0        0          1          1
+VLAN0216                     0         0        0          1          1
+VLAN0217                     0         0        0          1          1
+VLAN0218                     0         0        0          1          1
+VLAN0219                     0         0        0          1          1
+---------------------- -------- --------- -------- ---------- ----------
+24 vlans                     0         0        0         30         30' does not match 'Portfast Edge BPDU Guard Default\s+is enabled'</status>
+</test>
+<test id="s1-s1-t7" name="Errdisable recovery for bpduguard is enabled" line="79">
+<for flavor="IN">
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T10:51:35.144468" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T10:51:35.144222" elapsed="0.000265"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T10:51:35.144523" elapsed="0.000021"/>
+</return>
+<msg time="2026-09-12T10:51:35.144651" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T10:51:35.144062" elapsed="0.000616"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-12T10:51:35.631075" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show errdisable recovery
+ErrDisable Reason            Timer Status
+-----------------            --------------
+arp-inspection               Disabled
+bpduguard                    Enabled
+channel-misconfig            Disabled
+dhcp-rate-limit              Disabled
+dtp-flap                     Disabled
+evpn-mh-core-isolation       Disabled
+gbic-invalid                 Disabled
+inline-power                 Disabled
+l2ptguard                    Disabled
+link-flap                    Disabled
+mac-limit                    Disabled
+link-monitor-failure         Disabled
+loopback                     Disabled
+loopdetect                   Disabled
+oam-remote-failure           Disabled
+pagp-flap                    Disabled
+port-mode-failure            Disabled
+pppoe-ia-rate-limit          Disabled
+psecure-violation            Disabled
+security-violation           Disabled
+sfp-config-mismatch          Disabled
+storm-control                Disabled
+udld                         Disabled
+psp                          Disabled
+dual-active-recovery         Disabled
+evc-lite input mapping fa    Disabled
+mrp-miscabling               Disabled
+
+Timer interval: 300 seconds
+
+Interfaces that will be enabled at the next timeout:
+&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:35.631240" level="INFO">${out} = ErrDisable Reason            Timer Status
+-----------------            --------------
+arp-inspection               Disabled
+bpduguard                    Enabled
+channel-misconfig            Disabled
+d...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-12T10:51:35.144776" elapsed="0.486486"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-12T10:51:35.631319" elapsed="0.000042"/>
+</return>
+<msg time="2026-09-12T10:51:35.631466" level="INFO">${rec} = ErrDisable Reason            Timer Status
+-----------------            --------------
+arp-inspection               Disabled
+bpduguard                    Enabled
+channel-misconfig            Disabled
+d...</msg>
+<var>${rec}</var>
+<arg>${sw}</arg>
+<arg>show errdisable recovery</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-12T10:51:35.143839" elapsed="0.487644"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${rec}</arg>
+<arg>(?m)^bpduguard\\s+Enabled</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-12T10:51:35.631602" elapsed="0.000358"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${rec}</arg>
+<arg>Timer interval: 300 seconds</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-12T10:51:35.632039" elapsed="0.000209"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-12T10:51:35.143755" elapsed="0.488519"/>
+</iter>
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T10:51:35.633063" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T10:51:35.632855" elapsed="0.000226"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T10:51:35.633114" elapsed="0.000025"/>
+</return>
+<msg time="2026-09-12T10:51:35.633209" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T10:51:35.632693" elapsed="0.000532"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-12T10:51:36.119412" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show errdisable recovery
+ErrDisable Reason            Timer Status
+-----------------            --------------
+arp-inspection               Disabled
+bpduguard                    Enabled
+channel-misconfig            Disabled
+dhcp-rate-limit              Disabled
+dtp-flap                     Disabled
+evpn-mh-core-isolation       Disabled
+gbic-invalid                 Disabled
+inline-power                 Disabled
+l2ptguard                    Disabled
+link-flap                    Disabled
+mac-limit                    Disabled
+link-monitor-failure         Disabled
+loopback                     Disabled
+loopdetect                   Disabled
+oam-remote-failure           Disabled
+pagp-flap                    Disabled
+port-mode-failure            Disabled
+pppoe-ia-rate-limit          Disabled
+psecure-violation            Disabled
+security-violation           Disabled
+sfp-config-mismatch          Disabled
+storm-control                Disabled
+udld                         Disabled
+psp                          Disabled
+dual-active-recovery         Disabled
+evc-lite input mapping fa    Disabled
+mrp-miscabling               Disabled
+
+Timer interval: 300 seconds
+
+Interfaces that will be enabled at the next timeout:
+&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:36.119576" level="INFO">${out} = ErrDisable Reason            Timer Status
+-----------------            --------------
+arp-inspection               Disabled
+bpduguard                    Enabled
+channel-misconfig            Disabled
+d...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-12T10:51:35.633283" elapsed="0.486314"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-12T10:51:36.119658" elapsed="0.000034"/>
+</return>
+<msg time="2026-09-12T10:51:36.119801" level="INFO">${rec} = ErrDisable Reason            Timer Status
+-----------------            --------------
+arp-inspection               Disabled
+bpduguard                    Enabled
+channel-misconfig            Disabled
+d...</msg>
+<var>${rec}</var>
+<arg>${sw}</arg>
+<arg>show errdisable recovery</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-12T10:51:35.632464" elapsed="0.487354"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${rec}</arg>
+<arg>(?m)^bpduguard\\s+Enabled</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-12T10:51:36.119916" elapsed="0.000266"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${rec}</arg>
+<arg>Timer interval: 300 seconds</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-12T10:51:36.120244" elapsed="0.000158"/>
+</kw>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-12T10:51:35.632358" elapsed="0.488068"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-12T10:51:35.143654" elapsed="0.976796"/>
+</for>
+<status status="PASS" start="2026-09-12T10:51:35.143472" elapsed="0.977047"/>
+</test>
+<test id="s1-s1-t8" name="Service hygiene: timestamps, password encryption, login auditing" line="86">
+<for flavor="IN">
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T10:51:36.121580" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T10:51:36.121394" elapsed="0.000203"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T10:51:36.121627" elapsed="0.000020"/>
+</return>
+<msg time="2026-09-12T10:51:36.121716" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T10:51:36.121244" elapsed="0.000488"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-12T10:51:36.668582" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show run | include ^service|^login on
+service tcp-keepalives-in
+service tcp-keepalives-out
+service timestamps debug datetime msec
+service timestamps log datetime msec localtime show-timezone
+service password-encryption
+login on-failure log
+login on-success log&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:36.668744" level="INFO">${out} = service tcp-keepalives-in
+service tcp-keepalives-out
+service timestamps debug datetime msec
+service timestamps log datetime msec localtime show-timezone
+service password-encryption
+login on-failure lo...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-12T10:51:36.121784" elapsed="0.546984"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-12T10:51:36.668834" elapsed="0.000041"/>
+</return>
+<msg time="2026-09-12T10:51:36.668993" level="INFO">${svc} = service tcp-keepalives-in
+service tcp-keepalives-out
+service timestamps debug datetime msec
+service timestamps log datetime msec localtime show-timezone
+service password-encryption
+login on-failure lo...</msg>
+<var>${svc}</var>
+<arg>${sw}</arg>
+<arg>show run | include ^service|^login on</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-12T10:51:36.121037" elapsed="0.547975"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${svc}</arg>
+<arg>service timestamps log datetime msec localtime show-timezone</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:36.669112" elapsed="0.000276"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${svc}</arg>
+<arg>service password-encryption</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:36.669450" elapsed="0.000176"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${svc}</arg>
+<arg>service tcp-keepalives-in</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:36.669682" elapsed="0.000159"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${svc}</arg>
+<arg>login on-success log</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:36.669898" elapsed="0.000175"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${svc}</arg>
+<arg>login on-failure log</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:36.670130" elapsed="0.000151"/>
+</kw>
+<kw name="Nms Command" owner="LabLib">
+<msg time="2026-09-12T10:51:37.220105" level="INFO" html="true">&lt;pre&gt;nms$ sshpass -p admin ssh -o ConnectTimeout=10 sw1 "show clock"
+rc=0
+Managed by Network-as-Code (Terraform). Manual changes will be reverted.
+
+
+14:51:37.140 UTC Sat Sep 12 2026Connection to sw1 closed by remote host.
+&lt;/pre&gt;</msg>
+<arg>sshpass -p ${PASSWORD} ssh -o ConnectTimeout=10 ${sw} "show clock"</arg>
+<doc>Run a shell command on the NMS jumphost; returns stdout (fails on non-zero rc).</doc>
+<status status="PASS" start="2026-09-12T10:51:36.670355" elapsed="0.549859"/>
+</kw>
+<kw name="Wait Until Keyword Succeeds" owner="BuiltIn">
+<kw name="Nms Command" owner="LabLib">
+<msg time="2026-09-12T10:51:37.266105" level="INFO" html="true">&lt;pre&gt;nms$ grep -q 'LOGIN_SUCCESS.*Source: 10.0.0.10' /var/log/lab/sw1.log
+rc=0
+&lt;/pre&gt;</msg>
+<arg>grep -q 'LOGIN_SUCCESS.*Source: ${NMS}[host]' /var/log/lab/${sw}.log</arg>
+<doc>Run a shell command on the NMS jumphost; returns stdout (fails on non-zero rc).</doc>
+<status status="PASS" start="2026-09-12T10:51:37.220760" elapsed="0.045494"/>
+</kw>
+<arg>20s</arg>
+<arg>2s</arg>
+<arg>Nms Command</arg>
+<arg>grep -q 'LOGIN_SUCCESS.*Source: ${NMS}[host]' /var/log/lab/${sw}.log</arg>
+<doc>Runs the specified keyword and retries if it fails.</doc>
+<status status="PASS" start="2026-09-12T10:51:37.220366" elapsed="0.045971"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-12T10:51:36.120936" elapsed="1.145465"/>
+</iter>
+<iter>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T10:51:37.267971" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T10:51:37.267570" elapsed="0.000443"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T10:51:37.268070" elapsed="0.000045"/>
+</return>
+<msg time="2026-09-12T10:51:37.268252" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T10:51:37.267278" elapsed="0.001001"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-12T10:51:37.789888" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show run | include ^service|^login on
+service tcp-keepalives-in
+service tcp-keepalives-out
+service timestamps debug datetime msec
+service timestamps log datetime msec localtime show-timezone
+service password-encryption
+login on-failure log
+login on-success log&lt;/pre&gt;</msg>
+<msg time="2026-09-12T10:51:37.790061" level="INFO">${out} = service tcp-keepalives-in
+service tcp-keepalives-out
+service timestamps debug datetime msec
+service timestamps log datetime msec localtime show-timezone
+service password-encryption
+login on-failure lo...</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-12T10:51:37.268393" elapsed="0.521689"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-12T10:51:37.790140" elapsed="0.000050"/>
+</return>
+<msg time="2026-09-12T10:51:37.790318" level="INFO">${svc} = service tcp-keepalives-in
+service tcp-keepalives-out
+service timestamps debug datetime msec
+service timestamps log datetime msec localtime show-timezone
+service password-encryption
+login on-failure lo...</msg>
+<var>${svc}</var>
+<arg>${sw}</arg>
+<arg>show run | include ^service|^login on</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-12T10:51:37.266811" elapsed="0.523526"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${svc}</arg>
+<arg>service timestamps log datetime msec localtime show-timezone</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:37.790439" elapsed="0.000307"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${svc}</arg>
+<arg>service password-encryption</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:37.790822" elapsed="0.000187"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${svc}</arg>
+<arg>service tcp-keepalives-in</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:37.791070" elapsed="0.000206"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${svc}</arg>
+<arg>login on-success log</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:37.791340" elapsed="0.000167"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${svc}</arg>
+<arg>login on-failure log</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T10:51:37.791564" elapsed="0.000209"/>
+</kw>
+<kw name="Nms Command" owner="LabLib">
+<msg time="2026-09-12T10:51:38.342476" level="INFO" html="true">&lt;pre&gt;nms$ sshpass -p admin ssh -o ConnectTimeout=10 sw2 "show clock"
+rc=0
+Managed by Network-as-Code (Terraform). Manual changes will be reverted.
+
+
+14:51:38.204 UTC Sat Sep 12 2026Connection to sw2 closed by remote host.
+&lt;/pre&gt;</msg>
+<arg>sshpass -p ${PASSWORD} ssh -o ConnectTimeout=10 ${sw} "show clock"</arg>
+<doc>Run a shell command on the NMS jumphost; returns stdout (fails on non-zero rc).</doc>
+<status status="PASS" start="2026-09-12T10:51:37.791836" elapsed="0.550846"/>
+</kw>
+<kw name="Wait Until Keyword Succeeds" owner="BuiltIn">
+<kw name="Nms Command" owner="LabLib">
+<msg time="2026-09-12T10:51:38.388645" level="INFO" html="true">&lt;pre&gt;nms$ grep -q 'LOGIN_SUCCESS.*Source: 10.0.0.10' /var/log/lab/sw2.log
+rc=0
+&lt;/pre&gt;</msg>
+<arg>grep -q 'LOGIN_SUCCESS.*Source: ${NMS}[host]' /var/log/lab/${sw}.log</arg>
+<doc>Run a shell command on the NMS jumphost; returns stdout (fails on non-zero rc).</doc>
+<status status="PASS" start="2026-09-12T10:51:38.343232" elapsed="0.045614"/>
+</kw>
+<arg>20s</arg>
+<arg>2s</arg>
+<arg>Nms Command</arg>
+<arg>grep -q 'LOGIN_SUCCESS.*Source: ${NMS}[host]' /var/log/lab/${sw}.log</arg>
+<doc>Runs the specified keyword and retries if it fails.</doc>
+<status status="PASS" start="2026-09-12T10:51:38.342844" elapsed="0.046061"/>
+</kw>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-12T10:51:37.266595" elapsed="1.122338"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-12T10:51:36.120814" elapsed="2.268147"/>
+</for>
+<status status="PASS" start="2026-09-12T10:51:36.120636" elapsed="2.268447"/>
+</test>
+<kw name="Suite Teardown Close Connections" owner="common" type="TEARDOWN">
+<kw name="Close All Connections" owner="LabLib">
+<status status="PASS" start="2026-09-12T10:51:38.389698" elapsed="0.021318"/>
+</kw>
+<status status="PASS" start="2026-09-12T10:51:38.389523" elapsed="0.021594"/>
+</kw>
+<doc>Management-plane and L2 hardening: AAA parity, SSH/VTY settings with a management ACL,
+deterministic STP root and portfast/bpduguard defaults, service/logging hygiene.</doc>
+<status status="FAIL" start="2026-09-12T10:51:21.233870" elapsed="17.177275"/>
+</suite>
+<status status="FAIL" start="2026-09-12T10:51:21.212100" elapsed="17.199591"/>
+</suite>
+<statistics>
+<total>
+<stat pass="7" fail="1" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat name="cat9000v lab" id="s1" pass="7" fail="1" skip="0">cat9000v lab</stat>
+<stat name="08 Hardening" id="s1-s1" pass="7" fail="1" skip="0">cat9000v lab.08 Hardening</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

@@ -47,6 +47,7 @@ results/
 | `04_services` | NTP server config + association (+ synced, `slow` tag), syslog end-to-end (marker via `send log`, seen in `/var/log/lab/swN.log` on the NMS), SNMP identity queried from the NMS + trap host, banner, CDP/LLDP global |
 | `06_vlans` | Routed VLANs 110-119: present on both switches, SVI up with the /24 gateway on the owning switch, originated into BGP by the owner, learned via iBGP on the other switch, gateway pingable across the trunk; L2 VLANs 210-219: present, no SVI, STP forwarding on the trunk; trunk allowed list |
 | `07_hosts` | CirrOS hosts: OOB reachability + hostname, eth1 address and default route via the SVI, switch sees the host MAC/ARP on the right access port and VLAN, gateway ping, **host1 ↔ host2 ping through the switches (iBGP-routed)**, traceroute hops = sw1 SVI → sw2 transit SVI (never the OOB net), far-switch loopback and routed-VLAN gateways reachable |
+| `08_hardening` | AAA parity (local login + exec authz on both), SSH v2/timeout/retries, VTY blocks SSH-only with `MGMT-ACCESS in vrf-also`, ACL admits the OOB net and **blocks SSH from a user VLAN** (host1 → SVI, deny counter increases), sw1 root / sw2 backup for every trunked VLAN, portfast + bpduguard defaults, errdisable recovery, service timestamps/password-encryption, login auditing seen in NMS syslog |
 | `05_nac_compliance` | `terraform plan -detailed-exitcode` == 0 (device config matches the NAC data model), rendered model present |
 
 Host credentials (`cirros`/`gocubsgo`) and attachments (`HOSTS`) are in

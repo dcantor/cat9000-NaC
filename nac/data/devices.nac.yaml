@@ -13,6 +13,33 @@ iosxe:
       configuration:
         system:
           hostname: sw1
+        spanning_tree:
+          vlans:                      # sw1 is the deterministic STP root for every VLAN in use
+            - { id: 1, priority: 4096 }
+            - { id: 10, priority: 4096 }
+            - { id: 20, priority: 4096 }
+            - { id: 99, priority: 4096 }
+            - { id: 100, priority: 4096 }
+            - { id: 110, priority: 4096 }
+            - { id: 111, priority: 4096 }
+            - { id: 112, priority: 4096 }
+            - { id: 113, priority: 4096 }
+            - { id: 114, priority: 4096 }
+            - { id: 115, priority: 4096 }
+            - { id: 116, priority: 4096 }
+            - { id: 117, priority: 4096 }
+            - { id: 118, priority: 4096 }
+            - { id: 119, priority: 4096 }
+            - { id: 210, priority: 4096 }
+            - { id: 211, priority: 4096 }
+            - { id: 212, priority: 4096 }
+            - { id: 213, priority: 4096 }
+            - { id: 214, priority: 4096 }
+            - { id: 215, priority: 4096 }
+            - { id: 216, priority: 4096 }
+            - { id: 217, priority: 4096 }
+            - { id: 218, priority: 4096 }
+            - { id: 219, priority: 4096 }
         interfaces:
           # sw1 is the gateway for the USERS VLAN
           vlans:
@@ -65,6 +92,33 @@ iosxe:
       configuration:
         system:
           hostname: sw2
+        spanning_tree:
+          vlans:                      # sw2 is the backup root (one entry per VLAN: that is how IOS reports it back)
+            - { id: 1, priority: 8192 }
+            - { id: 10, priority: 8192 }
+            - { id: 20, priority: 8192 }
+            - { id: 99, priority: 8192 }
+            - { id: 100, priority: 8192 }
+            - { id: 110, priority: 8192 }
+            - { id: 111, priority: 8192 }
+            - { id: 112, priority: 8192 }
+            - { id: 113, priority: 8192 }
+            - { id: 114, priority: 8192 }
+            - { id: 115, priority: 8192 }
+            - { id: 116, priority: 8192 }
+            - { id: 117, priority: 8192 }
+            - { id: 118, priority: 8192 }
+            - { id: 119, priority: 8192 }
+            - { id: 210, priority: 8192 }
+            - { id: 211, priority: 8192 }
+            - { id: 212, priority: 8192 }
+            - { id: 213, priority: 8192 }
+            - { id: 214, priority: 8192 }
+            - { id: 215, priority: 8192 }
+            - { id: 216, priority: 8192 }
+            - { id: 217, priority: 8192 }
+            - { id: 218, priority: 8192 }
+            - { id: 219, priority: 8192 }
         interfaces:
           # sw2 is the gateway for the SERVERS VLAN
           vlans:

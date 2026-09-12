@@ -114,6 +114,21 @@ class LabLib:
             raise AssertionError(f"'{command}' on {host} failed rc={rc}: {text.strip()[-300:]}")
         return text
 
+    @keyword
+    def host_command_rc(self, host, command, user="cirros", password="gocubsgo", timeout=60):
+        """Run a command on a CirrOS host and return its exit code (never fails)."""
+        c = paramiko.SSHClient()
+        c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        c.connect(host, username=user, password=password, timeout=20,
+                  look_for_keys=False, allow_agent=False)
+        try:
+            _, out, err = c.exec_command(command, timeout=float(timeout))
+            rc = out.channel.recv_exit_status()
+            logger.info(f"<pre>{host}$ {command}\nrc={rc}\n{out.read().decode()}{err.read().decode()}</pre>", html=True)
+        finally:
+            c.close()
+        return rc
+
     # ---- host-side helpers -----------------------------------------------
     @keyword
     def host_ping(self, target, count=3):

@@ -69,6 +69,11 @@ TRUNK_ALLOWED_VLANS = "10,20,100,110-119,210-219"
 ACCESS_PORTS = {"Gi1/0/2": "10", "Gi1/0/3": "10", "Gi1/0/4": "20"}
 STP_MODE = "rapid-pvst"
 
+# Hardening (from nac/data/global.nac.yaml / devices.nac.yaml)
+MGMT_ACL = "MGMT-ACCESS"
+STP_PRIORITY = {"sw1": 4096, "sw2": 8192}       # sw1 = root, sw2 = backup root
+STP_ROOT_MAC = "5254.00c9.0100"                  # sw1 bridge MAC (52:54:00:c9:01:00)
+
 # Services (from nac/data/global.nac.yaml)
 NTP_SERVER = "10.0.0.10"
 SYSLOG_HOST = "10.0.0.10"
