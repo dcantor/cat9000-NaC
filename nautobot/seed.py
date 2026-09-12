@@ -43,10 +43,16 @@ def lab_conf(*arrays):
                          capture_output=True, text=True, check=True).stdout
     res = {}
     for name in arrays:
-        m = re.search(rf"declare -A {name}=\((.*?)\)\n", out, re.S)
+        m = re.search(rf"declare -[aA] {name}=\((.*?)\)\n", out, re.S)
         res[name] = dict(re.findall(r'\[(\w+)\]="([^"]*)"', m.group(1)))
     return res
-conf = lab_conf("HOST_ATTACH", "MGMT_IP")
+conf = lab_conf("HOST_ATTACH", "MGMT_IP", "LINKS")
+# every switch<->switch link is a member of Port-channel1 (lab convention)
+SW_LINKS = [l.split() for l in conf["LINKS"].values() if all(x.split(":")[0].startswith("sw") for x in l.split())]
+LAG_MEMBERS = {}
+for a_end, b_end in SW_LINKS:
+    for end in (a_end, b_end):
+        LAG_MEMBERS.setdefault(end.split(":")[0], []).append(int(end.split(":")[1]))
 MGMT = conf["MGMT_IP"]
 HOSTS = {}
 for h, spec in conf["HOST_ATTACH"].items():
@@ -240,9 +246,20 @@ for sw, dy in devices_yaml.items():
     ensure_ip(mgmt, f"{MGMT[sw]}/24", primary_of=dev)
     switch_ifaces[sw] = {}
     eth = {e["id"]: e for e in cfg["interfaces"]["ethernets"]}
+    trunk = next(e for e in cfg["interfaces"]["ethernets"] + cfg["interfaces"].get("port_channels", [])
+                 if e.get("switchport", {}).get("mode") == "trunk")
+    # Port-channel1: LAG carrying the trunk; the physical links in lab.conf are its members
+    lag = ensure_iface(dev, "Port-channel1", "lag", trunk["description"], mode="tagged",
+                       untagged=trunk["switchport"]["trunk_native_vlan_id"], tagged=trunk_vlans)
     for n in range(1, 9):
         name = f"GigabitEthernet1/0/{n}"
         e = eth.get(f"1/0/{n}")
+        if n in LAG_MEMBERS.get(sw, []):
+            itf = ensure_iface(dev, name, "1000base-t", f"Port-channel1 member (to peer core switch)", mode="tagged",
+                               untagged=trunk["switchport"]["trunk_native_vlan_id"], tagged=trunk_vlans)
+            ensure(itf, lag=lag.id)
+            switch_ifaces[sw][n] = itf
+            continue
         if e is None:   # no cable, no role: shut and parked in the quarantine VLAN
             itf = ensure_iface(dev, name, "1000base-t", "unused (quarantine)", enabled=False,
                                mode="access", untagged=SERVICES["quarantine_vlan"])
@@ -269,8 +286,10 @@ for sw, dy in devices_yaml.items():
         itf = ensure_iface(dev, f"Vlan{vid}", "virtual", s["description"], mode="access", untagged=vid)
         ensure_ip(itf, f"{addr}/{plen}")
 
-# inter-switch trunk
-ensure_cable(switch_ifaces["sw1"][1], switch_ifaces["sw2"][1])
+# inter-switch links (Port-channel1 members)
+for a_end, b_end in SW_LINKS:
+    a_sw, a_p = a_end.split(":"); b_sw, b_p = b_end.split(":")
+    ensure_cable(switch_ifaces[a_sw][int(a_p)], switch_ifaces[b_sw][int(b_p)])
 
 # end hosts + NMS
 for h, spec in HOSTS.items():
@@ -357,10 +376,12 @@ NAC_QUERY = """{
     software_version { version }
     interfaces {
       name
+      type
       description
       enabled
       mgmt_only
       mode
+      lag { name }
       untagged_vlan { vid }
       tagged_vlans { vid }
       vrf { name }
@@ -397,7 +418,7 @@ gq = nb.extras.graphql_queries.get(name="nac-device-model")
 if gq is None:
     nb.extras.graphql_queries.create(name="nac-device-model", query=NAC_QUERY)
     created.append("graphql-query:nac-device-model")
-elif gq.query != NAC_QUERY:   # pynautobot's diff-based update() skips this field; PATCH directly
+elif gq.query.strip() != NAC_QUERY.strip():   # pynautobot's diff-based update() skips this field; PATCH directly
     nb.http_session.patch(f"{a.url}/api/extras/graphql-queries/{gq.id}/", json={"query": NAC_QUERY},
                           headers={"Authorization": f"Token {a.token}", "Accept": "application/json"}).raise_for_status()
     created.append("graphql-query:nac-device-model (updated)")

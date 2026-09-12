@@ -148,7 +148,8 @@ for slug, name, match in (("vlan", "VLAN database", "vlan"),
                           ("syslog", "Syslog", "logging host"),
                           ("snmp", "SNMP", "snmp-server community\nsnmp-server location\nsnmp-server contact\nsnmp-server host"),
                           ("banner", "Banner", "banner motd"),
-                          ("mgmt-acl", "Management ACL", "ip access-list standard MGMT-ACCESS")):
+                          ("mgmt-acl", "Management ACL", "ip access-list standard MGMT-ACCESS"),
+                          ("port-channel", "Port-channel", "interface Port-channel")):
     feat = feat_ep.get(slug=slug) or feat_ep.create(slug=slug, name=name, description=f"{name} (from Nautobot)")
     rule = rule_ep.get(feature=feat.id, platform=plat.id)
     fields = {"feature": feat.id, "platform": plat.id, "config_type": "cli", "match_config": match,

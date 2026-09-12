@@ -4,8 +4,14 @@ Resource          ../resources/common.resource
 Suite Teardown    Suite Teardown Close Connections
 
 *** Test Cases ***
-Inter-switch link is up on both ends
+Inter-switch links are up and bundled in the LACP port-channel
     FOR    ${sw}    IN    @{SWITCH_NAMES}
+        FOR    ${m}    IN    @{TRUNK_MEMBERS}
+            ${st}=    Show    ${sw}    show interfaces status | include ${m}${SPACE}
+            Should Match Regexp    ${st}    ${m}\\s.*\\sconnected\\s
+        END
+        ${ec}=    Show    ${sw}    show etherchannel summary | begin Group
+        Should Match Regexp    ${ec}    (?m)^1\\s+${TRUNK_PORT}\\(SU\\)\\s+LACP\\s+Gi1/0/1\\(P\\)\\s+Gi1/0/5\\(P\\)
         ${st}=    Show    ${sw}    show interfaces status | include ${TRUNK_PORT}${SPACE}
         Should Match Regexp    ${st}    ${TRUNK_PORT}\\s.*\\sconnected\\s
     END
@@ -25,6 +31,10 @@ Trunk port configuration
         Should Match Regexp    ${trunk}    (?m)^${TRUNK_PORT}\\s+${TRUNK_ALLOWED_VLANS}\\s*$
         ${cfg}=    Show    ${sw}    show run interface ${TRUNK_PORT}
         Should Contain    ${cfg}    switchport nonegotiate
+        FOR    ${m}    IN    @{TRUNK_MEMBERS}
+            ${mcfg}=    Show    ${sw}    show run interface ${m}
+            Should Contain    ${mcfg}    channel-group 1 mode active
+        END
     END
 
 Access ports are in the right VLANs with portfast and bpduguard
@@ -48,13 +58,16 @@ Spanning tree runs in rapid-pvst and the trunk is forwarding
         Should Match Regexp    ${stp}    ${TRUNK_PORT}\\s+(Root|Desg)\\s+FWD
     END
 
-CDP and LLDP see the peer switch on the trunk
+CDP and LLDP see the peer switch on every port-channel member
     FOR    ${sw}    IN    @{SWITCH_NAMES}
         ${peer}=    Set Variable    ${SWITCHES}[${sw}][peer]
         ${cdp}=    Show    ${sw}    show cdp neighbors
-        Should Match Regexp    ${cdp}    ${peer}\\.${DOMAIN_NAME}\\s+Gig 1/0/1\\s.*Gig 1/0/1
         ${lldp}=    Show    ${sw}    show lldp neighbors
-        Should Match Regexp    ${lldp}    ${peer}\\.${DOMAIN_NAME}\\s+${TRUNK_PORT}\\s.*${TRUNK_PORT}
+        FOR    ${m}    IN    @{TRUNK_MEMBERS}
+            ${cdp_if}=    Replace String    ${m}    Gi    Gig${SPACE}
+            Should Match Regexp    ${cdp}    ${peer}\\.${DOMAIN_NAME}\\s+${cdp_if}\\s.*${cdp_if}
+            Should Match Regexp    ${lldp}    ${peer}\\.${DOMAIN_NAME}\\s+${m}\\s.*${m}
+        END
     END
 
 Unused ports are shut down and parked in the quarantine VLAN

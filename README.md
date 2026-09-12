@@ -17,7 +17,7 @@ out-of-band management network.
               │ Gi0/0 (Mgmt-vrf)                     │ Gi0/0 (Mgmt-vrf)
          ┌────┴────┐                            ┌────┴────┐
          │   sw1   │ Gi1/0/1 ══════════ Gi1/0/1 │   sw2   │
-         │10.0.0.11│      (UDP p2p tunnel)      │10.0.0.12│
+         │10.0.0.11│ Gi1/0/5 ══ Po1 (LACP) ═══ Gi1/0/5 │10.0.0.12│
          └────┬────┘                            └────┬────┘
               │ Gi1/0/2  access VLAN 10             │ Gi1/0/4  access VLAN 20
          ┌────┴────┐                            ┌────┴────┐

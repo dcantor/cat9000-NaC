@@ -171,8 +171,10 @@ iosxe:
             address_mask: 255.255.255.0
         - type: GigabitEthernet
           id: 1/0/1
-          description: TRUNK to peer core switch
+          description: Port-channel1 member (to peer core switch)
           shutdown: false
+          port_channel_id: 1
+          port_channel_mode: active
           switchport:
             enable: true
             mode: trunk
@@ -239,12 +241,41 @@ iosxe:
             bpduguard: true
         - type: GigabitEthernet
           id: 1/0/5
-          description: unused (quarantine)
-          shutdown: true
+          description: Port-channel1 member (to peer core switch)
+          shutdown: false
+          port_channel_id: 1
+          port_channel_mode: active
           switchport:
             enable: true
-            mode: access
-            access_vlan: 999
+            mode: trunk
+            trunk_native_vlan_id: 99
+            trunk_allowed_vlans:
+              vlans:
+                ids:
+                - 10
+                - 20
+                - 100
+                - 110
+                - 111
+                - 112
+                - 113
+                - 114
+                - 115
+                - 116
+                - 117
+                - 118
+                - 119
+                - 210
+                - 211
+                - 212
+                - 213
+                - 214
+                - 215
+                - 216
+                - 217
+                - 218
+                - 219
+            nonegotiate: true
         - type: GigabitEthernet
           id: 1/0/6
           description: unused (quarantine)
@@ -318,6 +349,41 @@ iosxe:
           ipv4:
             address: 10.255.0.1
             address_mask: 255.255.255.255
+        port_channels:
+        - id: 1
+          description: TRUNK to peer core switch
+          shutdown: false
+          switchport:
+            enable: true
+            mode: trunk
+            trunk_native_vlan_id: 99
+            trunk_allowed_vlans:
+              vlans:
+                ids:
+                - 10
+                - 20
+                - 100
+                - 110
+                - 111
+                - 112
+                - 113
+                - 114
+                - 115
+                - 116
+                - 117
+                - 118
+                - 119
+                - 210
+                - 211
+                - 212
+                - 213
+                - 214
+                - 215
+                - 216
+                - 217
+                - 218
+                - 219
+            nonegotiate: true
       routing:
         static_routes:
         - vrf: Mgmt-vrf
@@ -521,8 +587,10 @@ iosxe:
             address_mask: 255.255.255.0
         - type: GigabitEthernet
           id: 1/0/1
-          description: TRUNK to peer core switch
+          description: Port-channel1 member (to peer core switch)
           shutdown: false
+          port_channel_id: 1
+          port_channel_mode: active
           switchport:
             enable: true
             mode: trunk
@@ -589,12 +657,41 @@ iosxe:
             bpduguard: true
         - type: GigabitEthernet
           id: 1/0/5
-          description: unused (quarantine)
-          shutdown: true
+          description: Port-channel1 member (to peer core switch)
+          shutdown: false
+          port_channel_id: 1
+          port_channel_mode: active
           switchport:
             enable: true
-            mode: access
-            access_vlan: 999
+            mode: trunk
+            trunk_native_vlan_id: 99
+            trunk_allowed_vlans:
+              vlans:
+                ids:
+                - 10
+                - 20
+                - 100
+                - 110
+                - 111
+                - 112
+                - 113
+                - 114
+                - 115
+                - 116
+                - 117
+                - 118
+                - 119
+                - 210
+                - 211
+                - 212
+                - 213
+                - 214
+                - 215
+                - 216
+                - 217
+                - 218
+                - 219
+            nonegotiate: true
         - type: GigabitEthernet
           id: 1/0/6
           description: unused (quarantine)
@@ -668,6 +765,41 @@ iosxe:
           ipv4:
             address: 10.255.0.2
             address_mask: 255.255.255.255
+        port_channels:
+        - id: 1
+          description: TRUNK to peer core switch
+          shutdown: false
+          switchport:
+            enable: true
+            mode: trunk
+            trunk_native_vlan_id: 99
+            trunk_allowed_vlans:
+              vlans:
+                ids:
+                - 10
+                - 20
+                - 100
+                - 110
+                - 111
+                - 112
+                - 113
+                - 114
+                - 115
+                - 116
+                - 117
+                - 118
+                - 119
+                - 210
+                - 211
+                - 212
+                - 213
+                - 214
+                - 215
+                - 216
+                - 217
+                - 218
+                - 219
+            nonegotiate: true
       routing:
         static_routes:
         - vrf: Mgmt-vrf

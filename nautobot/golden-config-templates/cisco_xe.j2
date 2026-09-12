@@ -46,6 +46,15 @@ vlan {{ v.vid }}
  name {{ v.name }}
 !
 {% endfor -%}
+{% for i in interfaces | sort(attribute='name') if i.name.startswith('Port-channel') %}
+interface {{ i.name }}
+ description {{ i.description }}
+ switchport trunk native vlan {{ i.untagged_vlan.vid }}
+ switchport trunk allowed vlan {{ i.tagged_vlans | map(attribute='vid') | list | vlanlist_to_config | first }}
+ switchport mode trunk
+ switchport nonegotiate
+!
+{% endfor %}
 {% for i in loops -%}
 interface {{ i.name }}
  description {{ i.description }}

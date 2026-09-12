@@ -43,7 +43,8 @@ QUERY = """
     config_context
     software_version { version }
     interfaces {
-      name description enabled mgmt_only mode
+      name type description enabled mgmt_only mode
+      lag { name }
       untagged_vlan { vid }
       tagged_vlans { vid }
       vrf { name }
@@ -103,7 +104,7 @@ def render_device(dev):
     svc = dev["config_context"] or {}          # merged global ("lab-services") + local context
     oob = svc.get("oob", {})
     ifaces = sorted(dev["interfaces"], key=lambda i: (i["name"].rstrip("0123456789/"), ifnum(i["name"])))
-    svis, loopbacks, ethernets, networks = [], [], [], []
+    svis, loopbacks, ethernets, networks, port_channels = [], [], [], [], []
     router_id = transit_ip = None
     ri = bgp_ri.get(name)
 
@@ -121,9 +122,21 @@ def render_device(dev):
                               "shutdown": not i["enabled"], "vrf_forwarding": i["vrf"]["name"] if i["vrf"] else None,
                               "ipv4": {"address": addr, "address_mask": mask}})
             continue
+        if n.startswith("Port-channel"):
+            pc = {"id": int(n[12:]), "description": i["description"], "shutdown": not i["enabled"]}
+            if i["mode"] == "TAGGED":
+                pc["switchport"] = {"enable": True, "mode": "trunk",
+                                    "trunk_native_vlan_id": i["untagged_vlan"]["vid"],
+                                    "trunk_allowed_vlans": {"vlans": {"ids": sorted(v["vid"] for v in i["tagged_vlans"])}},
+                                    "nonegotiate": True}
+            port_channels.append(pc)
+            continue
         if n.startswith("GigabitEthernet1/0/"):
             port = n.split("GigabitEthernet")[1]
             e = {"type": "GigabitEthernet", "id": port, "description": i["description"], "shutdown": not i["enabled"]}
+            if i["lag"]:                                   # LACP member: same switchport config as the LAG
+                e["port_channel_id"] = int(i["lag"]["name"][12:])
+                e["port_channel_mode"] = "active"
             if i["mode"] == "TAGGED":
                 e["switchport"] = {"enable": True, "mode": "trunk",
                                    "trunk_native_vlan_id": i["untagged_vlan"]["vid"],
@@ -209,7 +222,8 @@ def render_device(dev):
             "system": services.get("system", {"hostname": name}),
             "spanning_tree": {"vlans": [{"id": v, "priority": ctx.get("stp_priority")} for v in [1] + vlan_ids]},
             "vlan": {"vlans": [{"id": v["vid"], "name": v["name"]} for v in vlans]},
-            "interfaces": {"ethernets": ethernets, "vlans": svis, "loopbacks": loopbacks},
+            "interfaces": {"ethernets": ethernets, "vlans": svis, "loopbacks": loopbacks,
+                           **({"port_channels": port_channels} if port_channels else {})},
             **({"routing": routing} if routing else {}),
         },
     }

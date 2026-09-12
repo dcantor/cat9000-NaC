@@ -66,15 +66,20 @@ VLAN group holds the modelled VLANs
 
 Trunk, access ports, SVIs and cabling are modelled per switch
     FOR    ${sw}    IN    @{SWITCH_NAMES}
-        ${d}=    Nautobot Graphql    { devices(name:"${sw}") { interfaces { name mode untagged_vlan { vid } tagged_vlans { vid } ip_addresses { address } connected_interface { name device { name } } } } }
+        ${d}=    Nautobot Graphql    { devices(name:"${sw}") { interfaces { name mode lag { name } untagged_vlan { vid } tagged_vlans { vid } ip_addresses { address } connected_interface { name device { name } } } } }
         ${ifs}=    Create Dictionary
         FOR    ${i}    IN    @{d}[devices][0][interfaces]
             Set To Dictionary    ${ifs}    ${i}[name]    ${i}
         END
-        Should Be Equal    ${ifs}[GigabitEthernet1/0/1][mode]    TAGGED
-        Should Be Equal As Integers    ${ifs}[GigabitEthernet1/0/1][untagged_vlan][vid]    ${TRUNK_NATIVE_VLAN}
-        Length Should Be    ${ifs}[GigabitEthernet1/0/1][tagged_vlans]    23
-        Should Be Equal    ${ifs}[GigabitEthernet1/0/1][connected_interface][device][name]    ${SWITCHES}[${sw}][peer]
+        Should Be Equal    ${ifs}[Port-channel1][mode]    TAGGED
+        Should Be Equal As Integers    ${ifs}[Port-channel1][untagged_vlan][vid]    ${TRUNK_NATIVE_VLAN}
+        Length Should Be    ${ifs}[Port-channel1][tagged_vlans]    23
+        FOR    ${m}    IN    @{TRUNK_MEMBERS}
+            ${name}=    Replace String    ${m}    Gi    GigabitEthernet
+            Should Be Equal    ${ifs}[${name}][lag][name]    Port-channel1
+            Should Be Equal    ${ifs}[${name}][connected_interface][device][name]    ${SWITCHES}[${sw}][peer]
+            Should Be Equal    ${ifs}[${name}][connected_interface][name]    ${name}
+        END
         FOR    ${port}    ${vlan}    IN    &{ACCESS_PORTS}
             ${name}=    Replace String    ${port}    Gi    GigabitEthernet
             Should Be Equal    ${ifs}[${name}][mode]    ACCESS
