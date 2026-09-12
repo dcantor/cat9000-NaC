@@ -53,6 +53,7 @@ works as-is (an ssh config with the right user/algorithms is pre-installed).
 | `lab.sh` | Controller (`up`, `down`, `status`, `console`, `ssh`, `bootstrap`, `log`, `nac`, `rebuild`, `clean`) |
 | `nac/` | Network-as-Code Terraform root + YAML data model for the switches |
 | `tests/` | Robot Framework suites, keyword library, `run.sh` |
+| `nautobot/` | Docker Compose stack + installer for Nautobot on the NMS |
 | `results/` | One folder per test run: configs + Robot report/log (git-ignored) |
 | `networks/oob-mgmt.xml` | libvirt definition of the OOB bridge (`virbr-oob`, host = 10.0.0.1) |
 | `nodes/swN/iosxe_config.txt` | Day-0 config, delivered on a CD-ROM ISO and re-applied by `bootstrap` |
@@ -115,6 +116,12 @@ by the `netascode/nac-iosxe` Terraform module. See [nac/README.md](nac/README.md
 The day-0 files in `nodes/sw*/iosxe_config.txt` only bootstrap management
 access (hostname, Gi0/0, users, SSH, NETCONF/RESTCONF); everything else
 belongs in `nac/data/`.
+
+## Nautobot
+
+[Nautobot](nautobot/README.md) 3.2 runs on the NMS jumphost as a Docker
+Compose stack (`./lab.sh nautobot install|status|logs|up|down`):
+http://10.0.0.10:8080, `admin`/`admin`.
 
 ## Tests
 

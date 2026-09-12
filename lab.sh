@@ -381,6 +381,19 @@ cmd_bootstrap() {  # wait for a switch to finish booting, then generate SSH keys
 
 cmd_log() { tail -n "${2:-50}" -f "$(node_dir "${1:?node}")/console.log"; }
 
+cmd_nautobot() {   # install|status|logs|down — Nautobot (Docker Compose) on the NMS jumphost
+  local sub="${1:-status}"; shift || true
+  case "$sub" in
+    install) exec "$LAB_DIR/nautobot/install.sh" ;;
+    status)  cmd_ssh nms 'cd /opt/nautobot && sg docker -c "docker compose ps --format \"table {{.Service}}\t{{.Status}}\""'
+             echo; echo "UI/API: http://${MGMT_IP[nms]}:8080  (admin / admin)" ;;
+    logs)    cmd_ssh nms "cd /opt/nautobot && sg docker -c 'docker compose logs --tail ${1:-100} ${2:-}'" ;;
+    down)    cmd_ssh nms 'cd /opt/nautobot && sg docker -c "docker compose down"' ;;
+    up)      cmd_ssh nms 'cd /opt/nautobot && sg docker -c "docker compose up -d"' ;;
+    *) die "usage: lab.sh nautobot {install|status|logs [n] [service]|up|down}" ;;
+  esac
+}
+
 cmd_test() {       # run the Robot Framework suite; results in results/<date>_<time>/
   [[ -x "$LAB_DIR/tests/.venv/bin/robot" ]] || "$LAB_DIR/tests/setup.sh"
   exec "$LAB_DIR/tests/run.sh" "$@"
@@ -419,6 +432,7 @@ usage: $(basename "$0") <command> [node...]
   log <node> [n]     follow a node's console log
   nac <tf args..>    run terraform in nac/ (e.g. nac init, nac plan, nac apply)
   test [robot args]  run the Robot Framework tests (e.g. test --exclude internet)
+  nautobot <cmd>     install | status | logs | up | down  (Nautobot on the NMS, port 8080)
   rebuild [node..]   re-generate domain XML from lab.conf (keeps disks)
   clean [node..]     stop, undefine and delete overlay disks (fresh start)
 nodes: ${ALL_NODES[*]}
@@ -427,6 +441,6 @@ U
 
 cmd="${1:-}"; shift || true
 case "$cmd" in
-  up|down|status|console|ssh|bootstrap|log|nac|test|rebuild|clean) "cmd_$cmd" "$@" ;;
+  up|down|status|console|ssh|bootstrap|log|nac|test|nautobot|rebuild|clean) "cmd_$cmd" "$@" ;;
   *) usage; exit 1 ;;
 esac

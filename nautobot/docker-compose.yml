@@ -1,0 +1,102 @@
+# Nautobot on the NMS jumphost (10.0.0.10) — Nautobot + Celery worker/beat, PostgreSQL, Redis.
+# Deployed by ../lab.sh nautobot install  →  http://10.0.0.10:8080
+name: nautobot
+
+x-nautobot: &nautobot
+  image: networktocode/nautobot:${NAUTOBOT_IMAGE_TAG:-3.2-py3.12}
+  env_file: .env
+  restart: unless-stopped
+  volumes:
+    - nautobot_media:/opt/nautobot/media
+    - nautobot_git:/opt/nautobot/git
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
+services:
+  # one-shot: named volumes are created root-owned, the image runs as uid 999 (nautobot)
+  volume_init:
+    image: networktocode/nautobot:${NAUTOBOT_IMAGE_TAG:-3.2-py3.12}
+    user: "0:0"
+    entrypoint: ["sh", "-c", "chown -R 999:999 /opt/nautobot/media /opt/nautobot/git"]
+    volumes:
+      - nautobot_media:/opt/nautobot/media
+      - nautobot_git:/opt/nautobot/git
+    restart: "no"
+
+  nautobot:
+    <<: *nautobot
+    depends_on:
+      volume_init:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8080/health/"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 120s      # first start runs migrations and creates the superuser
+
+  celery_worker:
+    <<: *nautobot
+    command: nautobot-server celery worker -l INFO --events
+    depends_on:
+      nautobot:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "bash", "-c", "nautobot-server celery inspect ping --destination celery@$$HOSTNAME"]
+      interval: 60s
+      timeout: 15s
+      retries: 3
+      start_period: 60s
+
+  celery_beat:
+    <<: *nautobot
+    command: nautobot-server celery beat -l INFO
+    depends_on:
+      nautobot:
+        condition: service_healthy
+    healthcheck:
+      disable: true
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${NAUTOBOT_DB_USER}
+      POSTGRES_PASSWORD: ${NAUTOBOT_DB_PASSWORD}
+      POSTGRES_DB: ${NAUTOBOT_DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${NAUTOBOT_REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a $$NAUTOBOT_REDIS_PASSWORD ping | grep -q PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    environment:
+      NAUTOBOT_REDIS_PASSWORD: ${NAUTOBOT_REDIS_PASSWORD}
+
+volumes:
+  postgres_data:
+  redis_data:
+  nautobot_media:
+  nautobot_git:

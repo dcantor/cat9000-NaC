@@ -6,7 +6,7 @@ timezone: UTC
 users:
   - name: lab
     gecos: Lab user
-    groups: [adm, sudo]
+    groups: [adm, sudo, docker]
     shell: /bin/bash
     sudo: ALL=(ALL) NOPASSWD:ALL
     lock_passwd: false
@@ -41,6 +41,8 @@ packages:
   - iptables-persistent
   - chrony
   - rsyslog
+  - docker.io
+  - docker-compose-v2
 write_files:
   - path: /home/lab/.ssh/config
     owner: lab:lab
