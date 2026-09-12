@@ -31,6 +31,28 @@ Switch identity in Nautobot matches the running switches
         Should Be Equal    ${dev}[primary_ip4][host]    ${SWITCHES}[${sw}][host]
         ${ver}=    Show    ${sw}    show version | include System Serial Number|Model Number
         Should Contain    ${ver}    ${dev}[serial]
+        Should Be Equal    ${dev}[software_version][version]    ${SOFTWARE_VERSION}
+        ${run}=    Show    ${sw}    show version | include ^Cisco IOS XE Software
+        # IOS prints 17.18.02, Nautobot stores 17.18.2 — compare numerically per field
+        ${ios}=    Get Regexp Matches    ${run}    Version (\\S+)    1
+        ${norm}=    Evaluate    ".".join(str(int(x)) for x in "${ios}[0]".split("."))
+        Should Be Equal    ${norm}    ${SOFTWARE_VERSION}
+    END
+
+Services and OOB settings come from the lab-services config context
+    ${d}=    Nautobot Graphql    { devices(role:"core-switch") { name config_context interfaces(name:"GigabitEthernet0/0") { vrf { name } ip_addresses { address } } } }
+    FOR    ${dev}    IN    @{d}[devices]
+        ${cc}=    Set Variable    ${dev}[config_context]
+        Should Be Equal    ${cc}[domain_name]    ${DOMAIN_NAME}
+        Should Be Equal    ${cc}[oob][vrf]    Mgmt-vrf
+        Should Be Equal    ${cc}[oob][gateway]    ${NMS}[host]
+        Should Be Equal    ${cc}[oob][acl]    ${MGMT_ACL}
+        Should Be Equal    ${cc}[ntp_servers][0][ip]    ${NTP_SERVER}
+        Should Be Equal    ${cc}[syslog_hosts][0]    ${SYSLOG_HOST}
+        Should Be Equal    ${cc}[snmp][community]    ${SNMP_COMMUNITY}
+        Should Be Equal    ${cc}[snmp][location]    ${SNMP_LOCATION}
+        Should Be Equal    ${dev}[interfaces][0][vrf][name]    Mgmt-vrf
+        Should Be Equal    ${dev}[interfaces][0][ip_addresses][0][address]    ${SWITCHES}[${dev}[name]][host]/24
     END
 
 VLAN group holds the modelled VLANs
@@ -94,7 +116,7 @@ Golden Config: backups of both switches are in the lab Gitea
 
 Golden Config: every switch is compliant with the Nautobot-rendered intent
     ${cc}=    Nautobot Get    plugins/golden-config/config-compliance/    limit=100
-    Should Be True    ${cc}[count] >= 8    msg=expected at least 4 features x 2 devices, got ${cc}[count]
+    Should Be True    ${cc}[count] >= 22    msg=expected at least 11 features x 2 devices, got ${cc}[count]
     FOR    ${row}    IN    @{cc}[results]
         Should Be True    ${row}[compliance]    msg=non-compliant: ${row}[device] ${row}[rule] missing=${row}[missing] extra=${row}[extra]
     END

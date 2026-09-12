@@ -26,6 +26,12 @@ Verify Management Access
     Should Match Regexp    ${ping}    Success rate is (100|66) percent
     ${dom}=    Show    ${sw}    show run | include ^ip domain name
     Should Contain    ${dom}    ${DOMAIN_NAME}
+    ${mgmt_cfg}=    Show    ${sw}    show run interface GigabitEthernet0/0
+    Should Contain    ${mgmt_cfg}    vrf forwarding Mgmt-vrf
+    Should Contain    ${mgmt_cfg}    ip address ${host} 255.255.255.0
+    ${rt}=    Show    ${sw}    show ip route vrf Mgmt-vrf 0.0.0.0
+    Should Contain    ${rt}    Routing entry for 0.0.0.0/0
+    Should Match Regexp    ${rt}    (?m)^\\s*\\*?\\s*${NMS}[host]\\b
 
 *** Test Cases ***
 NMS jumphost is reachable and on both networks

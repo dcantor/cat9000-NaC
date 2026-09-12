@@ -13,8 +13,46 @@ iosxe:
       transit_ip: 10.100.0.1
       bgp_asn: 65000
     configuration:
+      ntp:
+        servers:
+        - ip: 10.0.0.10
+          vrf: Mgmt-vrf
+          prefer: true
+      logging:
+        hosts:
+        - ip: 10.0.0.10
+          vrf: Mgmt-vrf
+      snmp_server:
+        contact: netops@lab.local
+        location: cat9000v-lab
+        snmp_communities:
+        - name: lab
+          permission: ro
+        hosts:
+        - ip: 10.0.0.10
+          vrf: Mgmt-vrf
+          community: lab
+          version: 2c
+        enable_traps: true
+      banner:
+        motd: Managed by Network-as-Code (Terraform). Manual changes will be reverted.
+      access_lists:
+        standard:
+        - name: MGMT-ACCESS
+          entries:
+          - sequence: 10
+            remark: OOB management network (host, NMS, lab hosts)
+          - sequence: 20
+            action: permit
+            prefix: 10.0.0.0
+            prefix_mask: 0.0.0.255
+          - sequence: 30
+            action: deny
+            any: true
+            log: true
       system:
         hostname: sw1
+        ip_domain_name: lab.local
       spanning_tree:
         vlans:
         - id: 1
@@ -67,6 +105,8 @@ iosxe:
           priority: 4096
         - id: 219
           priority: 4096
+        - id: 999
+          priority: 4096
       vlan:
         vlans:
         - id: 10
@@ -117,8 +157,18 @@ iosxe:
           name: L2-218
         - id: 219
           name: L2-219
+        - id: 999
+          name: QUARANTINE
       interfaces:
         ethernets:
+        - type: GigabitEthernet
+          id: 0/0
+          description: OOB management (Mgmt-vrf)
+          shutdown: false
+          vrf_forwarding: Mgmt-vrf
+          ipv4:
+            address: 10.0.0.11
+            address_mask: 255.255.255.0
         - type: GigabitEthernet
           id: 1/0/1
           description: TRUNK to peer core switch
@@ -187,6 +237,38 @@ iosxe:
           spanning_tree:
             portfast: true
             bpduguard: true
+        - type: GigabitEthernet
+          id: 1/0/5
+          description: unused (quarantine)
+          shutdown: true
+          switchport:
+            enable: true
+            mode: access
+            access_vlan: 999
+        - type: GigabitEthernet
+          id: 1/0/6
+          description: unused (quarantine)
+          shutdown: true
+          switchport:
+            enable: true
+            mode: access
+            access_vlan: 999
+        - type: GigabitEthernet
+          id: 1/0/7
+          description: unused (quarantine)
+          shutdown: true
+          switchport:
+            enable: true
+            mode: access
+            access_vlan: 999
+        - type: GigabitEthernet
+          id: 1/0/8
+          description: unused (quarantine)
+          shutdown: true
+          switchport:
+            enable: true
+            mode: access
+            access_vlan: 999
         vlans:
         - id: 10
           description: USERS gateway
@@ -237,6 +319,12 @@ iosxe:
             address: 10.255.0.1
             address_mask: 255.255.255.255
       routing:
+        static_routes:
+        - vrf: Mgmt-vrf
+          prefix: 0.0.0.0
+          mask: 0.0.0.0
+          next_hops:
+          - ip: 10.0.0.10
         bgp:
           as_number: 65000
           router_id: 10.255.0.1
@@ -275,8 +363,46 @@ iosxe:
       transit_ip: 10.100.0.2
       bgp_asn: 65000
     configuration:
+      ntp:
+        servers:
+        - ip: 10.0.0.10
+          vrf: Mgmt-vrf
+          prefer: true
+      logging:
+        hosts:
+        - ip: 10.0.0.10
+          vrf: Mgmt-vrf
+      snmp_server:
+        contact: netops@lab.local
+        location: cat9000v-lab
+        snmp_communities:
+        - name: lab
+          permission: ro
+        hosts:
+        - ip: 10.0.0.10
+          vrf: Mgmt-vrf
+          community: lab
+          version: 2c
+        enable_traps: true
+      banner:
+        motd: Managed by Network-as-Code (Terraform). Manual changes will be reverted.
+      access_lists:
+        standard:
+        - name: MGMT-ACCESS
+          entries:
+          - sequence: 10
+            remark: OOB management network (host, NMS, lab hosts)
+          - sequence: 20
+            action: permit
+            prefix: 10.0.0.0
+            prefix_mask: 0.0.0.255
+          - sequence: 30
+            action: deny
+            any: true
+            log: true
       system:
         hostname: sw2
+        ip_domain_name: lab.local
       spanning_tree:
         vlans:
         - id: 1
@@ -329,6 +455,8 @@ iosxe:
           priority: 8192
         - id: 219
           priority: 8192
+        - id: 999
+          priority: 8192
       vlan:
         vlans:
         - id: 10
@@ -379,8 +507,18 @@ iosxe:
           name: L2-218
         - id: 219
           name: L2-219
+        - id: 999
+          name: QUARANTINE
       interfaces:
         ethernets:
+        - type: GigabitEthernet
+          id: 0/0
+          description: OOB management (Mgmt-vrf)
+          shutdown: false
+          vrf_forwarding: Mgmt-vrf
+          ipv4:
+            address: 10.0.0.12
+            address_mask: 255.255.255.0
         - type: GigabitEthernet
           id: 1/0/1
           description: TRUNK to peer core switch
@@ -449,6 +587,38 @@ iosxe:
           spanning_tree:
             portfast: true
             bpduguard: true
+        - type: GigabitEthernet
+          id: 1/0/5
+          description: unused (quarantine)
+          shutdown: true
+          switchport:
+            enable: true
+            mode: access
+            access_vlan: 999
+        - type: GigabitEthernet
+          id: 1/0/6
+          description: unused (quarantine)
+          shutdown: true
+          switchport:
+            enable: true
+            mode: access
+            access_vlan: 999
+        - type: GigabitEthernet
+          id: 1/0/7
+          description: unused (quarantine)
+          shutdown: true
+          switchport:
+            enable: true
+            mode: access
+            access_vlan: 999
+        - type: GigabitEthernet
+          id: 1/0/8
+          description: unused (quarantine)
+          shutdown: true
+          switchport:
+            enable: true
+            mode: access
+            access_vlan: 999
         vlans:
         - id: 20
           description: SERVERS gateway
@@ -499,6 +669,12 @@ iosxe:
             address: 10.255.0.2
             address_mask: 255.255.255.255
       routing:
+        static_routes:
+        - vrf: Mgmt-vrf
+          prefix: 0.0.0.0
+          mask: 0.0.0.0
+          next_hops:
+          - ip: 10.0.0.10
         bgp:
           as_number: 65000
           router_id: 10.255.0.2

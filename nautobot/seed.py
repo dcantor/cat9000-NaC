@@ -105,10 +105,44 @@ plat_xe = nb.dcim.platforms.get(name="cisco_xe")
 ensure(plat_xe, napalm_driver="ios", manufacturer=cisco.id)          # golden-config / napalm need the driver
 plat_linux = get_or_create(nb.dcim.platforms, {"name": "linux"}, network_driver="linux")
 
+# ---------------------------------------------------------------- global config context: services
+# Rendered into every switch by render_nac.py (domain, NTP, syslog, SNMP, banner, OOB routing/ACL)
+SERVICES = {
+    "domain_name": "lab.local",
+    "oob": {"vrf": "Mgmt-vrf", "gateway": MGMT["nms"], "acl": "MGMT-ACCESS", "prefix": "10.0.0.0/24"},
+    "ntp_servers": [{"ip": MGMT["nms"], "prefer": True}],
+    "syslog_hosts": [MGMT["nms"]],
+    "snmp": {"community": "lab", "location": "cat9000v-lab", "contact": "netops@lab.local",
+             "trap_hosts": [MGMT["nms"]]},
+    "banner_motd": "Managed by Network-as-Code (Terraform). Manual changes will be reverted.",
+    "quarantine_vlan": 999,
+}
+cc = nb.extras.config_contexts.get(name="lab-services")
+if cc is None:
+    nb.extras.config_contexts.create(name="lab-services", weight=1000, description="NMS-provided services and OOB settings for every switch",
+                                     data=SERVICES, roles=[role_core.id])
+    created.append("config-context:lab-services")
+elif cc.data != SERVICES:
+    cc.update({"data": SERVICES})
+
+# management VRF (core IPAM) — Gi0/0 lives in it on every switch
+mgmt_vrf = nb.ipam.vrfs.get(name="Mgmt-vrf", namespace=ns.id)
+if mgmt_vrf is None:
+    mgmt_vrf = nb.ipam.vrfs.create(name="Mgmt-vrf", namespace=ns.id, description="OOB management VRF (Gi0/0)")
+    created.append("vrf:Mgmt-vrf")
+
+# software version (dcim 3.x) for the switches
+swv = nb.dcim.software_versions.get(version="17.18.2", platform=plat_xe.id)
+if swv is None:
+    swv = nb.dcim.software_versions.create(version="17.18.2", platform=plat_xe.id, status=active.id,
+                                           long_term_support=False, release_date="2025-12-19")
+    created.append("software-version:17.18.2")
+
 # ---------------------------------------------------------------- VLANs
 vg = get_or_create(nb.ipam.vlan_groups, {"name": "cat9000v-lab"}, location=site.id)
 vlans = {}
-for v in first["configuration"]["vlan"]["vlans"]:
+vlan_list = list(first["configuration"]["vlan"]["vlans"]) + [{"id": SERVICES["quarantine_vlan"], "name": "QUARANTINE"}]
+for v in vlan_list:
     vid, name = int(v["id"]), v["name"]
     role = prefix_roles["routed-vlan"] if name.startswith("L3-") or vid in (10, 20) else \
            prefix_roles["transit"] if vid == 100 else prefix_roles["layer2-vlan"]
@@ -188,7 +222,7 @@ def ensure_cable(a_itf, b_itf):
                           termination_b_type="dcim.interface", termination_b_id=b_itf.id, status=connected.id)
     created.append(f"cable:{a_itf.device.name}:{a_itf.name}-{b_itf.device.name}:{b_itf.name}")
 
-trunk_vlans = sorted(vid for vid in vlans if vid != 99)   # everything but the native VLAN
+trunk_vlans = sorted(vid for vid in vlans if vid not in (99, SERVICES["quarantine_vlan"]))   # not native, not quarantine
 
 switch_ifaces = {}
 for sw, dy in devices_yaml.items():
@@ -196,21 +230,27 @@ for sw, dy in devices_yaml.items():
     ctx = {"bgp": {"asn": int(dy["variables"]["bgp_asn"])},
            "stp_priority": cfg["spanning_tree"]["vlans"][0]["priority"]}
     dev = ensure_device(sw, nb.dcim.device_types.get(model="C9KV-UADP-8P"), role_core, plat_xe, ctx)
-    ensure(dev, secrets_group=nb.extras.secrets_groups.get(name="lab-devices").id)   # Nornir/Golden Config creds
+    ensure(dev, secrets_group=nb.extras.secrets_groups.get(name="lab-devices").id,   # Nornir/Golden Config creds
+           software_version=swv.id)
     mgmt = ensure_iface(dev, "GigabitEthernet0/0", "1000base-t", "OOB management (Mgmt-vrf)", mgmt_only=True)
+    if nb.ipam.vrf_device_assignments.get(vrf=mgmt_vrf.id, device=dev.id) is None:   # VRF must be on the device first
+        nb.ipam.vrf_device_assignments.create(vrf=mgmt_vrf.id, device=dev.id)
+        created.append(f"vrf-device:{sw}/Mgmt-vrf")
+    ensure(mgmt, vrf=mgmt_vrf.id)
     ensure_ip(mgmt, f"{MGMT[sw]}/24", primary_of=dev)
     switch_ifaces[sw] = {}
     eth = {e["id"]: e for e in cfg["interfaces"]["ethernets"]}
     for n in range(1, 9):
         name = f"GigabitEthernet1/0/{n}"
         e = eth.get(f"1/0/{n}")
-        if e is None:
-            itf = ensure_iface(dev, name, "1000base-t", "unused", enabled=True)
+        if e is None:   # no cable, no role: shut and parked in the quarantine VLAN
+            itf = ensure_iface(dev, name, "1000base-t", "unused (quarantine)", enabled=False,
+                               mode="access", untagged=SERVICES["quarantine_vlan"])
         elif e["switchport"]["mode"] == "trunk":
-            itf = ensure_iface(dev, name, "1000base-t", e["description"], mode="tagged",
+            itf = ensure_iface(dev, name, "1000base-t", e["description"], mode="tagged", enabled=not e.get("shutdown", False),
                                untagged=e["switchport"]["trunk_native_vlan_id"], tagged=trunk_vlans)
         else:
-            itf = ensure_iface(dev, name, "1000base-t", e["description"], mode="access",
+            itf = ensure_iface(dev, name, "1000base-t", e["description"], mode="access", enabled=not e.get("shutdown", False),
                                untagged=e["switchport"]["access_vlan"])
         switch_ifaces[sw][n] = itf
     for lo in cfg["interfaces"]["loopbacks"]:
@@ -313,6 +353,8 @@ NAC_QUERY = """{
     name
     primary_ip4 { address }
     local_config_context_data
+    config_context
+    software_version { version }
     interfaces {
       name
       description
@@ -321,7 +363,8 @@ NAC_QUERY = """{
       mode
       untagged_vlan { vid }
       tagged_vlans { vid }
-        ip_addresses {
+      vrf { name }
+      ip_addresses {
         address
         parent { role { name } prefix }
       }
@@ -354,7 +397,9 @@ gq = nb.extras.graphql_queries.get(name="nac-device-model")
 if gq is None:
     nb.extras.graphql_queries.create(name="nac-device-model", query=NAC_QUERY)
     created.append("graphql-query:nac-device-model")
-elif gq.query != NAC_QUERY:
-    gq.update({"query": NAC_QUERY})
+elif gq.query != NAC_QUERY:   # pynautobot's diff-based update() skips this field; PATCH directly
+    nb.http_session.patch(f"{a.url}/api/extras/graphql-queries/{gq.id}/", json={"query": NAC_QUERY},
+                          headers={"Authorization": f"Token {a.token}", "Accept": "application/json"}).raise_for_status()
+    created.append("graphql-query:nac-device-model (updated)")
 
 print(f"seed complete: {len(created)} objects created" + (":\n  " + "\n  ".join(created) if created else " (nothing new)"))

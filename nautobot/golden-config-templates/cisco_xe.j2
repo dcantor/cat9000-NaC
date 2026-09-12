@@ -9,6 +9,38 @@
 {%- endfor -%}
 hostname {{ hostname }}
 !
+ip domain name {{ config_context.domain_name }}
+!
+{% for i in interfaces if i.name == 'GigabitEthernet0/0' %}
+interface GigabitEthernet0/0
+ description {{ i.description }}
+ vrf forwarding {{ i.vrf.name }}
+ ip address {{ i.ip_addresses[0].address.split('/')[0] }} {{ masks[i.ip_addresses[0].address.split('/')[1]] }}
+ negotiation auto
+!
+{% endfor %}
+ip route vrf {{ config_context.oob.vrf }} 0.0.0.0 0.0.0.0 {{ config_context.oob.gateway }}
+!
+ip access-list standard {{ config_context.oob.acl }}
+ 10 remark OOB management network (host, NMS, lab hosts)
+ 20 permit {{ config_context.oob.prefix | ipaddress_network('network_address') }} {{ config_context.oob.prefix | ipaddress_network('hostmask') }}
+ 30 deny any log
+!
+{% for h in config_context.syslog_hosts %}
+logging host {{ h }} vrf {{ config_context.oob.vrf }}
+{% endfor %}
+snmp-server community {{ config_context.snmp.community }} RO
+snmp-server location {{ config_context.snmp.location }}
+snmp-server contact {{ config_context.snmp.contact }}
+{% for h in config_context.snmp.trap_hosts %}
+snmp-server host {{ h }} vrf {{ config_context.oob.vrf }} version 2c {{ config_context.snmp.community }}
+{% endfor %}
+banner motd ^C{{ config_context.banner_motd }}^C
+{% for n in config_context.ntp_servers %}
+ntp server vrf {{ config_context.oob.vrf }} {{ n.ip }}{% if n.prefer %} prefer{% endif %}
+
+{% endfor %}
+!
 {% for v in location.vlan_groups[0].vlans | sort(attribute='vid') -%}
 vlan {{ v.vid }}
  name {{ v.name }}

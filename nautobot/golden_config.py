@@ -73,7 +73,8 @@ GQL = """query ($device_id: ID!) {
   device(id: $device_id) {
     name hostname: name platform { network_driver } primary_ip4 { address }
     local_config_context_data
-    interfaces { name description enabled mode untagged_vlan { vid } tagged_vlans { vid }
+    config_context
+    interfaces { name description enabled mode untagged_vlan { vid } tagged_vlans { vid } vrf { name }
                  ip_addresses { address parent { prefix tags { name } } } }
     location { vlan_groups { vlans { vid name } } }
     bgp_routing_instances {
@@ -140,7 +141,14 @@ rule_ep = nb.plugins.golden_config.compliance_rule
 for slug, name, match in (("vlan", "VLAN database", "vlan"),
                           ("loopback", "Loopbacks", "interface Loopback"),
                           ("svi", "SVIs", "interface Vlan"),
-                          ("bgp", "BGP", "router bgp")):
+                          ("bgp", "BGP", "router bgp"),
+                          ("mgmt-interface", "Management interface", "interface GigabitEthernet0/0"),
+                          ("static-routes", "Static routes", "ip route"),
+                          ("ntp", "NTP", "ntp server"),
+                          ("syslog", "Syslog", "logging host"),
+                          ("snmp", "SNMP", "snmp-server community\nsnmp-server location\nsnmp-server contact\nsnmp-server host"),
+                          ("banner", "Banner", "banner motd"),
+                          ("mgmt-acl", "Management ACL", "ip access-list standard MGMT-ACCESS")):
     feat = feat_ep.get(slug=slug) or feat_ep.create(slug=slug, name=name, description=f"{name} (from Nautobot)")
     rule = rule_ep.get(feature=feat.id, platform=plat.id)
     fields = {"feature": feat.id, "platform": plat.id, "config_type": "cli", "match_config": match,

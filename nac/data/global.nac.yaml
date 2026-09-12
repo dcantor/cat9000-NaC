@@ -10,16 +10,12 @@ iosxe:
         errdisable recovery interval 300
   global:
     templates: [errdisable_recovery]
-    variables:
-      domain_name: lab.local
-      mgmt_vrf: Mgmt-vrf
-      nms_ip: 10.0.0.10          # NTP / syslog / SNMP trap receiver
-      snmp_community: lab
-      mgmt_subnet: 10.0.0.0
-      mgmt_wildcard: 0.0.0.255
+    # Services (domain, NTP, syslog, SNMP, banner), the OOB VRF/default route and the
+    # management ACL are GENERATED per device from the Nautobot config context
+    # "lab-services" (nautobot/seed.py). This file keeps policy: hardening, STP defaults,
+    # logging buffer, VTP mode, VTY lines (which reference the rendered ACL).
     configuration:
       system:
-        ip_domain_name: "${domain_name}"
         ip_domain_lookup: false
         ip_routing: true
         # SSH hardening
@@ -50,21 +46,6 @@ iosxe:
           execs:
             - name: default
               methods: [local]
-      # management-plane ACL: only the OOB network may open a VTY session
-      access_lists:
-        standard:
-          - name: MGMT-ACCESS
-            entries:
-              - sequence: 10
-                remark: OOB management network (host, NMS, lab hosts)
-              - sequence: 20
-                action: permit
-                prefix: "${mgmt_subnet}"
-                prefix_mask: "${mgmt_wildcard}"
-              - sequence: 30
-                action: deny
-                any: true
-                log: true
       line:
         # IOS reports "line vty 0 15" back as two blocks (0-4 and 5-15); model it the same
         # way so Terraform's refresh matches. Both blocks are identical.
@@ -110,30 +91,6 @@ iosxe:
       # (see templates below): the iosxe_errdisable resource breaks RESTCONF reads
       # of /native/errdisable on Cat9kv 17.18 ("no registration found for callpoint
       # ec_genet_deprecated" on detect/cause/all) after its first write.
-      ntp:
-        servers:
-          - ip: "${nms_ip}"
-            vrf: "${mgmt_vrf}"
-            prefer: true
       logging:
         buffered_size: 64000
         buffered_severity: informational
-        # trap severity is left at the IOS default (informational): setting it explicitly
-        # drifts after a reload because IOS drops default values from running-config
-        hosts:
-          - ip: "${nms_ip}"
-            vrf: "${mgmt_vrf}"
-      snmp_server:
-        contact: netops@lab.local
-        location: cat9000v-lab
-        snmp_communities:
-          - name: "${snmp_community}"
-            permission: ro
-        hosts:
-          - ip: "${nms_ip}"
-            vrf: "${mgmt_vrf}"
-            community: "${snmp_community}"
-            version: 2c
-        enable_traps: true
-      banner:
-        motd: "Managed by Network-as-Code (Terraform). Manual changes will be reverted."

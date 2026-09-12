@@ -40,10 +40,13 @@ QUERY = """
     name
     primary_ip4 { address }
     local_config_context_data
+    config_context
+    software_version { version }
     interfaces {
       name description enabled mgmt_only mode
       untagged_vlan { vid }
       tagged_vlans { vid }
+      vrf { name }
       ip_addresses { address parent { role { name } prefix } }
     }
   }
@@ -90,9 +93,15 @@ def netmask(cidr):
     return str(n.ip), str(n.network.netmask), str(n.network)
 
 
+def wildcard(prefix):
+    return str(ipaddress.IPv4Network(prefix).hostmask)
+
+
 def render_device(dev):
     name = dev["name"]
     ctx = dev["local_config_context_data"] or {}
+    svc = dev["config_context"] or {}          # merged global ("lab-services") + local context
+    oob = svc.get("oob", {})
     ifaces = sorted(dev["interfaces"], key=lambda i: (i["name"].rstrip("0123456789/"), ifnum(i["name"])))
     svis, loopbacks, ethernets, networks = [], [], [], []
     router_id = transit_ip = None
@@ -106,6 +115,12 @@ def render_device(dev):
         if parent and parent["prefix"] in advertise:          # explicit: prefix tagged bgp:advertise
             net = ipaddress.IPv4Network(parent["prefix"])
             networks.append({"network": str(net.network_address), "mask": str(net.netmask)})
+        if n == "GigabitEthernet0/0" and ips:          # OOB management in the management VRF
+            addr, mask, _ = netmask(ips[0])
+            ethernets.append({"type": "GigabitEthernet", "id": "0/0", "description": i["description"],
+                              "shutdown": not i["enabled"], "vrf_forwarding": i["vrf"]["name"] if i["vrf"] else None,
+                              "ipv4": {"address": addr, "address_mask": mask}})
+            continue
         if n.startswith("GigabitEthernet1/0/"):
             port = n.split("GigabitEthernet")[1]
             e = {"type": "GigabitEthernet", "id": port, "description": i["description"], "shutdown": not i["enabled"]}
@@ -116,9 +131,10 @@ def render_device(dev):
                                    "nonegotiate": True}
             elif i["mode"] == "ACCESS":
                 e["switchport"] = {"enable": True, "mode": "access", "access_vlan": i["untagged_vlan"]["vid"]}
-                e["spanning_tree"] = {"portfast": True, "bpduguard": True}
+                if i["enabled"]:                           # quarantined (shut) ports get no edge-port settings
+                    e["spanning_tree"] = {"portfast": True, "bpduguard": True}
             else:
-                continue                                  # unused ports stay at device defaults
+                continue
             ethernets.append(e)
         elif n.startswith("Vlan") and ips:
             vid = int(n[4:])
@@ -154,6 +170,33 @@ def render_device(dev):
                                                    # order already on the switches, the provider treats it as ordered
                                                    "networks": sorted(networks, key=lambda n: (n["mask"] != "255.255.255.255", ipaddress.IPv4Address(n["network"])))}}}
 
+    services = {}
+    if svc:
+        services = {
+            "system": {"hostname": name, "ip_domain_name": svc.get("domain_name")},
+            "ntp": {"servers": [{"ip": n["ip"], "vrf": oob.get("vrf"), "prefer": n.get("prefer", False)} for n in svc.get("ntp_servers", [])]},
+            "logging": {"hosts": [{"ip": h, "vrf": oob.get("vrf")} for h in svc.get("syslog_hosts", [])]},
+            "snmp_server": {
+                "contact": svc["snmp"]["contact"], "location": svc["snmp"]["location"],
+                "snmp_communities": [{"name": svc["snmp"]["community"], "permission": "ro"}],
+                "hosts": [{"ip": h, "vrf": oob.get("vrf"), "community": svc["snmp"]["community"], "version": "2c"}
+                          for h in svc["snmp"].get("trap_hosts", [])],
+                "enable_traps": True,
+            } if svc.get("snmp") else {},
+            "banner": {"motd": svc["banner_motd"]} if svc.get("banner_motd") else {},
+            "access_lists": {"standard": [{
+                "name": oob["acl"],
+                "entries": [{"sequence": 10, "remark": "OOB management network (host, NMS, lab hosts)"},
+                            {"sequence": 20, "action": "permit", "prefix": str(ipaddress.IPv4Network(oob["prefix"]).network_address),
+                             "prefix_mask": wildcard(oob["prefix"])},
+                            {"sequence": 30, "action": "deny", "any": True, "log": True}]}]} if oob.get("acl") else {},
+            "routing": {"static_routes": [{"vrf": oob["vrf"], "prefix": "0.0.0.0", "mask": "0.0.0.0",
+                                           "next_hops": [{"ip": oob["gateway"]}]}]} if oob.get("gateway") else {},
+        }
+    routing = dict(services.pop("routing", {}))
+    if bgp:
+        routing["bgp"] = bgp
+
     return {
         "name": name,
         "host": dev["primary_ip4"]["address"].split("/")[0],
@@ -162,11 +205,12 @@ def render_device(dev):
         "variables": {"router_id": router_id, "transit_ip": transit_ip,
                       "bgp_asn": ri["autonomous_system"]["asn"] if ri else ctx.get("bgp", {}).get("asn")},
         "configuration": {
-            "system": {"hostname": name},
+            **{k: v for k, v in services.items() if v and k != "system"},
+            "system": services.get("system", {"hostname": name}),
             "spanning_tree": {"vlans": [{"id": v, "priority": ctx.get("stp_priority")} for v in [1] + vlan_ids]},
             "vlan": {"vlans": [{"id": v["vid"], "name": v["name"]} for v in vlans]},
             "interfaces": {"ethernets": ethernets, "vlans": svis, "loopbacks": loopbacks},
-            "routing": {"bgp": bgp} if bgp else {},
+            **({"routing": routing} if routing else {}),
         },
     }
 

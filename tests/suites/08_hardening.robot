@@ -62,7 +62,7 @@ Spanning tree: sw1 is root for every VLAN, sw2 is backup root, edge defaults on
     # only VLANs carried on the trunk share one STP topology; VLAN 1 (not allowed on the trunk)
     # is an isolated instance per switch and the native VLAN 99 has no ports at all
     ${vlans}=    Get Dictionary Keys    ${VLANS}
-    Remove Values From List    ${vlans}    ${TRUNK_NATIVE_VLAN}
+    Remove Values From List    ${vlans}    ${TRUNK_NATIVE_VLAN}    ${QUARANTINE_VLAN}
     FOR    ${sw}    IN    @{SWITCH_NAMES}
         ${sum}=    Show    ${sw}    show spanning-tree summary
         Should Contain    ${sum}    Switch is in rapid-pvst mode
@@ -74,7 +74,7 @@ Spanning tree: sw1 is root for every VLAN, sw2 is backup root, edge defaults on
             Should Match Regexp    ${root}    (?m)^VLAN0*${id}\\s+${prio}\\s+${STP_ROOT_MAC}\\s
         END
         ${bridge}=    Show    ${sw}    show spanning-tree bridge priority
-        FOR    ${id}    IN    1    10    110    210
+        FOR    ${id}    IN    10    110    210    # VLAN 1 has no active ports any more (unused ports are shut)
             ${own}=    Evaluate    ${STP_PRIORITY}[${sw}] + ${id}
             Should Match Regexp    ${bridge}    (?m)^VLAN0*${id}\\s+${own}\\s*$
         END

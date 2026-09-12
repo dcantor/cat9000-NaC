@@ -67,6 +67,10 @@ TRUNK_PORT = "Gi1/0/1"
 TRUNK_NATIVE_VLAN = "99"
 TRUNK_ALLOWED_VLANS = "10,20,100,110-119,210-219"
 ACCESS_PORTS = {"Gi1/0/2": "10", "Gi1/0/3": "10", "Gi1/0/4": "20"}
+UNUSED_PORTS = ["Gi1/0/5", "Gi1/0/6", "Gi1/0/7", "Gi1/0/8"]   # shut, parked in the quarantine VLAN
+QUARANTINE_VLAN = "999"
+VLANS[QUARANTINE_VLAN] = "QUARANTINE"
+SOFTWARE_VERSION = "17.18.2"
 STP_MODE = "rapid-pvst"
 
 # Hardening (from nac/data/global.nac.yaml / devices.nac.yaml)

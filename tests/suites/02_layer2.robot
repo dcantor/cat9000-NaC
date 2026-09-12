@@ -56,3 +56,13 @@ CDP and LLDP see the peer switch on the trunk
         ${lldp}=    Show    ${sw}    show lldp neighbors
         Should Match Regexp    ${lldp}    ${peer}\\.${DOMAIN_NAME}\\s+${TRUNK_PORT}\\s.*${TRUNK_PORT}
     END
+
+Unused ports are shut down and parked in the quarantine VLAN
+    FOR    ${sw}    IN    @{SWITCH_NAMES}
+        FOR    ${port}    IN    @{UNUSED_PORTS}
+            ${st}=    Show    ${sw}    show interfaces status | include ${port}${SPACE}
+            Should Match Regexp    ${st}    ${port}\\s.*\\sdisabled\\s+${QUARANTINE_VLAN}\\s
+        END
+        ${trunk}=    Show    ${sw}    show interfaces trunk
+        Should Not Match Regexp    ${trunk}    (?m)^${TRUNK_PORT}\\s+.*${QUARANTINE_VLAN}
+    END
