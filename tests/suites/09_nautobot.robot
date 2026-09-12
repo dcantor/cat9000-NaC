@@ -119,14 +119,14 @@ Golden Config: backups of both switches are in the lab Gitea
     END
 
 Golden Config: every switch is compliant with the Nautobot-rendered intent
-    ${cc}=    Nautobot Get    plugins/golden-config/config-compliance/    limit=100
+    ${cc}=    Nautobot Get    plugins/golden-config/config-compliance/    location=cat9000v-lab    limit=100
     Should Be True    ${cc}[count] >= 28    msg=expected at least 14 features x 2 devices, got ${cc}[count]
     FOR    ${row}    IN    @{cc}[results]
         Should Be True    ${row}[compliance]    msg=non-compliant: ${row}[device] ${row}[rule] missing=${row}[missing] extra=${row}[extra]
     END
 
 BGP is modelled: AS, routing instances, peering and advertised prefixes
-    ${d}=    Nautobot Graphql    { bgp_routing_instances { device { name } autonomous_system { asn } router_id { address } endpoints { enabled source_ip { address } peer { source_ip { address } autonomous_system { asn } routing_instance { device { name } } } } } prefixes(tags:"bgp:advertise") { prefix } }
+    ${d}=    Nautobot Graphql    { bgp_routing_instances(device:["sw1","sw2"]) { device { name } autonomous_system { asn } router_id { address } endpoints { enabled source_ip { address } peer { source_ip { address } autonomous_system { asn } routing_instance { device { name } } } } } prefixes(tags:"bgp:advertise") { prefix } }
     Length Should Be    ${d}[bgp_routing_instances]    2
     FOR    ${ri}    IN    @{d}[bgp_routing_instances]
         ${sw}=    Set Variable    ${ri}[device][name]
@@ -148,7 +148,7 @@ BGP is modelled: AS, routing instances, peering and advertised prefixes
     END
 
 Live BGP sessions match the peerings modelled in Nautobot
-    ${d}=    Nautobot Graphql    { bgp_routing_instances { device { name } endpoints { source_ip { interfaces { vrf { name } } } peer { source_ip { address } autonomous_system { asn } } } } }
+    ${d}=    Nautobot Graphql    { bgp_routing_instances(device:["sw1","sw2"]) { device { name } endpoints { source_ip { interfaces { vrf { name } } } peer { source_ip { address } autonomous_system { asn } } } } }
     FOR    ${ri}    IN    @{d}[bgp_routing_instances]
         ${sw}=    Set Variable    ${ri}[device][name]
         FOR    ${ep}    IN    @{ri}[endpoints]
@@ -219,5 +219,5 @@ Backup And Check Compliance
     Should Be Equal    ${st}    SUCCESS
 
 Golden Config Should Be Fully Compliant
-    ${cc}=    Nautobot Get    plugins/golden-config/config-compliance/    compliance=false
+    ${cc}=    Nautobot Get    plugins/golden-config/config-compliance/    location=cat9000v-lab    compliance=false
     Should Be Equal As Integers    ${cc}[count]    0    msg=non-compliant rows remain after restoring the drift
