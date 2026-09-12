@@ -32,6 +32,8 @@ a = p.parse_args()
 if not a.token:
     sys.exit("NAUTOBOT_TOKEN (or --token) is required")
 
+# The query is saved in Nautobot as "nac-device-model" (Extensibility > GraphQL Queries) so it
+# can be run from the GUI; that saved copy is used when present, this is the fallback.
 QUERY = """
 {
   devices(role: "core-switch") {
@@ -48,6 +50,10 @@ QUERY = """
   vlan_groups(name: "cat9000v-lab") { vlans { vid name role { name } } }
 }
 """
+saved = requests.get(f"{a.url}/api/extras/graphql-queries/", params={"name": "nac-device-model"},
+                     headers={"Authorization": f"Token {a.token}"}, timeout=30)
+if saved.ok and saved.json()["count"] == 1:
+    QUERY = saved.json()["results"][0]["query"]
 r = requests.post(f"{a.url}/api/graphql/", json={"query": QUERY},
                   headers={"Authorization": f"Token {a.token}"}, timeout=60)
 r.raise_for_status()

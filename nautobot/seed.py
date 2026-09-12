@@ -245,4 +245,36 @@ e0 = ensure_iface(nms, "eth0", "virtual", "libvirt default NAT (internet)")
 e1 = ensure_iface(nms, "eth1", "virtual", "OOB management — NTP/syslog/SNMP/Nautobot")
 ensure_ip(e1, f"{MGMT['nms']}/24", primary_of=nms)
 
+# saved GraphQL query: the exact query render_nac.py uses, runnable from Extensibility > GraphQL Queries
+NAC_QUERY = """{
+  devices(role: "core-switch") {
+    name
+    primary_ip4 { address }
+    local_config_context_data
+    interfaces {
+      name
+      description
+      enabled
+      mgmt_only
+      mode
+      untagged_vlan { vid }
+      tagged_vlans { vid }
+      ip_addresses {
+        address
+        parent { role { name } }
+      }
+    }
+  }
+  vlan_groups(name: "cat9000v-lab") {
+    vlans { vid name role { name } }
+  }
+}
+"""
+gq = nb.extras.graphql_queries.get(name="nac-device-model")
+if gq is None:
+    nb.extras.graphql_queries.create(name="nac-device-model", query=NAC_QUERY)
+    created.append("graphql-query:nac-device-model")
+elif gq.query != NAC_QUERY:
+    gq.update({"query": NAC_QUERY})
+
 print(f"seed complete: {len(created)} objects created" + (":\n  " + "\n  ".join(created) if created else " (nothing new)"))

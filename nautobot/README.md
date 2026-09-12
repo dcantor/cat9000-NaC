@@ -77,6 +77,13 @@ hardening. Round trip verified: rendering from Nautobot then `terraform plan`
 gives *No changes*, and test `09_nautobot` fails if the committed file drifts
 from Nautobot.
 
+The renderer's query is saved in Nautobot as **Extensibility → GraphQL Queries →
+`nac-device-model`** (seeded by `seed.py`); open it and press *Run* to execute it
+in GraphiQL. `render_nac.py` fetches that saved copy by name (falling back to
+its embedded version), so what you run in the GUI is exactly what generates the
+YAML. `golden-config-lab` (takes `$device_id`) is the query behind the
+intended-config template.
+
 Rules encoded in the renderer: access ports get portfast + bpduguard, trunks
 `nonegotiate`, prefixes with role `transit` are excluded from BGP, Loopback0 is
 the router-id, the iBGP peer is the other core switch's transit address.
