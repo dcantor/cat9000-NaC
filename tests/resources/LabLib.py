@@ -163,6 +163,80 @@ class LabLib:
         return body["data"]
 
     @keyword
+    def hosts_from_nautobot(self):
+        """Build the end-host inventory (same shape as lab_vars.HOSTS) plus HOST_PATH from Nautobot.
+
+        gateway  = HSRP VIP of the host's VLAN (or the SVI address on the connected switch)
+        path     = the real SVI address of the HSRP-active switch (first traceroute hop)
+        """
+        data = self.nautobot_graphql("""{
+          devices(role: "host") {
+            name primary_ip4 { address }
+            interfaces(name: "eth1") {
+              mac_address untagged_vlan { vid } ip_addresses { address }
+              connected_interface { name device { name } }
+            }
+          }
+          interface_redundancy_groups {
+            protocol protocol_group_id virtual_ip { address }
+            interface_redundancy_group_associations { priority interface { name device { name } ip_addresses { address } } }
+          }
+          devices_svi: devices(role: "core-switch") { name interfaces { name ip_addresses { address } } }
+        }""")
+        hsrp = {int(g["protocol_group_id"]): g for g in data["interface_redundancy_groups"] if (g["protocol"] or "").lower() == "hsrp"}
+        svi = {(d["name"], i["name"]): i["ip_addresses"][0]["address"].split("/")[0]
+               for d in data["devices_svi"] for i in d["interfaces"] if i["ip_addresses"]}
+        hosts, path = {}, {}
+        for d in data["devices"]:
+            e1 = d["interfaces"][0]
+            vid = e1["untagged_vlan"]["vid"]
+            sw, port = e1["connected_interface"]["device"]["name"], e1["connected_interface"]["name"]
+            if vid in hsrp:
+                g = hsrp[vid]
+                gateway = g["virtual_ip"]["address"].split("/")[0]
+                active = max(g["interface_redundancy_group_associations"], key=lambda a: a["priority"])
+                first_hop = active["interface"]["ip_addresses"][0]["address"].split("/")[0]
+            else:
+                gateway = first_hop = svi[(sw, f"Vlan{vid}")]
+            hosts[d["name"]] = {"mgmt": d["primary_ip4"]["address"].split("/")[0], "switch": sw,
+                                "port": port.replace("GigabitEthernet", "Gi"), "vlan": str(vid),
+                                "ip": e1["ip_addresses"][0]["address"].split("/")[0], "gateway": gateway,
+                                "mac": e1["mac_address"].lower().replace(":", "")[:4] + "." + e1["mac_address"].lower().replace(":", "")[4:8] + "." + e1["mac_address"].lower().replace(":", "")[8:]}
+            path[d["name"]] = [first_hop]
+        names = sorted(hosts)
+        for n in names:                                   # peer = the other host (two-host lab)
+            hosts[n]["peer"] = next(o for o in names if o != n)
+        logger.info(f"hosts from Nautobot: {json.dumps(hosts, indent=1)}\npaths: {path}")
+        return hosts, path
+
+    @keyword
+    def nautobot_run_job(self, job_name, timeout=600, **data):
+        """Run a Nautobot job by name with the given data, wait for it, return its status string."""
+        url, token = self._nautobot()
+        hdr = {"Authorization": f"Token {token}", "Accept": "application/json"}
+        jobs = requests.get(f"{url}/api/extras/jobs/", params={"name": job_name}, headers=hdr, timeout=60).json()["results"]
+        if len(jobs) != 1:
+            raise AssertionError(f"job {job_name!r} not found")
+        r = requests.post(f"{url}/api/extras/jobs/{jobs[0]['id']}/run/", json={"data": data}, headers=hdr, timeout=60)
+        r.raise_for_status()
+        jr = r.json()["job_result"]["id"]
+        deadline = time.time() + float(timeout)
+        while time.time() < deadline:
+            st = requests.get(f"{url}/api/extras/job-results/{jr}/", headers=hdr, timeout=60).json()["status"]["value"]
+            if st in ("SUCCESS", "FAILURE", "REVOKED"):
+                logger.info(f"job {job_name}: {st} ({url}/extras/job-results/{jr}/)")
+                return st
+            time.sleep(5)
+        raise AssertionError(f"job {job_name} did not finish within {timeout}s")
+
+    @keyword
+    def switch_config(self, host, *lines):
+        """Push configuration lines to a switch over SSH (used to simulate drift; tests must restore it)."""
+        out = self._conn(host).send_config_set(list(lines), read_timeout=60)
+        logger.info(f"<pre>{out}</pre>", html=True)
+        return out
+
+    @keyword
     def render_nac_check(self):
         """Run nautobot/render_nac.py --check; returns its exit code (0 = devices.nac.yaml matches Nautobot)."""
         url, token = self._nautobot()

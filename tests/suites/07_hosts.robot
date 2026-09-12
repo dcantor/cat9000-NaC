@@ -1,7 +1,9 @@
 *** Settings ***
 Documentation     CirrOS end hosts on switch access ports in different VLANs: attachment, gateway, and
-...               host-to-host reachability routed through both switches (iBGP over the trunk).
+...               host-to-host reachability through the switches. The host inventory (addresses, ports, VLANs,
+...               gateways, expected first hop) is read from Nautobot at suite start, not from lab_vars.
 Resource          ../resources/common.resource
+Suite Setup       Use Host Inventory From Nautobot
 Suite Teardown    Suite Teardown Close Connections
 
 *** Test Cases ***

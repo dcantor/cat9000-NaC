@@ -70,15 +70,23 @@ nothing sensitive is stored in the database.
 | `lab.sh nautobot render [--check]` | regenerates **`nac/data/devices.nac.yaml`** from Nautobot via GraphQL (`--check` only diffs) |
 | `lab.sh nautobot golden` | Golden Config setup + backup → intended → compliance run |
 
-What is modelled in Nautobot is *generated*: the VLAN database, switchport
-modes/allowed VLANs, SVIs and loopbacks with addresses, STP priorities,
-management addresses, and the **complete BGP configuration** — AS, router-id,
-`log-neighbor-changes` (routing-instance `extra_attributes`), every neighbor
-with remote-AS/description from the Peer Endpoints, address-family activation,
-and the `network` statements: prefixes tagged **`bgp:advertise`** that sit
-behind one of the device's own interface addresses. `device_groups.nac.yaml`
-is now just group membership; `global.nac.yaml` holds the services and
-hardening. Round trip verified: rendering from Nautobot then `terraform plan`
+Everything device-specific is *generated* from Nautobot:
+
+| Nautobot object | Rendered configuration |
+|---|---|
+| VLAN group `cat9000v-lab` | VLAN database (incl. `QUARANTINE` 999, `TRANSIT-A` 101) |
+| device tags `stp-root` / `stp-backup-root` | `spanning-tree vlan … priority 4096 / 8192` |
+| interfaces: mode/untagged/tagged, `lag` | trunk on `Port-channel1`, LACP members, access ports (+portfast/bpduguard), shut + quarantine VLAN for unused ports |
+| SVIs / loopbacks with IPs, interface `vrf` | `interface Vlan…` / `Loopback0`, `vrf forwarding` |
+| VRFs (`Mgmt-vrf`, `TENANT-A` rd 65000:1) + device/prefix assignments | `vrf definition`, Gi0/0 in Mgmt-vrf |
+| global config context `lab-services` | domain, NTP, syslog, SNMP, banner, OOB default route, `MGMT-ACCESS` ACL |
+| Interface Redundancy Groups (HSRP) | `standby` config on the host VLAN SVIs (CLI template — HSRP is not in module 0.1.0) |
+| BGP app: AS, routing instances, peerings, AFs, `export_policy` | `router bgp` incl. per-VRF address-families, `route-map BGP-OUT` + `prefix-list BGP-ADVERTISE` |
+| prefixes tagged `bgp:advertise` | `network` statements (global or VRF, by the interface's VRF) |
+| software version | (tested against `show version`) |
+
+`device_groups.nac.yaml` is just group membership; `global.nac.yaml` holds
+policy only (hardening, STP defaults, VTP mode, VTY lines). Round trip verified: rendering from Nautobot then `terraform plan`
 gives *No changes*, and test `09_nautobot` fails if the committed file drifts
 from Nautobot.
 
@@ -100,8 +108,11 @@ assumed any more — add a switch or an eBGP uplink by creating the objects.
 A **Gitea** container (`http://10.0.0.10:3000`, user `lab`) hosts three repos
 that Nautobot uses as Git repositories: `config-backups`, `intended-configs`,
 `golden-config-templates` (`cisco_xe.j2` from `golden-config-templates/`,
-rendered from the `golden-config-lab` GraphQL query). Compliance features:
-VLAN database, SVIs, Loopbacks, **BGP** — all **compliant** on both switches.
+rendered from the `golden-config-lab` GraphQL query). 14 compliance features (VLAN database, SVIs incl. HSRP, loopbacks, BGP, BGP
+policy, VRFs, management interface, static routes, NTP, syslog, SNMP, banner,
+management ACL, port-channel) — **28/28 compliant**. Remediation
+(`hierconfig`) is enabled on every rule; test `09_nautobot` deliberately drifts
+one SNMP line and checks that Golden Config flags it and proposes the fix.
 
 Two lab changes were needed for that: VTP is now *transparent* (via NAC) so the
 VLAN database appears in running-config, and Vlan1 (shutdown) is modelled.

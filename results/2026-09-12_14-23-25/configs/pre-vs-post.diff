@@ -1,0 +1,15 @@
+diff -ru -I '^! .* captured ' /home/dcantor/cat9000v/results/2026-09-12_14-23-25/configs/pre-run/sw1.running-config.txt /home/dcantor/cat9000v/results/2026-09-12_14-23-25/configs/post-run/sw1.running-config.txt
+--- /home/dcantor/cat9000v/results/2026-09-12_14-23-25/configs/pre-run/sw1.running-config.txt	2026-09-12 14:23:27.573502983 -0400
++++ /home/dcantor/cat9000v/results/2026-09-12_14-23-25/configs/post-run/sw1.running-config.txt	2026-09-12 14:27:14.053406803 -0400
+@@ -1,9 +1,9 @@
+-! sw1 (10.0.0.11) show running-config captured 2026-09-12 14:23:26
++! sw1 (10.0.0.11) show running-config captured 2026-09-12 14:27:12
+ Building configuration...
+ 
+ Current configuration : 18079 bytes
+ !
+-! Last configuration change at 18:23:02 UTC Sat Sep 12 2026 by admin
++! Last configuration change at 18:26:59 UTC Sat Sep 12 2026 by admin
+ !
+ version 17.18
+ service tcp-keepalives-in

@@ -22,8 +22,11 @@ out-of-band management network.
               │ Gi1/0/2  access VLAN 10             │ Gi1/0/4  access VLAN 20
          ┌────┴────┐                            ┌────┴────┐
          │  host1  │ 10.10.0.100/24  (CirrOS)   │  host2  │ 10.20.0.100/24  (CirrOS)
-         │10.0.0.21│ gw 10.10.0.1 (sw1 Vlan10)  │10.0.0.22│ gw 10.20.0.1 (sw2 Vlan20)
+         │10.0.0.21│ gw 10.10.0.1 (HSRP VIP)    │10.0.0.22│ gw 10.20.0.1 (HSRP VIP)
          └─────────┘                            └─────────┘
+
+ VLANs 10/20: SVIs on both switches with HSRP (sw1 active for 10, sw2 for 20).
+ VLANs 110-119: routed inside VRF TENANT-A, iBGP over Vlan101; global table iBGP over Vlan100.
 ```
 
 host1 ↔ host2 traffic is routed sw1 → (iBGP AS 65000 over Vlan100 on the trunk) → sw2;

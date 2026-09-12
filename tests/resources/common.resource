@@ -20,3 +20,11 @@ Show
     ${host}=    Switch Host    ${sw}
     ${out}=    Run Command    ${host}    ${command}    ${timeout}
     RETURN    ${out}
+
+Use Host Inventory From Nautobot
+    [Documentation]    Replace the static HOSTS/HOST_PATH variables with what Nautobot models (source of truth).
+    ${hosts}    ${path}=    Hosts From Nautobot
+    Set Suite Variable    ${HOSTS}    ${hosts}
+    Set Suite Variable    ${HOST_PATH}    ${path}
+    ${names}=    Get Dictionary Keys    ${HOSTS}
+    Set Suite Variable    ${HOST_NAMES}    ${names}

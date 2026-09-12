@@ -2,6 +2,7 @@
 Documentation     Management-plane and L2 hardening: AAA parity, SSH/VTY settings with a management ACL,
 ...               deterministic STP root and portfast/bpduguard defaults, service/logging hygiene.
 Resource          ../resources/common.resource
+Suite Setup       Use Host Inventory From Nautobot
 Suite Teardown    Suite Teardown Close Connections
 
 *** Test Cases ***

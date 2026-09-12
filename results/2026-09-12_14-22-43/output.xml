@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.4.2 (Python 3.14.4 on linux)" generated="2026-09-12T14:22:48.304309" rpa="false" schemaversion="5">
+<suite id="s1" name="cat9000v lab" source="/home/dcantor/cat9000v/tests/suites">
+<suite id="s1-s1" name="09 Nautobot" source="/home/dcantor/cat9000v/tests/suites/09_nautobot.robot">
+<test id="s1-s1-t1" name="Golden Config detects drift and proposes the remediation" line="195">
+<kw name="Nautobot Get" owner="LabLib">
+<msg time="2026-09-12T14:22:48.817962" level="INFO" html="true">&lt;pre&gt;nms$ grep ^NAUTOBOT_SUPERUSER_API_TOKEN /opt/nautobot/.env | cut -d= -f2
+rc=0
+5836bb41b6d2bbda3f3398936a8d33b58d3f8e6c
+&lt;/pre&gt;</msg>
+<msg time="2026-09-12T14:22:48.957099" level="INFO">GET http://10.0.0.10:8080/api/dcim/devices/?name=sw1 -&gt; 200
+{"count":1,"next":null,"previous":null,"results":[{"id":"21cb1c46-34dc-4749-a8f6-a5536d670990","object_type":"dcim.device","display":"sw1","url":"http://10.0.0.10:8080/api/dcim/devices/21cb1c46-34dc-4749-a8f6-a5536d670990/","natural_slug":"sw1__cat9000v-lab_21cb","face":null,"local_config_context_data":{"bgp":{"asn":65000}},"local_config_context_data_owner_object_id":null,"name":"sw1","serial":"98R34VA1AR9","asset_tag":null,"position":null,"device_redundancy_group_priority":null,"vc_position":null,"vc_priority":null,"comments":"","local_config_context_schema":null,"local_config_context_data_owner_content_type":null,"device_type":{"id":"cc8c62c8-54b3-4a8b-b40c-0b5f673176e2","object_type":"dcim.devicetype","url":"http://10.0.0.10:8080/api/dcim/device-types/cc8c62c8-54b3-4a8b-b40c-0b5f673176e2/"},"status":{"id":"8f248011-2a05-4668-8162-ac48e85a9f28","object_type":"extras.status","url":"http://10.0.0.10:8080/api/extras/statuses/8f248011-2a05-4668-8162-ac48e85a9f28/"},"role":{"id":"e5cd93e3-0263-400d-83ed-01d2b7e62f11","object_type":"extras.role","url":"http://10.0.0.10:8080/api/extras/roles/e5cd93e3-0263-400d-83ed-01d2b7e62f11/"},"tenant":null,"platform":{"id":"8409fb74-347d-483d-b852-eb7902bedad0","object_type":"dcim.platform","url":"http://10.0.0.10:8080/api/dcim/platforms/8409fb74-347d-483d-b852-eb7902bedad0/"},"location":{"id":"80f37adb-c8ce-45b6-a2d5-6063ae206ffa","object_type":"dcim.location","url":"http://10.0.0.10:8080/api/dcim/locations/80f37adb-c8ce-45b6-a2d5-6063ae206f</msg>
+<msg time="2026-09-12T14:22:48.957378" level="INFO">${dev} = {'count': 1, 'next': None, 'previous': None, 'results': [{'id': '21cb1c46-34dc-4749-a8f6-a5536d670990', 'object_type': 'dcim.device', 'display': 'sw1', 'url': 'http://10.0.0.10:8080/api/dcim/devices/2...</msg>
+<var>${dev}</var>
+<arg>dcim/devices/</arg>
+<arg>name=sw1</arg>
+<doc>GET /api/&lt;path&gt; and return the parsed JSON (results list for list endpoints).</doc>
+<status status="PASS" start="2026-09-12T14:22:48.481634" elapsed="0.475768"/>
+</kw>
+<kw name="Create List" owner="BuiltIn">
+<msg time="2026-09-12T14:22:48.957883" level="INFO">${ids} = ['21cb1c46-34dc-4749-a8f6-a5536d670990']</msg>
+<var>${ids}</var>
+<arg>${dev}[results][0][id]</arg>
+<doc>Returns a list containing given items.</doc>
+<status status="PASS" start="2026-09-12T14:22:48.957558" elapsed="0.000349"/>
+</kw>
+<kw name="Switch Config" owner="LabLib">
+<msg time="2026-09-12T14:22:50.056997" level="INFO" html="true">&lt;pre&gt;configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+sw1(config)#snmp-server location DRIFTED-BY-ROBOT
+sw1(config)#end
+sw1#&lt;/pre&gt;</msg>
+<arg>${SWITCHES}[sw1][host]</arg>
+<arg>snmp-server location DRIFTED-BY-ROBOT</arg>
+<doc>Push configuration lines to a switch over SSH (used to simulate drift; tests must restore it).</doc>
+<status status="PASS" start="2026-09-12T14:22:48.957990" elapsed="1.099153"/>
+</kw>
+<kw name="Backup And Check Compliance">
+<kw name="Nautobot Run Job" owner="LabLib">
+<msg time="2026-09-12T14:22:56.270608" level="INFO">job Backup Configurations: SUCCESS (http://10.0.0.10:8080/extras/job-results/41151e6d-d5fa-4a33-b5ca-d8b5799ee12c/)</msg>
+<msg time="2026-09-12T14:22:56.270851" level="INFO">${st} = SUCCESS</msg>
+<var>${st}</var>
+<arg>Backup Configurations</arg>
+<arg>device=${device_ids}</arg>
+<doc>Run a Nautobot job by name with the given data, wait for it, return its status string.</doc>
+<status status="PASS" start="2026-09-12T14:22:50.058040" elapsed="6.212847"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${st}</arg>
+<arg>SUCCESS</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T14:22:56.271061" elapsed="0.000469"/>
+</kw>
+<kw name="Nautobot Run Job" owner="LabLib">
+<msg time="2026-09-12T14:23:02.497951" level="INFO">job Perform Configuration Compliance: SUCCESS (http://10.0.0.10:8080/extras/job-results/f26ef79b-3746-4bd5-831a-2e54cef03937/)</msg>
+<msg time="2026-09-12T14:23:02.498181" level="INFO">${st} = SUCCESS</msg>
+<var>${st}</var>
+<arg>Perform Configuration Compliance</arg>
+<arg>device=${device_ids}</arg>
+<doc>Run a Nautobot job by name with the given data, wait for it, return its status string.</doc>
+<status status="PASS" start="2026-09-12T14:22:56.271659" elapsed="6.226546"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${st}</arg>
+<arg>SUCCESS</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T14:23:02.498349" elapsed="0.000336"/>
+</kw>
+<arg>${ids}</arg>
+<doc>Compliance compares the stored backup with the intent, so back up first.</doc>
+<status status="PASS" start="2026-09-12T14:22:50.057522" elapsed="12.441232"/>
+</kw>
+<kw name="Nautobot Get" owner="LabLib">
+<msg time="2026-09-12T14:23:02.557733" level="INFO">GET http://10.0.0.10:8080/api/plugins/golden-config/config-compliance/?device=sw1&amp;compliance=false -&gt; 200
+{"count":1,"next":null,"previous":null,"results":[{"id":"e1f6e33e-36b4-45b2-b451-5ff9f4c5188f","object_type":"nautobot_golden_config.configcompliance","display":"sw1 -&gt; cisco_xe - SNMP -&gt; False","url":"http://10.0.0.10:8080/api/plugins/golden-config/config-compliance/e1f6e33e-36b4-45b2-b451-5ff9f4c5188f/","natural_slug":"sw1__cat9000v-lab_snmp_cisco-xe_e1f6","compliance":false,"actual":"snmp-server community lab RO\nsnmp-server location DRIFTED-BY-ROBOT\nsnmp-server contact netops@lab.local\nsnmp-server host 10.0.0.10 vrf Mgmt-vrf version 2c lab","intended":"snmp-server community lab RO\nsnmp-server location cat9000v-lab\nsnmp-server contact netops@lab.local\nsnmp-server host 10.0.0.10 vrf Mgmt-vrf version 2c lab","remediation":"no snmp-server location DRIFTED-BY-ROBOT\nsnmp-server location cat9000v-lab","missing":"snmp-server location cat9000v-lab","extra":"snmp-server location DRIFTED-BY-ROBOT","ordered":false,"compliance_int":0,"device":{"id":"21cb1c46-34dc-4749-a8f6-a5536d670990","object_type":"dcim.device","url":"http://10.0.0.10:8080/api/dcim/devices/21cb1c46-34dc-4749-a8f6-a5536d670990/"},"rule":{"id":"26a79d1a-2194-4d56-afc7-100eba220f90","object_type":"nautobot_golden_config.compliancerule","url":"http://10.0.0.10:8080/api/plugins/golden-config/compliance-rule/26a79d1a-2194-4d56-afc7-100eba220f90/"},"created":"2026-09-12T17:27:25.563774Z","last_updated":"2026-09-12T18:22:58.160044Z","tags":[],"notes_url":"http://10.0.0.10:8080/api/plugins/golden-config/config-complia</msg>
+<msg time="2026-09-12T14:23:02.558077" level="INFO">${cc} = {'count': 1, 'next': None, 'previous': None, 'results': [{'id': 'e1f6e33e-36b4-45b2-b451-5ff9f4c5188f', 'object_type': 'nautobot_golden_config.configcompliance', 'display': 'sw1 -&gt; cisco_xe - SNMP -&gt; ...</msg>
+<var>${cc}</var>
+<arg>plugins/golden-config/config-compliance/</arg>
+<arg>device=sw1</arg>
+<arg>compliance=false</arg>
+<doc>GET /api/&lt;path&gt; and return the parsed JSON (results list for list endpoints).</doc>
+<status status="PASS" start="2026-09-12T14:23:02.498850" elapsed="0.059259"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2026-09-12T14:23:02.558621" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${cc}[count]</arg>
+<arg>1</arg>
+<arg>msg=exactly the SNMP feature should be non-compliant</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2026-09-12T14:23:02.558273" elapsed="0.000407"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${cc}[results][0][extra]</arg>
+<arg>snmp-server location DRIFTED-BY-ROBOT</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T14:23:02.558800" elapsed="0.000458"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${cc}[results][0][missing]</arg>
+<arg>snmp-server location ${SNMP_LOCATION}</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T14:23:02.559345" elapsed="0.000260"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${cc}[results][0][remediation]</arg>
+<arg>snmp-server location ${SNMP_LOCATION}</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T14:23:02.559687" elapsed="0.000254"/>
+</kw>
+<kw name="Run Keywords" owner="BuiltIn" type="TEARDOWN">
+<kw name="Switch Config" owner="LabLib">
+<msg time="2026-09-12T14:23:02.663778" level="INFO" html="true">&lt;pre&gt;configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+sw1(config)#snmp-server location cat9000v-lab
+sw1(config)#end
+sw1#&lt;/pre&gt;</msg>
+<arg>${SWITCHES}[sw1][host]</arg>
+<arg>snmp-server location ${SNMP_LOCATION}</arg>
+<doc>Push configuration lines to a switch over SSH (used to simulate drift; tests must restore it).</doc>
+<status status="PASS" start="2026-09-12T14:23:02.560551" elapsed="0.103351"/>
+</kw>
+<kw name="Backup And Check Compliance">
+<kw name="Nautobot Run Job" owner="LabLib">
+<msg time="2026-09-12T14:23:08.913945" level="INFO">job Backup Configurations: SUCCESS (http://10.0.0.10:8080/extras/job-results/397fc714-7e1c-4dc1-a05d-505ac3e810f9/)</msg>
+<msg time="2026-09-12T14:23:08.914174" level="INFO">${st} = SUCCESS</msg>
+<var>${st}</var>
+<arg>Backup Configurations</arg>
+<arg>device=${device_ids}</arg>
+<doc>Run a Nautobot job by name with the given data, wait for it, return its status string.</doc>
+<status status="PASS" start="2026-09-12T14:23:02.664552" elapsed="6.249663"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${st}</arg>
+<arg>SUCCESS</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T14:23:08.914353" elapsed="0.000331"/>
+</kw>
+<kw name="Nautobot Run Job" owner="LabLib">
+<msg time="2026-09-12T14:23:15.090080" level="INFO">job Perform Configuration Compliance: SUCCESS (http://10.0.0.10:8080/extras/job-results/2e371733-391d-4f8b-95e7-c628e21443ac/)</msg>
+<msg time="2026-09-12T14:23:15.090267" level="INFO">${st} = SUCCESS</msg>
+<var>${st}</var>
+<arg>Perform Configuration Compliance</arg>
+<arg>device=${device_ids}</arg>
+<doc>Run a Nautobot job by name with the given data, wait for it, return its status string.</doc>
+<status status="PASS" start="2026-09-12T14:23:08.914768" elapsed="6.175519"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${st}</arg>
+<arg>SUCCESS</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T14:23:15.090402" elapsed="0.000301"/>
+</kw>
+<arg>${ids}</arg>
+<doc>Compliance compares the stored backup with the intent, so back up first.</doc>
+<status status="PASS" start="2026-09-12T14:23:02.664203" elapsed="12.426568"/>
+</kw>
+<kw name="Golden Config Should Be Fully Compliant">
+<kw name="Nautobot Get" owner="LabLib">
+<msg time="2026-09-12T14:23:15.129706" level="INFO">GET http://10.0.0.10:8080/api/plugins/golden-config/config-compliance/?compliance=false -&gt; 200
+{"count":0,"next":null,"previous":null,"results":[]}</msg>
+<msg time="2026-09-12T14:23:15.129957" level="INFO">${cc} = {'count': 0, 'next': None, 'previous': None, 'results': []}</msg>
+<var>${cc}</var>
+<arg>plugins/golden-config/config-compliance/</arg>
+<arg>compliance=false</arg>
+<doc>GET /api/&lt;path&gt; and return the parsed JSON (results list for list endpoints).</doc>
+<status status="PASS" start="2026-09-12T14:23:15.091083" elapsed="0.038916"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2026-09-12T14:23:15.130456" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${cc}[count]</arg>
+<arg>0</arg>
+<arg>msg=non-compliant rows remain after restoring the drift</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2026-09-12T14:23:15.130140" elapsed="0.000362"/>
+</kw>
+<status status="PASS" start="2026-09-12T14:23:15.090892" elapsed="0.039668"/>
+</kw>
+<arg>Switch Config</arg>
+<arg>${SWITCHES}[sw1][host]</arg>
+<arg>snmp-server location ${SNMP_LOCATION}</arg>
+<arg>AND</arg>
+<arg>Backup And Check Compliance</arg>
+<arg>${ids}</arg>
+<arg>AND</arg>
+<arg>Golden Config Should Be Fully Compliant</arg>
+<doc>Executes all the given keywords in a sequence.</doc>
+<status status="PASS" start="2026-09-12T14:23:02.560130" elapsed="12.570465"/>
+</kw>
+<doc>Change one SNMP line on sw1 out of band, run compliance: the SNMP feature must go
+non-compliant with a remediation that restores the intent; then put it back and re-check.</doc>
+<tag>drift</tag>
+<status status="PASS" start="2026-09-12T14:22:48.480901" elapsed="26.649752"/>
+</test>
+<kw name="Suite Teardown Close Connections" owner="common" type="TEARDOWN">
+<kw name="Close All Connections" owner="LabLib">
+<status status="PASS" start="2026-09-12T14:23:15.131254" elapsed="0.010513"/>
+</kw>
+<status status="PASS" start="2026-09-12T14:23:15.131123" elapsed="0.010709"/>
+</kw>
+<doc>Nautobot on the NMS: service health, apps, and the lab as modelled in it — Nautobot is the
+source of truth for nac/data/devices.nac.yaml and must match both that file and the devices.</doc>
+<status status="PASS" start="2026-09-12T14:22:48.327947" elapsed="26.813909"/>
+</suite>
+<status status="PASS" start="2026-09-12T14:22:48.304947" elapsed="26.837425"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="1" fail="0" skip="0">drift</stat>
+</tag>
+<suite>
+<stat name="cat9000v lab" id="s1" pass="1" fail="0" skip="0">cat9000v lab</stat>
+<stat name="09 Nautobot" id="s1-s1" pass="1" fail="0" skip="0">cat9000v lab.09 Nautobot</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

@@ -145,6 +145,11 @@ else:
     print("  (GITEA_PASSWORD not set: template not pushed)")
 
 plat = nb.dcim.platforms.get(name="cisco_xe")
+# remediation: hier_config generates the CLI that would bring a non-compliant feature back to the intent
+rem_ep = nb.plugins.golden_config.remediation_setting
+if not any(str(getattr(r.platform, "id", r.platform)) == plat.id for r in rem_ep.all()):   # filter by platform id is rejected
+    rem_ep.create(platform=plat.id, remediation_type="hierconfig", remediation_options={})
+    print("  created remediation setting (hierconfig) for cisco_xe")
 feat_ep = nb.plugins.golden_config.compliance_feature
 rule_ep = nb.plugins.golden_config.compliance_rule
 for slug, name, match in (("vlan", "VLAN database", "vlan"),
@@ -164,10 +169,12 @@ for slug, name, match in (("vlan", "VLAN database", "vlan"),
     feat = feat_ep.get(slug=slug) or feat_ep.create(slug=slug, name=name, description=f"{name} (from Nautobot)")
     rule = rule_ep.get(feature=feat.id, platform=plat.id)
     fields = {"feature": feat.id, "platform": plat.id, "config_type": "cli", "match_config": match,
-              "config_ordered": False, "config_remediation": False}
+              "config_ordered": False, "config_remediation": True}
     if rule is None:
         rule_ep.create(**fields)
         print(f"  created compliance rule {slug}")
+    elif not rule.config_remediation or rule.match_config != match:
+        rule.update({"config_remediation": True, "match_config": match})
 
 if a.no_backup:
     sys.exit(0)
@@ -194,5 +201,7 @@ def run_job(name):
 
 ok = run_job("Backup Configurations") and run_job("Generate Intended Configurations") and run_job("Perform Configuration Compliance")
 for c in nb.plugins.golden_config.config_compliance.all():
-    print(f"   compliance {c.device.name if hasattr(c.device,'name') else c.device} / {c.rule}: {'COMPLIANT' if c.compliance else 'NON-COMPLIANT'}")
+    rem = (c.remediation or "").strip()
+    print(f"   compliance {c.device.name if hasattr(c.device,'name') else c.device} / {c.rule}: "
+          f"{'COMPLIANT' if c.compliance else 'NON-COMPLIANT'}" + (f"  remediation:\n{rem}" if rem else ""))
 sys.exit(0 if ok else 1)

@@ -191,3 +191,33 @@ Tenant VRF, HSRP groups, STP roles and the BGP export policy are modelled
         Run Keyword If    ${is_global}    Should Be Equal    ${policy}    ${BGP_EXPORT_POLICY}
         ...    ELSE    Should Be Empty    ${policy}
     END
+
+Golden Config detects drift and proposes the remediation
+    [Documentation]    Change one SNMP line on sw1 out of band, run compliance: the SNMP feature must go
+    ...                non-compliant with a remediation that restores the intent; then put it back and re-check.
+    [Tags]    drift
+    ${dev}=    Nautobot Get    dcim/devices/    name=sw1
+    ${ids}=    Create List    ${dev}[results][0][id]
+    Switch Config    ${SWITCHES}[sw1][host]    snmp-server location DRIFTED-BY-ROBOT
+    Backup And Check Compliance    ${ids}
+    ${cc}=    Nautobot Get    plugins/golden-config/config-compliance/    device=sw1    compliance=false
+    Should Be Equal As Integers    ${cc}[count]    1    msg=exactly the SNMP feature should be non-compliant
+    Should Contain    ${cc}[results][0][extra]    snmp-server location DRIFTED-BY-ROBOT
+    Should Contain    ${cc}[results][0][missing]    snmp-server location ${SNMP_LOCATION}
+    Should Contain    ${cc}[results][0][remediation]    snmp-server location ${SNMP_LOCATION}
+    [Teardown]    Run Keywords    Switch Config    ${SWITCHES}[sw1][host]    snmp-server location ${SNMP_LOCATION}
+    ...    AND    Backup And Check Compliance    ${ids}
+    ...    AND    Golden Config Should Be Fully Compliant
+
+*** Keywords ***
+Backup And Check Compliance
+    [Documentation]    Compliance compares the stored backup with the intent, so back up first.
+    [Arguments]    ${device_ids}
+    ${st}=    Nautobot Run Job    Backup Configurations    device=${device_ids}
+    Should Be Equal    ${st}    SUCCESS
+    ${st}=    Nautobot Run Job    Perform Configuration Compliance    device=${device_ids}
+    Should Be Equal    ${st}    SUCCESS
+
+Golden Config Should Be Fully Compliant
+    ${cc}=    Nautobot Get    plugins/golden-config/config-compliance/    compliance=false
+    Should Be Equal As Integers    ${cc}[count]    0    msg=non-compliant rows remain after restoring the drift
