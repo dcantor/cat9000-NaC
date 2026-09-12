@@ -29,22 +29,23 @@ Routed VLAN SVIs are up on their owning switch with the /24 gateway
     FOR    ${id}    ${vlan}    IN    &{L3_VLANS}
         ${brief}=    Show    ${vlan}[owner]    show ip interface brief | include Vlan${id}${SPACE}
         Should Match Regexp    ${brief}    (?m)^Vlan${id}\\s+${vlan}[gateway]\\s+YES\\s+\\S+\\s+up\\s+up
-        ${ipif}=    Show    ${vlan}[owner]    show ip interface Vlan${id} | include Internet address
+        ${ipif}=    Show    ${vlan}[owner]    show ip interface Vlan${id} | include Internet address|VPN Routing
         Should Contain    ${ipif}    Internet address is ${vlan}[gateway]/24
+        Should Contain    ${ipif}    VPN Routing/Forwarding "${TENANT_VRF}"
     END
 
 Routed VLAN subnets are originated into BGP by their owning switch
     FOR    ${id}    ${vlan}    IN    &{L3_VLANS}
-        ${bgp}=    Show    ${vlan}[owner]    show bgp ipv4 unicast ${vlan}[subnet]
-        Should Contain    ${bgp}    BGP routing table entry for ${vlan}[subnet]
+        ${bgp}=    Show    ${vlan}[owner]    show bgp vpnv4 unicast vrf ${TENANT_VRF} ${vlan}[subnet]
+        Should Contain    ${bgp}    BGP routing table entry for 65000:1:${vlan}[subnet]
         Should Contain    ${bgp}    Local
     END
 
 Each switch learns the other switch's routed VLANs via iBGP
     FOR    ${id}    ${vlan}    IN    &{L3_VLANS}
         ${other}=    Set Variable    ${SWITCHES}[${vlan}[owner]][peer]
-        ${via}=    Set Variable    ${SWITCHES}[${vlan}[owner]][transit_ip]
-        ${route}=    Show    ${other}    show ip route ${vlan}[gateway]
+        ${via}=    Set Variable    ${SWITCHES}[${vlan}[owner]][tenant_transit_ip]
+        ${route}=    Show    ${other}    show ip route vrf ${TENANT_VRF} ${vlan}[gateway]
         Should Contain    ${route}    Routing entry for ${vlan}[subnet]
         Should Contain    ${route}    Known via "bgp ${BGP_ASN}"
         Should Contain    ${route}    ${via}
@@ -53,8 +54,14 @@ Each switch learns the other switch's routed VLANs via iBGP
 Every routed VLAN gateway is reachable from the other switch
     FOR    ${id}    ${vlan}    IN    &{L3_VLANS}
         ${other}=    Set Variable    ${SWITCHES}[${vlan}[owner]][peer]
-        ${ping}=    Show    ${other}    ping ${vlan}[gateway] source Loopback0 repeat 3
+        ${ping}=    Show    ${other}    ping vrf ${TENANT_VRF} ${vlan}[gateway] source Vlan101 repeat 3
         Should Match Regexp    ${ping}    Success rate is (100|66) percent
+    END
+
+Routed VLAN subnets are not leaked into the global table
+    FOR    ${sw}    IN    @{SWITCH_NAMES}
+        ${glob}=    Show    ${sw}    show ip route | include ^[BCL].*10\\.11[0-9]\\.
+        Should Be Empty    ${glob.strip()}
     END
 
 Layer-2 VLANs have no SVI and are forwarding across the trunk

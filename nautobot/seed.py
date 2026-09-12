@@ -103,6 +103,10 @@ prefix_roles = {n: get_or_create(nb.extras.roles, {"name": n}, color=c, content_
                 for n, c in (("oob-management", "9e9e9e"), ("transit", "607d8b"), ("loopback", "795548"),
                              ("routed-vlan", "3f51b5"), ("layer2-vlan", "9c27b0"))}
 
+tag_stp_root = get_or_create(nb.extras.tags, {"name": "stp-root"}, color="e91e63", content_types=["dcim.device"],
+                             description="spanning-tree root: priority 4096 on every VLAN")
+tag_stp_backup = get_or_create(nb.extras.tags, {"name": "stp-backup-root"}, color="f48fb1", content_types=["dcim.device"],
+                               description="spanning-tree backup root: priority 8192 on every VLAN")
 cisco = nb.dcim.manufacturers.get(name="Cisco")
 generic = get_or_create(nb.dcim.manufacturers, {"name": "Generic"})
 dt_cirros = get_or_create(nb.dcim.device_types, {"model": "CirrOS VM"}, manufacturer=generic.id, u_height=0)
@@ -144,14 +148,27 @@ if swv is None:
                                            long_term_support=False, release_date="2025-12-19")
     created.append("software-version:17.18.2")
 
+# tenant VRF for the routed VLANs (VRF-lite): VLANs 110-119, own transit VLAN 101 and iBGP AF
+TENANT = {"name": "TENANT-A", "rd": "65000:1", "vlans": range(110, 120),
+          "transit": {"vid": 101, "name": "TRANSIT-A", "prefix": "10.101.0.0/30", "ips": {"sw1": "10.101.0.1", "sw2": "10.101.0.2"}}}
+tenant_vrf = nb.ipam.vrfs.get(name=TENANT["name"], namespace=ns.id)
+if tenant_vrf is None:
+    tenant_vrf = nb.ipam.vrfs.create(name=TENANT["name"], namespace=ns.id, rd=TENANT["rd"], description="tenant VRF (VLANs 110-119)")
+    created.append(f"vrf:{TENANT['name']}")
+
+# HSRP on the host-facing VLANs: both switches carry the SVI, the VIP is the .1 gateway
+HSRP = {10: {"vip": "10.10.0.1", "ips": {"sw1": "10.10.0.2", "sw2": "10.10.0.3"}, "active": "sw1"},
+        20: {"vip": "10.20.0.1", "ips": {"sw1": "10.20.0.3", "sw2": "10.20.0.2"}, "active": "sw2"}}
+
 # ---------------------------------------------------------------- VLANs
 vg = get_or_create(nb.ipam.vlan_groups, {"name": "cat9000v-lab"}, location=site.id)
 vlans = {}
-vlan_list = list(first["configuration"]["vlan"]["vlans"]) + [{"id": SERVICES["quarantine_vlan"], "name": "QUARANTINE"}]
+vlan_list = list(first["configuration"]["vlan"]["vlans"]) + [{"id": SERVICES["quarantine_vlan"], "name": "QUARANTINE"},
+                                                             {"id": TENANT["transit"]["vid"], "name": TENANT["transit"]["name"]}]
 for v in vlan_list:
     vid, name = int(v["id"]), v["name"]
     role = prefix_roles["routed-vlan"] if name.startswith("L3-") or vid in (10, 20) else \
-           prefix_roles["transit"] if vid == 100 else prefix_roles["layer2-vlan"]
+           prefix_roles["transit"] if vid in (100, TENANT["transit"]["vid"]) else prefix_roles["layer2-vlan"]
     vlan = nb.ipam.vlans.get(vid=vid, vlan_group=vg.id)
     if vlan is None:
         vlan = nb.ipam.vlans.create(vid=vid, name=name, vlan_group=vg.id, status=active.id, role=role.id)
@@ -231,11 +248,17 @@ def ensure_cable(a_itf, b_itf):
 trunk_vlans = sorted(vid for vid in vlans if vid not in (99, SERVICES["quarantine_vlan"]))   # not native, not quarantine
 
 switch_ifaces = {}
+hsrp_members = {}
 for sw, dy in devices_yaml.items():
     cfg = dy["configuration"]
-    ctx = {"bgp": {"asn": int(dy["variables"]["bgp_asn"])},
-           "stp_priority": cfg["spanning_tree"]["vlans"][0]["priority"]}
+    ctx = {"bgp": {"asn": int(dy["variables"]["bgp_asn"])}}
     dev = ensure_device(sw, nb.dcim.device_types.get(model="C9KV-UADP-8P"), role_core, plat_xe, ctx)
+    # STP role as a tag: stp-root (4096) / stp-backup-root (8192)
+    prio = cfg["spanning_tree"]["vlans"][0]["priority"]
+    stp_tag = tag_stp_root if prio <= 4096 else tag_stp_backup
+    if stp_tag.id not in [t.id for t in dev.tags]:
+        dev.update({"tags": [t.id for t in dev.tags if t.id not in (tag_stp_root.id, tag_stp_backup.id)] + [stp_tag.id]})
+        created.append(f"tag {stp_tag.name} on {sw}")
     ensure(dev, secrets_group=nb.extras.secrets_groups.get(name="lab-devices").id,   # Nornir/Golden Config creds
            software_version=swv.id)
     mgmt = ensure_iface(dev, "GigabitEthernet0/0", "1000base-t", "OOB management (Mgmt-vrf)", mgmt_only=True)
@@ -277,14 +300,53 @@ for sw, dy in devices_yaml.items():
         ensure_ip(itf, cidr)
     # Vlan1 exists on every Catalyst and is kept shut down (modelled so compliance sees it)
     ensure_iface(dev, "Vlan1", "virtual", "", enabled=False)
-    for s in cfg["interfaces"]["vlans"]:
-        vid = int(s["id"])
+    if nb.ipam.vrf_device_assignments.get(vrf=tenant_vrf.id, device=dev.id) is None:
+        nb.ipam.vrf_device_assignments.create(vrf=tenant_vrf.id, device=dev.id)
+        created.append(f"vrf-device:{sw}/{TENANT['name']}")
+    svis = {int(x["id"]): x for x in cfg["interfaces"]["vlans"]}
+    # host VLANs: SVI on both switches (HSRP), addresses from the HSRP table
+    for vid, h in HSRP.items():
+        svis[vid] = {"id": vid, "description": vlans[vid].name.title() + " gateway (HSRP)", "shutdown": False,
+                     "ipv4": {"address": h["ips"][sw], "address_mask": "255.255.255.0"}}
+    # tenant transit SVI
+    tt = TENANT["transit"]
+    svis[tt["vid"]] = {"id": tt["vid"], "description": f"TRANSIT-A sw1-sw2 ({TENANT['name']})", "shutdown": False,
+                       "ipv4": {"address": tt["ips"][sw], "address_mask": "255.255.255.252"}}
+    for vid, s in sorted(svis.items()):
         addr = s["ipv4"]["address"]
         plen = mask_to_prefixlen(s["ipv4"]["address_mask"])
-        role = prefix_roles["transit"] if vid == 100 else prefix_roles["routed-vlan"]
-        ensure_prefix(f"{addr}/{plen}", role, vlans[vid], desc=s["description"])
+        in_tenant = vid in TENANT["vlans"] or vid == tt["vid"]
+        role = prefix_roles["transit"] if vid in (100, tt["vid"]) else prefix_roles["routed-vlan"]
+        pf = ensure_prefix(f"{addr}/{plen}", role, vlans[vid], desc=s["description"])
+        if in_tenant and nb.ipam.vrf_prefix_assignments.get(vrf=tenant_vrf.id, prefix=pf.id) is None:
+            nb.ipam.vrf_prefix_assignments.create(vrf=tenant_vrf.id, prefix=pf.id)
+            created.append(f"vrf-prefix:{pf.prefix}")
         itf = ensure_iface(dev, f"Vlan{vid}", "virtual", s["description"], mode="access", untagged=vid)
+        ensure(itf, vrf=tenant_vrf.id if in_tenant else None)
+        # replace a stale address (e.g. the old .1 gateway that became the HSRP VIP)
+        for old in nb.ipam.ip_addresses.filter(interfaces=itf.id):
+            if old.address != f"{addr}/{plen}":
+                old.delete(); created.append(f"removed stale ip {old.address} from {sw}/Vlan{vid}")
         ensure_ip(itf, f"{addr}/{plen}")
+        if vid in HSRP:
+            hsrp_members.setdefault(vid, []).append((itf, 110 if HSRP[vid]["active"] == sw else 90))
+
+# HSRP: one InterfaceRedundancyGroup per host VLAN, VIP = the .1 gateway, active switch priority 110
+for vid, h in HSRP.items():
+    vip = nb.ipam.ip_addresses.get(address=f"{h['vip']}/24", namespace=ns.id) or \
+          nb.ipam.ip_addresses.create(address=f"{h['vip']}/24", namespace=ns.id, status=active.id, description=f"HSRP VIP VLAN {vid}")
+    grp = nb.dcim.interface_redundancy_groups.get(name=f"hsrp-vlan{vid}")
+    if grp is None:
+        grp = nb.dcim.interface_redundancy_groups.create(name=f"hsrp-vlan{vid}", protocol="hsrp", protocol_group_id=vid,
+                                                         virtual_ip=vip.id, status=active.id, description=f"gateway redundancy for VLAN {vid}")
+        created.append(f"hsrp group vlan{vid}")
+    for itf, prio in hsrp_members.get(vid, []):
+        assoc = nb.dcim.interface_redundancy_group_associations.get(interface_redundancy_group=grp.id, interface=itf.id)
+        if assoc is None:
+            nb.dcim.interface_redundancy_group_associations.create(interface_redundancy_group=grp.id, interface=itf.id, priority=prio)
+            created.append(f"hsrp member {itf.device.name}/{itf.name} prio {prio}")
+        elif assoc.priority != prio:
+            assoc.update({"priority": prio})
 
 # inter-switch links (Port-channel1 members)
 for a_end, b_end in SW_LINKS:
@@ -335,41 +397,60 @@ for sw, dy in devices_yaml.items():
         if inst.extra_attributes != fields["extra_attributes"]:
             inst.update({"extra_attributes": fields["extra_attributes"]})
     ri[sw] = inst
-    if bgp.address_families.get(routing_instance=inst.id, afi_safi="ipv4_unicast") is None:
+    if bgp.address_families.get(routing_instance=inst.id, afi_safi="ipv4_unicast", vrf__isnull=True) is None:
         bgp.address_families.create(routing_instance=inst.id, afi_safi="ipv4_unicast")
         created.append(f"bgp-af:{sw}/ipv4_unicast")
+    if bgp.address_families.get(routing_instance=inst.id, afi_safi="ipv4_unicast", vrf=tenant_vrf.id) is None:
+        bgp.address_families.create(routing_instance=inst.id, afi_safi="ipv4_unicast", vrf=tenant_vrf.id)
+        created.append(f"bgp-af:{sw}/ipv4_unicast vrf {TENANT['name']}")
     # transit address on this switch = peering source
     tip = dy["variables"]["transit_ip"]
     transit_ip_obj[sw] = next(ip for ip in nb.ipam.ip_addresses.filter(address=tip, namespace=ns.id))
-    # prefixes this switch originates: loopback + every gateway VLAN it hosts
-    for net in dy["configuration"]["routing"]["bgp"]["address_family"]["ipv4_unicast"]["networks"]:
+    # prefixes this switch originates: loopback + every gateway VLAN it hosts (global and tenant)
+    nets = list(dy["configuration"]["routing"]["bgp"]["address_family"]["ipv4_unicast"]["networks"])
+    for vrf_af in dy["configuration"]["routing"]["bgp"]["address_family"]["ipv4_unicast"].get("vrfs", []):
+        nets += vrf_af.get("networks", [])
+    nets += [{"network": f"10.{v}.0.0", "mask": "255.255.255.0"} for v in HSRP]
+    for net in nets:
         plen = mask_to_prefixlen(net["mask"])
         pf = nb.ipam.prefixes.get(prefix=f"{net['network']}/{plen}", namespace=ns.id)
         if pf and tag_adv.id not in [t.id for t in pf.tags]:
             pf.update({"tags": [t.id for t in pf.tags] + [tag_adv.id]})
             created.append(f"tag bgp:advertise on {pf.prefix}")
 
-# one iBGP peering between the two core switches over the transit SVIs
-names = sorted(ri)
-if len(names) == 2:
+# iBGP peerings between the two core switches: global (Vlan100) and tenant VRF (Vlan101).
+# The global peering exports through route-map BGP-OUT (rendered from the bgp:advertise prefixes).
+def ensure_peering(src_ips, description, export_policy=None):
+    names = sorted(src_ips)
+    if len(names) != 2:
+        return
     a_sw, b_sw = names
-    existing = [e for e in bgp.peer_endpoints.filter(routing_instance=ri[a_sw].id) if getattr(e.source_ip, "id", None) == transit_ip_obj[a_sw].id]
+    existing = [e for e in bgp.peer_endpoints.filter(routing_instance=ri[a_sw].id) if getattr(e.source_ip, "id", None) == src_ips[a_sw].id]
     if existing:
-        peering = existing[0].peering
+        eps = {a_sw: existing[0], b_sw: existing[0].peer}
     else:
         peering = bgp.peerings.create(status=active.id)
-        created.append(f"bgp-peering:{a_sw}<->{b_sw}")
-        eps = {}
-        for sw in names:
-            eps[sw] = bgp.peer_endpoints.create(peering=peering.id, routing_instance=ri[sw].id, source_ip=transit_ip_obj[sw].id,
-                                                autonomous_system=as_obj.id, description="iBGP to peer core switch", enabled=True)
-            bgp.peer_endpoint_address_families.create(peer_endpoint=eps[sw].id, afi_safi="ipv4_unicast")
-        created.append("bgp-peer-endpoints + ipv4_unicast AFs")
+        created.append(f"bgp-peering:{description}")
+        eps = {sw: bgp.peer_endpoints.create(peering=peering.id, routing_instance=ri[sw].id, source_ip=src_ips[sw].id,
+                                             autonomous_system=as_obj.id, description=description, enabled=True) for sw in names}
+    for sw, ep in eps.items():
+        af = bgp.peer_endpoint_address_families.get(peer_endpoint=ep.id, afi_safi="ipv4_unicast")
+        if af is None:
+            af = bgp.peer_endpoint_address_families.create(peer_endpoint=ep.id, afi_safi="ipv4_unicast")
+            created.append(f"bgp-endpoint-af:{sw} {description}")
+        if (af.export_policy or None) != export_policy:
+            af.update({"export_policy": export_policy or ""})
+            created.append(f"export policy {export_policy} on {sw} {description}")
+
+ensure_peering(transit_ip_obj, "iBGP to peer core switch", export_policy="BGP-OUT")
+tenant_transit_obj = {sw: next(ip for ip in nb.ipam.ip_addresses.filter(address=TENANT["transit"]["ips"][sw], namespace=ns.id)) for sw in ri}
+ensure_peering(tenant_transit_obj, f"iBGP to peer core switch ({TENANT['name']})")
 
 # saved GraphQL query: the exact query render_nac.py uses, runnable from Extensibility > GraphQL Queries
 NAC_QUERY = """{
   devices(role: "core-switch") {
     name
+    tags { name }
     primary_ip4 { address }
     local_config_context_data
     config_context
@@ -403,8 +484,8 @@ NAC_QUERY = """{
     endpoints {
       description
       enabled
-      source_ip { address }
-      address_families { afi_safi }
+      source_ip { address interfaces { vrf { name } } }
+      address_families { afi_safi export_policy }
       peer {
         source_ip { address }
         autonomous_system { asn }
@@ -412,6 +493,15 @@ NAC_QUERY = """{
     }
   }
   prefixes(tags: "bgp:advertise") { prefix }
+  vrfs { name rd description }
+  interface_redundancy_groups {
+    name protocol protocol_group_id
+    virtual_ip { address }
+    interface_redundancy_group_associations {
+      priority
+      interface { name device { name } }
+    }
+  }
 }
 """
 gq = nb.extras.graphql_queries.get(name="nac-device-model")

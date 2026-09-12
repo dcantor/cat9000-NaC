@@ -38,6 +38,7 @@ QUERY = """
 {
   devices(role: "core-switch") {
     name
+    tags { name }
     primary_ip4 { address }
     local_config_context_data
     config_context
@@ -60,12 +61,18 @@ QUERY = """
     address_families { afi_safi }
     endpoints {
       description enabled
-      source_ip { address }
-      address_families { afi_safi }
+      source_ip { address interfaces { vrf { name } } }
+      address_families { afi_safi export_policy }
       peer { source_ip { address } autonomous_system { asn } }
     }
   }
   prefixes(tags: "bgp:advertise") { prefix }
+  vrfs { name rd description }
+  interface_redundancy_groups {
+    name protocol protocol_group_id
+    virtual_ip { address }
+    interface_redundancy_group_associations { priority interface { name device { name } } }
+  }
 }
 """
 saved = requests.get(f"{a.url}/api/extras/graphql-queries/", params={"name": "nac-device-model"},
@@ -83,6 +90,16 @@ vlans = sorted(data["data"]["vlan_groups"][0]["vlans"], key=lambda v: v["vid"])
 vlan_ids = [v["vid"] for v in vlans]
 bgp_ri = {r["device"]["name"]: r for r in data["data"]["bgp_routing_instances"]}
 advertise = {p["prefix"] for p in data["data"]["prefixes"]}
+# HSRP: {device: {interface: [(group_id, vip, priority)]}}
+hsrp = {}
+for g in data["data"].get("interface_redundancy_groups", []):
+    if (g["protocol"] or "").lower() != "hsrp":
+        continue
+    for assoc in g["interface_redundancy_group_associations"]:
+        dev, ifn = assoc["interface"]["device"]["name"], assoc["interface"]["name"]
+        hsrp.setdefault(dev, {}).setdefault(ifn, []).append((int(g["protocol_group_id"]), g["virtual_ip"]["address"].split("/")[0], assoc["priority"]))
+STP_PRIORITY = {"stp-root": 4096, "stp-backup-root": 8192}
+vrf_defs = {v["name"]: v for v in data["data"].get("vrfs", [])}
 
 
 def ifnum(name):                      # GigabitEthernet1/0/3 -> (1,0,3) for natural sorting
@@ -105,6 +122,8 @@ def render_device(dev):
     oob = svc.get("oob", {})
     ifaces = sorted(dev["interfaces"], key=lambda i: (i["name"].rstrip("0123456789/"), ifnum(i["name"])))
     svis, loopbacks, ethernets, networks, port_channels = [], [], [], [], []
+    vrf_networks = {}                         # vrf name -> [networks] (prefixes tagged bgp:advertise in that VRF)
+    vrfs_used = {}                            # vrf name -> True (rendered as vrf definitions)
     router_id = transit_ip = None
     ri = bgp_ri.get(name)
 
@@ -113,9 +132,13 @@ def render_device(dev):
         ips = [ip["address"] for ip in i["ip_addresses"]]
         parent = i["ip_addresses"][0]["parent"] if i["ip_addresses"] and i["ip_addresses"][0]["parent"] else None
         role = (parent["role"] or {}).get("name") if parent else None
+        vrf_name = i["vrf"]["name"] if i.get("vrf") else None
+        if vrf_name and n != "GigabitEthernet0/0":
+            vrfs_used[vrf_name] = True
         if parent and parent["prefix"] in advertise:          # explicit: prefix tagged bgp:advertise
             net = ipaddress.IPv4Network(parent["prefix"])
-            networks.append({"network": str(net.network_address), "mask": str(net.netmask)})
+            entry = {"network": str(net.network_address), "mask": str(net.netmask)}
+            (vrf_networks.setdefault(vrf_name, []) if vrf_name else networks).append(entry)
         if n == "GigabitEthernet0/0" and ips:          # OOB management in the management VRF
             addr, mask, _ = netmask(ips[0])
             ethernets.append({"type": "GigabitEthernet", "id": "0/0", "description": i["description"],
@@ -152,9 +175,12 @@ def render_device(dev):
         elif n.startswith("Vlan") and ips:
             vid = int(n[4:])
             addr, mask, net = netmask(ips[0])
-            svis.append({"id": vid, "description": i["description"], "shutdown": not i["enabled"],
-                         "ipv4": {"address": addr, "address_mask": mask}})
-            if role == "transit":
+            svi = {"id": vid, "description": i["description"], "shutdown": not i["enabled"],
+                   "ipv4": {"address": addr, "address_mask": mask}}
+            if vrf_name:
+                svi["vrf_forwarding"] = vrf_name
+            svis.append(svi)
+            if role == "transit" and not vrf_name:
                 transit_ip = addr
         elif n.startswith("Loopback") and ips:
             addr, mask, net = netmask(ips[0])
@@ -163,25 +189,63 @@ def render_device(dev):
                 router_id = addr
 
     # BGP from nautobot-bgp-models: routing instance (AS, router-id), peer endpoints, address families
-    bgp = None
+    def net_order(n):   # loopback (/32) first, then subnets ascending (the provider treats the list as ordered)
+        return (n["mask"] != "255.255.255.255", ipaddress.IPv4Address(n["network"]))
+
+    bgp, prefix_lists, route_maps = None, [], []
     if ri:
-        neighbors, af_neighbors = [], []
+        neighbors, af_neighbors, vrf_afs = [], [], {}
         for ep in sorted(ri["endpoints"], key=lambda e: e["peer"]["source_ip"]["address"] if e["peer"] else ""):
             if not ep["peer"] or not ep["enabled"]:
                 continue
             peer_ip = ep["peer"]["source_ip"]["address"].split("/")[0]
+            src_ifaces = ep["source_ip"]["interfaces"] if ep["source_ip"] else []
+            ep_vrf = next((x["vrf"]["name"] for x in src_ifaces if x.get("vrf")), None)
+            ipv4 = next((af for af in ep["address_families"] if af["afi_safi"] == "IPV4_UNICAST"), None)
+            if ep_vrf:                                     # neighbor inside a VRF address-family
+                nbr = {"ip": peer_ip, "remote_as": ep["peer"]["autonomous_system"]["asn"], "description": ep["description"]}
+                if ipv4 and ipv4.get("export_policy"):
+                    nbr["route_maps"] = [{"name": ipv4["export_policy"], "direction": "out"}]
+                vrf_afs.setdefault(ep_vrf, []).append(nbr)
+                continue
             neighbors.append({"ip": peer_ip, "remote_as": ep["peer"]["autonomous_system"]["asn"],
                               "description": ep["description"]})
-            if any(af["afi_safi"] == "IPV4_UNICAST" for af in ep["address_families"]):
-                af_neighbors.append({"ip": peer_ip, "activate": True})
+            if ipv4:
+                afn = {"ip": peer_ip, "activate": True}
+                if ipv4.get("export_policy"):              # policy name from Nautobot; contents rendered below
+                    afn["route_maps"] = [{"name": ipv4["export_policy"], "direction": "out"}]
+                    pl_name = ipv4["export_policy"].replace("-OUT", "") + "-ADVERTISE"
+                    prefix_lists.append({"name": pl_name, "seqs": [
+                        {"seq": 10 * (k + 1), "action": "permit",
+                         "prefix": f"{n['network']}/{ipaddress.IPv4Network('0.0.0.0/' + n['mask']).prefixlen}"}
+                        for k, n in enumerate(sorted(networks, key=net_order))]})
+                    route_maps.append({"name": ipv4["export_policy"], "entries": [
+                        {"seq": 10, "operation": "permit", "match": {"ipv4_address_prefix_lists": [pl_name]}}]})
+                af_neighbors.append(afn)
+        ipv4_af = {"neighbors": af_neighbors, "networks": sorted(networks, key=net_order)}
+        vrf_list = []
+        for v in sorted(set(vrf_afs) | set(vrf_networks)):
+            vrf_list.append({"vrf": v, "neighbors": vrf_afs.get(v, []),
+                             "networks": sorted(vrf_networks.get(v, []), key=net_order)})
+        if vrf_list:
+            ipv4_af["vrfs"] = vrf_list
         bgp = {"as_number": ri["autonomous_system"]["asn"],
                "router_id": ri["router_id"]["address"].split("/")[0] if ri["router_id"] else router_id,
                "log_neighbor_changes": bool((ri["extra_attributes"] or {}).get("log_neighbor_changes", True)),
                "neighbors": neighbors,
-               "address_family": {"ipv4_unicast": {"neighbors": af_neighbors,
-                                                   # loopback (/32) first, then subnets ascending — matches the
-                                                   # order already on the switches, the provider treats it as ordered
-                                                   "networks": sorted(networks, key=lambda n: (n["mask"] != "255.255.255.255", ipaddress.IPv4Address(n["network"])))}}}
+               "address_family": {"ipv4_unicast": ipv4_af}}
+
+    # HSRP is not in the NAC model (module 0.1.0): rendered as a per-device CLI template
+    cli_templates = []
+    if hsrp.get(name):
+        lines = []
+        for ifn, groups in sorted(hsrp[name].items()):
+            lines.append(f"interface {ifn}")
+            lines.append(" standby version 2")
+            for gid, vip, prio in sorted(groups):
+                lines += [f" standby {gid} ip {vip}", f" standby {gid} priority {prio}", f" standby {gid} preempt"]
+        cli_templates.append({"name": f"hsrp_{name}", "type": "cli", "content": "\n".join(lines) + "\n"})
+    stp_priority = next((STP_PRIORITY[t["name"]] for t in dev["tags"] if t["name"] in STP_PRIORITY), None)
 
     services = {}
     if svc:
@@ -215,12 +279,20 @@ def render_device(dev):
         "host": dev["primary_ip4"]["address"].split("/")[0],
         "protocol": "restconf",
         "device_groups": [a.group],
+        **({"templates": [t["name"] for t in cli_templates]} if cli_templates else {}),
+        "_cli_templates": cli_templates,
         "variables": {"router_id": router_id, "transit_ip": transit_ip,
                       "bgp_asn": ri["autonomous_system"]["asn"] if ri else ctx.get("bgp", {}).get("asn")},
         "configuration": {
             **{k: v for k, v in services.items() if v and k != "system"},
             "system": services.get("system", {"hostname": name}),
-            "spanning_tree": {"vlans": [{"id": v, "priority": ctx.get("stp_priority")} for v in [1] + vlan_ids]},
+            **({"spanning_tree": {"vlans": [{"id": v, "priority": stp_priority} for v in [1] + vlan_ids]}} if stp_priority else {}),
+            **({"vrfs": [{"name": v, "description": vrf_defs.get(v, {}).get("description") or v,
+                          **({"route_distinguisher": vrf_defs[v]["rd"]} if vrf_defs.get(v, {}).get("rd") else {}),
+                          "address_family_ipv4": {"enable": True}}
+                         for v in sorted(vrfs_used)]} if vrfs_used else {}),
+            **({"prefix_lists": prefix_lists} if prefix_lists else {}),
+            **({"route_maps": route_maps} if route_maps else {}),
             "vlan": {"vlans": [{"id": v["vid"], "name": v["name"]} for v in vlans]},
             "interfaces": {"ethernets": ethernets, "vlans": svis, "loopbacks": loopbacks,
                            **({"port_channels": port_channels} if port_channels else {})},
@@ -230,11 +302,13 @@ def render_device(dev):
 
 
 rendered = [render_device(d) for d in devices]
+templates = [t for d in rendered for t in d.pop("_cli_templates")]
 
 header = ("---\n"
           "# GENERATED from Nautobot by nautobot/render_nac.py — do not edit by hand.\n"
           f"# Source of truth: {a.url}  (devices with role core-switch, VLAN group cat9000v-lab)\n")
-out = header + yaml.safe_dump({"iosxe": {"devices": rendered}}, sort_keys=False, default_flow_style=False, width=120)
+model = {"iosxe": {**({"templates": templates} if templates else {}), "devices": rendered}}
+out = header + yaml.safe_dump(model, sort_keys=False, default_flow_style=False, width=120)
 
 if a.check:
     current = Path(a.out).read_text() if Path(a.out).exists() else ""

@@ -2,12 +2,23 @@
 # GENERATED from Nautobot by nautobot/render_nac.py — do not edit by hand.
 # Source of truth: http://10.0.0.10:8080  (devices with role core-switch, VLAN group cat9000v-lab)
 iosxe:
+  templates:
+  - name: hsrp_sw1
+    type: cli
+    content: "interface Vlan10\n standby version 2\n standby 10 ip 10.10.0.1\n standby 10 priority 110\n standby 10 preempt\n\
+      interface Vlan20\n standby version 2\n standby 20 ip 10.20.0.1\n standby 20 priority 90\n standby 20 preempt\n"
+  - name: hsrp_sw2
+    type: cli
+    content: "interface Vlan10\n standby version 2\n standby 10 ip 10.10.0.1\n standby 10 priority 90\n standby 10 preempt\n\
+      interface Vlan20\n standby version 2\n standby 20 ip 10.20.0.1\n standby 20 priority 110\n standby 20 preempt\n"
   devices:
   - name: sw1
     host: 10.0.0.11
     protocol: restconf
     device_groups:
     - CORE_SWITCHES
+    templates:
+    - hsrp_sw1
     variables:
       router_id: 10.255.0.1
       transit_ip: 10.100.0.1
@@ -65,6 +76,8 @@ iosxe:
           priority: 4096
         - id: 100
           priority: 4096
+        - id: 101
+          priority: 4096
         - id: 110
           priority: 4096
         - id: 111
@@ -107,6 +120,32 @@ iosxe:
           priority: 4096
         - id: 999
           priority: 4096
+      vrfs:
+      - name: TENANT-A
+        description: tenant VRF (VLANs 110-119)
+        route_distinguisher: '65000:1'
+        address_family_ipv4:
+          enable: true
+      prefix_lists:
+      - name: BGP-ADVERTISE
+        seqs:
+        - seq: 10
+          action: permit
+          prefix: 10.255.0.1/32
+        - seq: 20
+          action: permit
+          prefix: 10.10.0.0/24
+        - seq: 30
+          action: permit
+          prefix: 10.20.0.0/24
+      route_maps:
+      - name: BGP-OUT
+        entries:
+        - seq: 10
+          operation: permit
+          match:
+            ipv4_address_prefix_lists:
+            - BGP-ADVERTISE
       vlan:
         vlans:
         - id: 10
@@ -117,6 +156,8 @@ iosxe:
           name: NATIVE
         - id: 100
           name: TRANSIT
+        - id: 101
+          name: TRANSIT-A
         - id: 110
           name: L3-110
         - id: 111
@@ -185,6 +226,7 @@ iosxe:
                 - 10
                 - 20
                 - 100
+                - 101
                 - 110
                 - 111
                 - 112
@@ -255,6 +297,7 @@ iosxe:
                 - 10
                 - 20
                 - 100
+                - 101
                 - 110
                 - 111
                 - 112
@@ -302,10 +345,16 @@ iosxe:
             access_vlan: 999
         vlans:
         - id: 10
-          description: USERS gateway
+          description: Users gateway (HSRP)
           shutdown: false
           ipv4:
-            address: 10.10.0.1
+            address: 10.10.0.2
+            address_mask: 255.255.255.0
+        - id: 20
+          description: Servers gateway (HSRP)
+          shutdown: false
+          ipv4:
+            address: 10.20.0.3
             address_mask: 255.255.255.0
         - id: 100
           description: TRANSIT sw1-sw2
@@ -313,36 +362,48 @@ iosxe:
           ipv4:
             address: 10.100.0.1
             address_mask: 255.255.255.252
+        - id: 101
+          description: TRANSIT-A sw1-sw2 (TENANT-A)
+          shutdown: false
+          ipv4:
+            address: 10.101.0.1
+            address_mask: 255.255.255.252
+          vrf_forwarding: TENANT-A
         - id: 110
           description: L3-110 gateway
           shutdown: false
           ipv4:
             address: 10.110.0.1
             address_mask: 255.255.255.0
+          vrf_forwarding: TENANT-A
         - id: 111
           description: L3-111 gateway
           shutdown: false
           ipv4:
             address: 10.111.0.1
             address_mask: 255.255.255.0
+          vrf_forwarding: TENANT-A
         - id: 112
           description: L3-112 gateway
           shutdown: false
           ipv4:
             address: 10.112.0.1
             address_mask: 255.255.255.0
+          vrf_forwarding: TENANT-A
         - id: 113
           description: L3-113 gateway
           shutdown: false
           ipv4:
             address: 10.113.0.1
             address_mask: 255.255.255.0
+          vrf_forwarding: TENANT-A
         - id: 114
           description: L3-114 gateway
           shutdown: false
           ipv4:
             address: 10.114.0.1
             address_mask: 255.255.255.0
+          vrf_forwarding: TENANT-A
         loopbacks:
         - id: 0
           description: Router ID
@@ -351,7 +412,7 @@ iosxe:
             address_mask: 255.255.255.255
         port_channels:
         - id: 1
-          description: TRUNK to peer core switch
+          description: Port-channel1 member (to peer core switch)
           shutdown: false
           switchport:
             enable: true
@@ -363,6 +424,7 @@ iosxe:
                 - 10
                 - 20
                 - 100
+                - 101
                 - 110
                 - 111
                 - 112
@@ -404,26 +466,40 @@ iosxe:
               neighbors:
               - ip: 10.100.0.2
                 activate: true
+                route_maps:
+                - name: BGP-OUT
+                  direction: out
               networks:
               - network: 10.255.0.1
                 mask: 255.255.255.255
               - network: 10.10.0.0
                 mask: 255.255.255.0
-              - network: 10.110.0.0
+              - network: 10.20.0.0
                 mask: 255.255.255.0
-              - network: 10.111.0.0
-                mask: 255.255.255.0
-              - network: 10.112.0.0
-                mask: 255.255.255.0
-              - network: 10.113.0.0
-                mask: 255.255.255.0
-              - network: 10.114.0.0
-                mask: 255.255.255.0
+              vrfs:
+              - vrf: TENANT-A
+                neighbors:
+                - ip: 10.101.0.2
+                  remote_as: 65000
+                  description: iBGP to peer core switch (TENANT-A)
+                networks:
+                - network: 10.110.0.0
+                  mask: 255.255.255.0
+                - network: 10.111.0.0
+                  mask: 255.255.255.0
+                - network: 10.112.0.0
+                  mask: 255.255.255.0
+                - network: 10.113.0.0
+                  mask: 255.255.255.0
+                - network: 10.114.0.0
+                  mask: 255.255.255.0
   - name: sw2
     host: 10.0.0.12
     protocol: restconf
     device_groups:
     - CORE_SWITCHES
+    templates:
+    - hsrp_sw2
     variables:
       router_id: 10.255.0.2
       transit_ip: 10.100.0.2
@@ -481,6 +557,8 @@ iosxe:
           priority: 8192
         - id: 100
           priority: 8192
+        - id: 101
+          priority: 8192
         - id: 110
           priority: 8192
         - id: 111
@@ -523,6 +601,32 @@ iosxe:
           priority: 8192
         - id: 999
           priority: 8192
+      vrfs:
+      - name: TENANT-A
+        description: tenant VRF (VLANs 110-119)
+        route_distinguisher: '65000:1'
+        address_family_ipv4:
+          enable: true
+      prefix_lists:
+      - name: BGP-ADVERTISE
+        seqs:
+        - seq: 10
+          action: permit
+          prefix: 10.255.0.2/32
+        - seq: 20
+          action: permit
+          prefix: 10.10.0.0/24
+        - seq: 30
+          action: permit
+          prefix: 10.20.0.0/24
+      route_maps:
+      - name: BGP-OUT
+        entries:
+        - seq: 10
+          operation: permit
+          match:
+            ipv4_address_prefix_lists:
+            - BGP-ADVERTISE
       vlan:
         vlans:
         - id: 10
@@ -533,6 +637,8 @@ iosxe:
           name: NATIVE
         - id: 100
           name: TRANSIT
+        - id: 101
+          name: TRANSIT-A
         - id: 110
           name: L3-110
         - id: 111
@@ -601,6 +707,7 @@ iosxe:
                 - 10
                 - 20
                 - 100
+                - 101
                 - 110
                 - 111
                 - 112
@@ -671,6 +778,7 @@ iosxe:
                 - 10
                 - 20
                 - 100
+                - 101
                 - 110
                 - 111
                 - 112
@@ -717,11 +825,17 @@ iosxe:
             mode: access
             access_vlan: 999
         vlans:
-        - id: 20
-          description: SERVERS gateway
+        - id: 10
+          description: Users gateway (HSRP)
           shutdown: false
           ipv4:
-            address: 10.20.0.1
+            address: 10.10.0.3
+            address_mask: 255.255.255.0
+        - id: 20
+          description: Servers gateway (HSRP)
+          shutdown: false
+          ipv4:
+            address: 10.20.0.2
             address_mask: 255.255.255.0
         - id: 100
           description: TRANSIT sw1-sw2
@@ -729,36 +843,48 @@ iosxe:
           ipv4:
             address: 10.100.0.2
             address_mask: 255.255.255.252
+        - id: 101
+          description: TRANSIT-A sw1-sw2 (TENANT-A)
+          shutdown: false
+          ipv4:
+            address: 10.101.0.2
+            address_mask: 255.255.255.252
+          vrf_forwarding: TENANT-A
         - id: 115
           description: L3-115 gateway
           shutdown: false
           ipv4:
             address: 10.115.0.1
             address_mask: 255.255.255.0
+          vrf_forwarding: TENANT-A
         - id: 116
           description: L3-116 gateway
           shutdown: false
           ipv4:
             address: 10.116.0.1
             address_mask: 255.255.255.0
+          vrf_forwarding: TENANT-A
         - id: 117
           description: L3-117 gateway
           shutdown: false
           ipv4:
             address: 10.117.0.1
             address_mask: 255.255.255.0
+          vrf_forwarding: TENANT-A
         - id: 118
           description: L3-118 gateway
           shutdown: false
           ipv4:
             address: 10.118.0.1
             address_mask: 255.255.255.0
+          vrf_forwarding: TENANT-A
         - id: 119
           description: L3-119 gateway
           shutdown: false
           ipv4:
             address: 10.119.0.1
             address_mask: 255.255.255.0
+          vrf_forwarding: TENANT-A
         loopbacks:
         - id: 0
           description: Router ID
@@ -767,7 +893,7 @@ iosxe:
             address_mask: 255.255.255.255
         port_channels:
         - id: 1
-          description: TRUNK to peer core switch
+          description: Port-channel1 member (to peer core switch)
           shutdown: false
           switchport:
             enable: true
@@ -779,6 +905,7 @@ iosxe:
                 - 10
                 - 20
                 - 100
+                - 101
                 - 110
                 - 111
                 - 112
@@ -820,18 +947,30 @@ iosxe:
               neighbors:
               - ip: 10.100.0.1
                 activate: true
+                route_maps:
+                - name: BGP-OUT
+                  direction: out
               networks:
               - network: 10.255.0.2
                 mask: 255.255.255.255
+              - network: 10.10.0.0
+                mask: 255.255.255.0
               - network: 10.20.0.0
                 mask: 255.255.255.0
-              - network: 10.115.0.0
-                mask: 255.255.255.0
-              - network: 10.116.0.0
-                mask: 255.255.255.0
-              - network: 10.117.0.0
-                mask: 255.255.255.0
-              - network: 10.118.0.0
-                mask: 255.255.255.0
-              - network: 10.119.0.0
-                mask: 255.255.255.0
+              vrfs:
+              - vrf: TENANT-A
+                neighbors:
+                - ip: 10.101.0.1
+                  remote_as: 65000
+                  description: iBGP to peer core switch (TENANT-A)
+                networks:
+                - network: 10.115.0.0
+                  mask: 255.255.255.0
+                - network: 10.116.0.0
+                  mask: 255.255.255.0
+                - network: 10.117.0.0
+                  mask: 255.255.255.0
+                - network: 10.118.0.0
+                  mask: 255.255.255.0
+                - network: 10.119.0.0
+                  mask: 255.255.255.0

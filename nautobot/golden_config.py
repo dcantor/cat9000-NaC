@@ -83,8 +83,17 @@ GQL = """query ($device_id: ID!) {
       extra_attributes
       endpoints {
         description enabled
-        address_families { afi_safi }
+        source_ip { interfaces { vrf { name } } }
+        address_families { afi_safi export_policy }
         peer { source_ip { address } autonomous_system { asn } }
+      }
+    }
+    vrf_assignments { vrf { name rd description } }
+    interfaces_redundancy: interfaces {
+      name
+      interface_redundancy_group_associations {
+        priority
+        interface_redundancy_group { protocol protocol_group_id virtual_ip { address } }
       }
     }
   }
@@ -149,7 +158,9 @@ for slug, name, match in (("vlan", "VLAN database", "vlan"),
                           ("snmp", "SNMP", "snmp-server community\nsnmp-server location\nsnmp-server contact\nsnmp-server host"),
                           ("banner", "Banner", "banner motd"),
                           ("mgmt-acl", "Management ACL", "ip access-list standard MGMT-ACCESS"),
-                          ("port-channel", "Port-channel", "interface Port-channel")):
+                          ("port-channel", "Port-channel", "interface Port-channel"),
+                          ("vrf", "VRF definitions", "vrf definition"),
+                          ("bgp-policy", "BGP policy", "ip prefix-list\nroute-map")):
     feat = feat_ep.get(slug=slug) or feat_ep.create(slug=slug, name=name, description=f"{name} (from Nautobot)")
     rule = rule_ep.get(feature=feat.id, platform=plat.id)
     fields = {"feature": feat.id, "platform": plat.id, "config_type": "cli", "match_config": match,

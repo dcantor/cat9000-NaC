@@ -9,6 +9,24 @@
 {%- endfor -%}
 hostname {{ hostname }}
 !
+{% for va in vrf_assignments | sort(attribute='vrf.name') %}
+vrf definition {{ va.vrf.name }}
+{% if va.vrf.name == config_context.oob.vrf %}
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+{% else %}
+ description {{ va.vrf.description }}
+ rd {{ va.vrf.rd }}
+ !
+ address-family ipv4
+ exit-address-family
+{% endif %}
+!
+{% endfor %}
 ip domain name {{ config_context.domain_name }}
 !
 {% for i in interfaces if i.name == 'GigabitEthernet0/0' %}
@@ -61,34 +79,60 @@ interface {{ i.name }}
  ip address {{ i.ip_addresses[0].address.split('/')[0] }} {{ masks[i.ip_addresses[0].address.split('/')[1]] }}
 !
 {% endfor -%}
-{% for i in svis | sort(attribute='name') -%}
+{%- set hsrp = {} -%}
+{%- for i in interfaces_redundancy -%}{%- if i.interface_redundancy_group_associations -%}{%- set _ = hsrp.update({i.name: i.interface_redundancy_group_associations}) -%}{%- endif -%}{%- endfor -%}
+{% for i in svis | sort(attribute='name') %}
 interface {{ i.name }}
-{% if i.description %} description {{ i.description }}
-{% endif -%}
-{% if i.ip_addresses %} ip address {{ i.ip_addresses[0].address.split('/')[0] }} {{ masks[i.ip_addresses[0].address.split('/')[1]] }}
-{% else %} no ip address
-{% endif -%}
-{% if not i.enabled %} shutdown
-{% endif -%}
+{% if i.description %}
+ description {{ i.description }}
+{% endif %}
+{% if i.vrf %}
+ vrf forwarding {{ i.vrf.name }}
+{% endif %}
+{% if i.ip_addresses %}
+ ip address {{ i.ip_addresses[0].address.split('/')[0] }} {{ masks[i.ip_addresses[0].address.split('/')[1]] }}
+{% else %}
+ no ip address
+{% endif %}
+{% if i.name in hsrp %}
+ standby version 2
+{% for a in hsrp[i.name] %}
+ standby {{ a.interface_redundancy_group.protocol_group_id }} ip {{ a.interface_redundancy_group.virtual_ip.address.split('/')[0] }}
+ standby {{ a.interface_redundancy_group.protocol_group_id }} priority {{ a.priority }}
+ standby {{ a.interface_redundancy_group.protocol_group_id }} preempt
+{% endfor %}
+{% endif %}
+{% if not i.enabled %}
+ shutdown
+{% endif %}
 !
-{% endfor -%}
+{% endfor %}
 {#- BGP from nautobot-bgp-models: routing instance, iBGP peer endpoints, networks = the prefixes tagged
     bgp:advertise behind this device's own interface addresses -#}
 {%- set own = [] -%}
+{%- set own_vrf = {} -%}
 {%- for i in interfaces -%}
   {%- for ip in i.ip_addresses if ip.parent -%}
-    {%- for t in ip.parent.tags if t.name == 'bgp:advertise' and ip.parent.prefix not in own -%}
-      {%- set _ = own.append(ip.parent.prefix) -%}
+    {%- for t in ip.parent.tags if t.name == 'bgp:advertise' -%}
+      {%- if i.vrf -%}
+        {%- if ip.parent.prefix not in own_vrf.get(i.vrf.name, []) -%}{%- set _ = own_vrf.update({i.vrf.name: own_vrf.get(i.vrf.name, []) + [ip.parent.prefix]}) -%}{%- endif -%}
+      {%- elif ip.parent.prefix not in own -%}{%- set _ = own.append(ip.parent.prefix) -%}
+      {%- endif -%}
     {%- endfor -%}
   {%- endfor -%}
 {%- endfor -%}
+{%- set global_eps = [] -%}{%- set vrf_eps = {} -%}
+{%- for ri in bgp_routing_instances -%}{%- for ep in ri.endpoints if ep.enabled and ep.peer -%}
+  {%- set epvrf = ((ep.source_ip.interfaces | selectattr('vrf') | map(attribute='vrf.name') | list) + [none]) | first -%}
+  {%- if epvrf -%}{%- set _ = vrf_eps.update({epvrf: vrf_eps.get(epvrf, []) + [ep]}) -%}{%- else -%}{%- set _ = global_eps.append(ep) -%}{%- endif -%}
+{%- endfor -%}{%- endfor -%}
 {% for ri in bgp_routing_instances %}
 router bgp {{ ri.autonomous_system.asn }}
  bgp router-id {{ ri.router_id.address.split('/')[0] }}
 {% if ri.extra_attributes.log_neighbor_changes | default(true) %}
  bgp log-neighbor-changes
 {% endif %}
-{% for ep in ri.endpoints if ep.enabled and ep.peer %}
+{% for ep in global_eps %}
  neighbor {{ ep.peer.source_ip.address.split('/')[0] }} remote-as {{ ep.peer.autonomous_system.asn }}
  neighbor {{ ep.peer.source_ip.address.split('/')[0] }} description {{ ep.description }}
 {% endfor %}
@@ -97,9 +141,36 @@ router bgp {{ ri.autonomous_system.asn }}
 {% for p in own | sort %}
   network {{ p.split('/')[0] }} mask {{ masks[p.split('/')[1]] }}
 {% endfor %}
-{% for ep in ri.endpoints if ep.enabled and ep.peer %}
+{% for ep in global_eps %}
+  neighbor {{ ep.peer.source_ip.address.split('/')[0] }} activate
+{% for af in ep.address_families if af.export_policy %}
+  neighbor {{ ep.peer.source_ip.address.split('/')[0] }} route-map {{ af.export_policy }} out
+{% endfor %}
+{% endfor %}
+ exit-address-family
+{% for vrf, eps in vrf_eps.items() | sort %}
+ !
+ address-family ipv4 vrf {{ vrf }}
+{% for p in own_vrf.get(vrf, []) | sort %}
+  network {{ p.split('/')[0] }} mask {{ masks[p.split('/')[1]] }}
+{% endfor %}
+{% for ep in eps %}
+  neighbor {{ ep.peer.source_ip.address.split('/')[0] }} remote-as {{ ep.peer.autonomous_system.asn }}
+  neighbor {{ ep.peer.source_ip.address.split('/')[0] }} description {{ ep.description }}
   neighbor {{ ep.peer.source_ip.address.split('/')[0] }} activate
 {% endfor %}
  exit-address-family
+{% endfor %}
 !
 {% endfor %}
+{% for ep in global_eps %}{% for af in ep.address_families if af.export_policy %}
+{% set pl = af.export_policy | replace('-OUT', '') ~ '-ADVERTISE' %}
+{% set lo = [] %}{% set nets = [] %}
+{% for p in own %}{% if p.endswith('/32') %}{% set _ = lo.append(p) %}{% else %}{% set _ = nets.append(p) %}{% endif %}{% endfor %}
+{% set ordered = lo + (nets | sort) %}
+{% for p in ordered %}
+ip prefix-list {{ pl }} seq {{ loop.index * 10 }} permit {{ p }}
+{% endfor %}
+route-map {{ af.export_policy }} permit 10
+ match ip address prefix-list {{ pl }}
+{% endfor %}{% endfor %}
