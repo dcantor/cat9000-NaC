@@ -31,3 +31,34 @@ interface {{ i.name }}
 {% endif -%}
 !
 {% endfor -%}
+{#- BGP from nautobot-bgp-models: routing instance, iBGP peer endpoints, networks = the prefixes tagged
+    bgp:advertise behind this device's own interface addresses -#}
+{%- set own = [] -%}
+{%- for i in interfaces -%}
+  {%- for ip in i.ip_addresses if ip.parent -%}
+    {%- for t in ip.parent.tags if t.name == 'bgp:advertise' and ip.parent.prefix not in own -%}
+      {%- set _ = own.append(ip.parent.prefix) -%}
+    {%- endfor -%}
+  {%- endfor -%}
+{%- endfor -%}
+{% for ri in bgp_routing_instances %}
+router bgp {{ ri.autonomous_system.asn }}
+ bgp router-id {{ ri.router_id.address.split('/')[0] }}
+{% if ri.extra_attributes.log_neighbor_changes | default(true) %}
+ bgp log-neighbor-changes
+{% endif %}
+{% for ep in ri.endpoints if ep.enabled and ep.peer %}
+ neighbor {{ ep.peer.source_ip.address.split('/')[0] }} remote-as {{ ep.peer.autonomous_system.asn }}
+ neighbor {{ ep.peer.source_ip.address.split('/')[0] }} description {{ ep.description }}
+{% endfor %}
+ !
+ address-family ipv4
+{% for p in own | sort %}
+  network {{ p.split('/')[0] }} mask {{ masks[p.split('/')[1]] }}
+{% endfor %}
+{% for ep in ri.endpoints if ep.enabled and ep.peer %}
+  neighbor {{ ep.peer.source_ip.address.split('/')[0] }} activate
+{% endfor %}
+ exit-address-family
+!
+{% endfor %}

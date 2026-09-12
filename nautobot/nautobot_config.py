@@ -680,6 +680,7 @@ PLUGINS = [
     "nautobot_ssot",
     "nautobot_device_onboarding",
     "nautobot_golden_config",
+    "nautobot_bgp_models",
 ]
 
 PLUGINS_CONFIG = {
@@ -700,6 +701,12 @@ PLUGINS_CONFIG = {
         "hide_example_jobs": True,
     },
     "nautobot_device_onboarding": {},
+    "nautobot_bgp_models": {
+        "default_statuses": {
+            "AutonomousSystem": ["active", "available", "planned"],
+            "Peering": ["active", "decommissioned", "deprovisioning", "offline", "planned", "provisioning"],
+        },
+    },
     "nautobot_golden_config": {
         "per_feature_bar_width": 0.15,
         "per_feature_width": 13,

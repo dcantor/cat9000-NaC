@@ -44,10 +44,24 @@ QUERY = """
       name description enabled mgmt_only mode
       untagged_vlan { vid }
       tagged_vlans { vid }
-      ip_addresses { address parent { role { name } } }
+      ip_addresses { address parent { role { name } prefix } }
     }
   }
   vlan_groups(name: "cat9000v-lab") { vlans { vid name role { name } } }
+  bgp_routing_instances {
+    device { name }
+    autonomous_system { asn }
+    router_id { address }
+    extra_attributes
+    address_families { afi_safi }
+    endpoints {
+      description enabled
+      source_ip { address }
+      address_families { afi_safi }
+      peer { source_ip { address } autonomous_system { asn } }
+    }
+  }
+  prefixes(tags: "bgp:advertise") { prefix }
 }
 """
 saved = requests.get(f"{a.url}/api/extras/graphql-queries/", params={"name": "nac-device-model"},
@@ -63,6 +77,8 @@ if data.get("errors"):
 devices = sorted(data["data"]["devices"], key=lambda d: d["name"])
 vlans = sorted(data["data"]["vlan_groups"][0]["vlans"], key=lambda v: v["vid"])
 vlan_ids = [v["vid"] for v in vlans]
+bgp_ri = {r["device"]["name"]: r for r in data["data"]["bgp_routing_instances"]}
+advertise = {p["prefix"] for p in data["data"]["prefixes"]}
 
 
 def ifnum(name):                      # GigabitEthernet1/0/3 -> (1,0,3) for natural sorting
@@ -80,11 +96,16 @@ def render_device(dev):
     ifaces = sorted(dev["interfaces"], key=lambda i: (i["name"].rstrip("0123456789/"), ifnum(i["name"])))
     svis, loopbacks, ethernets, networks = [], [], [], []
     router_id = transit_ip = None
+    ri = bgp_ri.get(name)
 
     for i in ifaces:
         n = i["name"]
         ips = [ip["address"] for ip in i["ip_addresses"]]
-        role = (i["ip_addresses"][0]["parent"]["role"] or {}).get("name") if i["ip_addresses"] and i["ip_addresses"][0]["parent"] else None
+        parent = i["ip_addresses"][0]["parent"] if i["ip_addresses"] and i["ip_addresses"][0]["parent"] else None
+        role = (parent["role"] or {}).get("name") if parent else None
+        if parent and parent["prefix"] in advertise:          # explicit: prefix tagged bgp:advertise
+            net = ipaddress.IPv4Network(parent["prefix"])
+            networks.append({"network": str(net.network_address), "mask": str(net.netmask)})
         if n.startswith("GigabitEthernet1/0/"):
             port = n.split("GigabitEthernet")[1]
             e = {"type": "GigabitEthernet", "id": port, "description": i["description"], "shutdown": not i["enabled"]}
@@ -106,36 +127,51 @@ def render_device(dev):
                          "ipv4": {"address": addr, "address_mask": mask}})
             if role == "transit":
                 transit_ip = addr
-            else:
-                networks.append({"network": net.split("/")[0], "mask": mask})
         elif n.startswith("Loopback") and ips:
             addr, mask, net = netmask(ips[0])
             loopbacks.append({"id": int(n[8:]), "description": i["description"], "ipv4": {"address": addr, "address_mask": mask}})
             if n == "Loopback0":
                 router_id = addr
-                networks.insert(0, {"network": addr, "mask": mask})
+
+    # BGP from nautobot-bgp-models: routing instance (AS, router-id), peer endpoints, address families
+    bgp = None
+    if ri:
+        neighbors, af_neighbors = [], []
+        for ep in sorted(ri["endpoints"], key=lambda e: e["peer"]["source_ip"]["address"] if e["peer"] else ""):
+            if not ep["peer"] or not ep["enabled"]:
+                continue
+            peer_ip = ep["peer"]["source_ip"]["address"].split("/")[0]
+            neighbors.append({"ip": peer_ip, "remote_as": ep["peer"]["autonomous_system"]["asn"],
+                              "description": ep["description"]})
+            if any(af["afi_safi"] == "IPV4_UNICAST" for af in ep["address_families"]):
+                af_neighbors.append({"ip": peer_ip, "activate": True})
+        bgp = {"as_number": ri["autonomous_system"]["asn"],
+               "router_id": ri["router_id"]["address"].split("/")[0] if ri["router_id"] else router_id,
+               "log_neighbor_changes": bool((ri["extra_attributes"] or {}).get("log_neighbor_changes", True)),
+               "neighbors": neighbors,
+               "address_family": {"ipv4_unicast": {"neighbors": af_neighbors,
+                                                   # loopback (/32) first, then subnets ascending — matches the
+                                                   # order already on the switches, the provider treats it as ordered
+                                                   "networks": sorted(networks, key=lambda n: (n["mask"] != "255.255.255.255", ipaddress.IPv4Address(n["network"])))}}}
 
     return {
         "name": name,
         "host": dev["primary_ip4"]["address"].split("/")[0],
         "protocol": "restconf",
         "device_groups": [a.group],
-        "variables": {"router_id": router_id, "transit_ip": transit_ip, "bgp_asn": ctx.get("bgp", {}).get("asn")},
+        "variables": {"router_id": router_id, "transit_ip": transit_ip,
+                      "bgp_asn": ri["autonomous_system"]["asn"] if ri else ctx.get("bgp", {}).get("asn")},
         "configuration": {
             "system": {"hostname": name},
             "spanning_tree": {"vlans": [{"id": v, "priority": ctx.get("stp_priority")} for v in [1] + vlan_ids]},
             "vlan": {"vlans": [{"id": v["vid"], "name": v["name"]} for v in vlans]},
             "interfaces": {"ethernets": ethernets, "vlans": svis, "loopbacks": loopbacks},
-            "routing": {"bgp": {"address_family": {"ipv4_unicast": {"networks": networks}}}},
+            "routing": {"bgp": bgp} if bgp else {},
         },
     }
 
 
 rendered = [render_device(d) for d in devices]
-# the iBGP peer is the other core switch's transit address
-for d in rendered:
-    others = [o for o in rendered if o is not d]
-    d["variables"]["peer_transit_ip"] = others[0]["variables"]["transit_ip"] if len(others) == 1 else None
 
 header = ("---\n"
           "# GENERATED from Nautobot by nautobot/render_nac.py — do not edit by hand.\n"

@@ -8,6 +8,7 @@ RUN pip install --no-cache-dir \
       "nautobot-ssot>=4.6,<5" \
       "nautobot-device-onboarding>=5.5,<6" \
       "nautobot-golden-config>=3.0,<4" \
+      "nautobot-bgp-models>=3.1,<4" \
       "pynautobot>=3.1,<4"
 COPY --chown=nautobot:nautobot nautobot_config.py /opt/nautobot/nautobot_config.py
 USER nautobot

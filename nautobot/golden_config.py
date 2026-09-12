@@ -74,8 +74,18 @@ GQL = """query ($device_id: ID!) {
     name hostname: name platform { network_driver } primary_ip4 { address }
     local_config_context_data
     interfaces { name description enabled mode untagged_vlan { vid } tagged_vlans { vid }
-                 ip_addresses { address } }
+                 ip_addresses { address parent { prefix tags { name } } } }
     location { vlan_groups { vlans { vid name } } }
+    bgp_routing_instances {
+      autonomous_system { asn }
+      router_id { address }
+      extra_attributes
+      endpoints {
+        description enabled
+        address_families { afi_safi }
+        peer { source_ip { address } autonomous_system { asn } }
+      }
+    }
   }
 }"""
 if gq is None:
@@ -129,7 +139,8 @@ feat_ep = nb.plugins.golden_config.compliance_feature
 rule_ep = nb.plugins.golden_config.compliance_rule
 for slug, name, match in (("vlan", "VLAN database", "vlan"),
                           ("loopback", "Loopbacks", "interface Loopback"),
-                          ("svi", "SVIs", "interface Vlan")):
+                          ("svi", "SVIs", "interface Vlan"),
+                          ("bgp", "BGP", "router bgp")):
     feat = feat_ep.get(slug=slug) or feat_ep.create(slug=slug, name=name, description=f"{name} (from Nautobot)")
     rule = rule_ep.get(feature=feat.id, platform=plat.id)
     fields = {"feature": feat.id, "platform": plat.id, "config_type": "cli", "match_config": match,

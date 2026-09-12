@@ -94,7 +94,41 @@ Golden Config: backups of both switches are in the lab Gitea
 
 Golden Config: every switch is compliant with the Nautobot-rendered intent
     ${cc}=    Nautobot Get    plugins/golden-config/config-compliance/    limit=100
-    Should Be True    ${cc}[count] >= 6    msg=expected at least 3 features x 2 devices, got ${cc}[count]
+    Should Be True    ${cc}[count] >= 8    msg=expected at least 4 features x 2 devices, got ${cc}[count]
     FOR    ${row}    IN    @{cc}[results]
         Should Be True    ${row}[compliance]    msg=non-compliant: ${row}[device] ${row}[rule] missing=${row}[missing] extra=${row}[extra]
+    END
+
+BGP is modelled: AS, routing instances, peering and advertised prefixes
+    ${d}=    Nautobot Graphql    { bgp_routing_instances { device { name } autonomous_system { asn } router_id { address } endpoints { enabled source_ip { address } peer { source_ip { address } autonomous_system { asn } routing_instance { device { name } } } } } prefixes(tags:"bgp:advertise") { prefix } }
+    Length Should Be    ${d}[bgp_routing_instances]    2
+    FOR    ${ri}    IN    @{d}[bgp_routing_instances]
+        ${sw}=    Set Variable    ${ri}[device][name]
+        Should Be Equal As Integers    ${ri}[autonomous_system][asn]    ${BGP_ASN}
+        Should Be Equal    ${ri}[router_id][address]    ${SWITCHES}[${sw}][router_id]/32
+        Length Should Be    ${ri}[endpoints]    1
+        ${ep}=    Set Variable    ${ri}[endpoints][0]
+        Should Start With    ${ep}[source_ip][address]    ${SWITCHES}[${sw}][transit_ip]/
+        Should Be Equal    ${ep}[peer][routing_instance][device][name]    ${SWITCHES}[${sw}][peer]
+        Should Start With    ${ep}[peer][source_ip][address]    ${SWITCHES}[${SWITCHES}[${sw}][peer]][transit_ip]/
+    END
+    ${adv}=    Create List
+    FOR    ${p}    IN    @{d}[prefixes]
+        Append To List    ${adv}    ${p}[prefix]
+    END
+    FOR    ${sw}    IN    @{SWITCH_NAMES}
+        FOR    ${net}    IN    @{BGP_NETWORKS}[${sw}]
+            List Should Contain Value    ${adv}    ${net}    msg=${net} not tagged bgp:advertise in Nautobot
+        END
+    END
+
+Live BGP sessions match the peerings modelled in Nautobot
+    ${d}=    Nautobot Graphql    { bgp_routing_instances { device { name } endpoints { peer { source_ip { address } autonomous_system { asn } } } } }
+    FOR    ${ri}    IN    @{d}[bgp_routing_instances]
+        ${sw}=    Set Variable    ${ri}[device][name]
+        ${sum}=    Show    ${sw}    show bgp ipv4 unicast summary | begin Neighbor
+        FOR    ${ep}    IN    @{ri}[endpoints]
+            ${peer_ip}=    Fetch From Left    ${ep}[peer][source_ip][address]    /
+            Should Match Regexp    ${sum}    (?m)^${peer_ip}\\s+4\\s+${ep}[peer][autonomous_system][asn]\\s+.*\\s\\d+\\s*$    msg=${sw}: session to ${peer_ip} not Established
+        END
     END

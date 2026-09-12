@@ -49,6 +49,7 @@ bind-mounted so edits only need `docker compose up -d`):
 | `nautobot-golden-config` | config backups, intended configs, compliance |
 | `nautobot-plugin-nornir` | inventory + credentials (`CredentialsNautobotSecrets`: each switch carries the `lab-devices` secrets group) |
 | `nautobot-ssot` | dependency of onboarding v5 |
+| `nautobot-bgp-models` | first-class BGP objects: Autonomous System 65000, a BGP Routing Instance per switch (router-id = Loopback0), the sw1↔sw2 Peering with Peer Endpoints on the transit SVIs, IPv4 unicast address families |
 
 Device credentials reach the containers as env vars (`LAB_DEVICE_*` in `.env`)
 and are referenced by Nautobot *Secrets* (environment-variable provider) —
@@ -70,9 +71,13 @@ nothing sensitive is stored in the database.
 | `lab.sh nautobot golden` | Golden Config setup + backup → intended → compliance run |
 
 What is modelled in Nautobot is *generated*: the VLAN database, switchport
-modes/allowed VLANs, SVIs and loopbacks with addresses, STP priorities, the BGP
-networks each switch originates, management addresses. `device_groups.nac.yaml`
-keeps only the iBGP peering skeleton and `global.nac.yaml` the services and
+modes/allowed VLANs, SVIs and loopbacks with addresses, STP priorities,
+management addresses, and the **complete BGP configuration** — AS, router-id,
+`log-neighbor-changes` (routing-instance `extra_attributes`), every neighbor
+with remote-AS/description from the Peer Endpoints, address-family activation,
+and the `network` statements: prefixes tagged **`bgp:advertise`** that sit
+behind one of the device's own interface addresses. `device_groups.nac.yaml`
+is now just group membership; `global.nac.yaml` holds the services and
 hardening. Round trip verified: rendering from Nautobot then `terraform plan`
 gives *No changes*, and test `09_nautobot` fails if the committed file drifts
 from Nautobot.
@@ -85,8 +90,10 @@ YAML. `golden-config-lab` (takes `$device_id`) is the query behind the
 intended-config template.
 
 Rules encoded in the renderer: access ports get portfast + bpduguard, trunks
-`nonegotiate`, prefixes with role `transit` are excluded from BGP, Loopback0 is
-the router-id, the iBGP peer is the other core switch's transit address.
+`nonegotiate`, an interface whose prefix has role `transit` provides
+`transit_ip`, BGP `network` order is loopback first then ascending (the
+provider treats the list as ordered). Nothing about the peering topology is
+assumed any more — add a switch or an eBGP uplink by creating the objects.
 
 ## Golden Config
 
@@ -94,7 +101,7 @@ A **Gitea** container (`http://10.0.0.10:3000`, user `lab`) hosts three repos
 that Nautobot uses as Git repositories: `config-backups`, `intended-configs`,
 `golden-config-templates` (`cisco_xe.j2` from `golden-config-templates/`,
 rendered from the `golden-config-lab` GraphQL query). Compliance features:
-VLAN database, SVIs, Loopbacks — all **compliant** on both switches.
+VLAN database, SVIs, Loopbacks, **BGP** — all **compliant** on both switches.
 
 Two lab changes were needed for that: VTP is now *transparent* (via NAC) so the
 VLAN database appears in running-config, and Vlan1 (shutdown) is modelled.

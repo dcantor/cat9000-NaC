@@ -215,7 +215,9 @@ for sw, dy in devices_yaml.items():
         switch_ifaces[sw][n] = itf
     for lo in cfg["interfaces"]["loopbacks"]:
         itf = ensure_iface(dev, f"Loopback{lo['id']}", "virtual", lo["description"])
-        ensure_ip(itf, f"{lo['ipv4']['address']}/{mask_to_prefixlen(lo['ipv4']['address_mask'])}")
+        cidr = f"{lo['ipv4']['address']}/{mask_to_prefixlen(lo['ipv4']['address_mask'])}"
+        ensure_prefix(cidr, prefix_roles["loopback"], desc=f"{sw} {lo['description']}")   # /32 so it can carry bgp:advertise
+        ensure_ip(itf, cidr)
     # Vlan1 exists on every Catalyst and is kept shut down (modelled so compliance sees it)
     ensure_iface(dev, "Vlan1", "virtual", "", enabled=False)
     for s in cfg["interfaces"]["vlans"]:
@@ -245,6 +247,66 @@ e0 = ensure_iface(nms, "eth0", "virtual", "libvirt default NAT (internet)")
 e1 = ensure_iface(nms, "eth1", "virtual", "OOB management — NTP/syslog/SNMP/Nautobot")
 ensure_ip(e1, f"{MGMT['nms']}/24", primary_of=nms)
 
+# ---------------------------------------------------------------- BGP (nautobot-bgp-models)
+bgp = nb.plugins.bgp
+# the "Active" status must be allowed on the BGP models before it can be used there
+need = ["nautobot_bgp_models.autonomoussystem", "nautobot_bgp_models.bgproutinginstance", "nautobot_bgp_models.peering"]
+missing = [ct for ct in need if ct not in active.content_types]
+if missing:
+    active.update({"content_types": list(active.content_types) + missing})
+    created.append("status Active: +bgp content types")
+tag_adv = get_or_create(nb.extras.tags, {"name": "bgp:advertise"}, color="ff5722", content_types=["ipam.prefix"],
+                        description="prefix is originated into BGP (network statement) by the switch that owns it")
+asn = int(first["variables"]["bgp_asn"])
+as_obj = get_or_create(bgp.autonomous_systems, {"asn": asn}, status=active.id, description="cat9000v lab (iBGP)")
+
+ri, transit_ip_obj = {}, {}
+for sw, dy in devices_yaml.items():
+    dev = nb.dcim.devices.get(name=sw)
+    rid_ip = nb.ipam.ip_addresses.get(address=f"{dy['variables']['router_id']}/32", namespace=ns.id)
+    inst = bgp.routing_instances.get(device=dev.id)
+    fields = {"autonomous_system": as_obj.id, "router_id": rid_ip.id, "status": active.id,
+              "extra_attributes": {"log_neighbor_changes": True},
+              "description": "core switch iBGP"}
+    if inst is None:
+        inst = bgp.routing_instances.create(device=dev.id, **fields)
+        created.append(f"bgp-routing-instance:{sw}")
+    else:
+        ensure(inst, **{k: v for k, v in fields.items() if k != "extra_attributes"})
+        if inst.extra_attributes != fields["extra_attributes"]:
+            inst.update({"extra_attributes": fields["extra_attributes"]})
+    ri[sw] = inst
+    if bgp.address_families.get(routing_instance=inst.id, afi_safi="ipv4_unicast") is None:
+        bgp.address_families.create(routing_instance=inst.id, afi_safi="ipv4_unicast")
+        created.append(f"bgp-af:{sw}/ipv4_unicast")
+    # transit address on this switch = peering source
+    tip = dy["variables"]["transit_ip"]
+    transit_ip_obj[sw] = next(ip for ip in nb.ipam.ip_addresses.filter(address=tip, namespace=ns.id))
+    # prefixes this switch originates: loopback + every gateway VLAN it hosts
+    for net in dy["configuration"]["routing"]["bgp"]["address_family"]["ipv4_unicast"]["networks"]:
+        plen = mask_to_prefixlen(net["mask"])
+        pf = nb.ipam.prefixes.get(prefix=f"{net['network']}/{plen}", namespace=ns.id)
+        if pf and tag_adv.id not in [t.id for t in pf.tags]:
+            pf.update({"tags": [t.id for t in pf.tags] + [tag_adv.id]})
+            created.append(f"tag bgp:advertise on {pf.prefix}")
+
+# one iBGP peering between the two core switches over the transit SVIs
+names = sorted(ri)
+if len(names) == 2:
+    a_sw, b_sw = names
+    existing = [e for e in bgp.peer_endpoints.filter(routing_instance=ri[a_sw].id) if getattr(e.source_ip, "id", None) == transit_ip_obj[a_sw].id]
+    if existing:
+        peering = existing[0].peering
+    else:
+        peering = bgp.peerings.create(status=active.id)
+        created.append(f"bgp-peering:{a_sw}<->{b_sw}")
+        eps = {}
+        for sw in names:
+            eps[sw] = bgp.peer_endpoints.create(peering=peering.id, routing_instance=ri[sw].id, source_ip=transit_ip_obj[sw].id,
+                                                autonomous_system=as_obj.id, description="iBGP to peer core switch", enabled=True)
+            bgp.peer_endpoint_address_families.create(peer_endpoint=eps[sw].id, afi_safi="ipv4_unicast")
+        created.append("bgp-peer-endpoints + ipv4_unicast AFs")
+
 # saved GraphQL query: the exact query render_nac.py uses, runnable from Extensibility > GraphQL Queries
 NAC_QUERY = """{
   devices(role: "core-switch") {
@@ -259,15 +321,33 @@ NAC_QUERY = """{
       mode
       untagged_vlan { vid }
       tagged_vlans { vid }
-      ip_addresses {
+        ip_addresses {
         address
-        parent { role { name } }
+        parent { role { name } prefix }
       }
     }
   }
   vlan_groups(name: "cat9000v-lab") {
     vlans { vid name role { name } }
   }
+  bgp_routing_instances {
+    device { name }
+    autonomous_system { asn }
+    router_id { address }
+    extra_attributes
+    address_families { afi_safi }
+    endpoints {
+      description
+      enabled
+      source_ip { address }
+      address_families { afi_safi }
+      peer {
+        source_ip { address }
+        autonomous_system { asn }
+      }
+    }
+  }
+  prefixes(tags: "bgp:advertise") { prefix }
 }
 """
 gq = nb.extras.graphql_queries.get(name="nac-device-model")

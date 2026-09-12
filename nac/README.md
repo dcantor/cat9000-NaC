@@ -23,8 +23,8 @@ override in the environment) and runs `terraform` inside this directory.
 | File | Scope | Content |
 |---|---|---|
 | `data/global.nac.yaml` | all devices (lowest precedence) | variables (`nms_ip`, `domain_name`, …), domain, `ip routing`, CDP/LLDP, rapid-PVST with portfast/bpduguard defaults, **AAA** (local login + exec authorization), **SSH hardening**, `MGMT-ACCESS` ACL on the VTYs (`vrf-also`), service timestamps/password-encryption/login auditing, NTP + syslog + SNMP traps to the NMS jumphost, MOTD banner, an `errdisable_recovery` CLI template |
-| `data/device_groups.nac.yaml` | group `CORE_SWITCHES` | only the iBGP peering skeleton (AS/neighbor from device variables) |
-| `data/devices.nac.yaml` | per device (highest precedence) — **GENERATED from Nautobot** (`lab.sh nautobot render`) | host, `router_id` / `transit_ip` / `peer_transit_ip` / `bgp_asn`, STP priorities, VLAN database, `Gi1/0/1` trunk + access ports, SVIs/loopbacks with addresses, BGP `network` statements |
+| `data/device_groups.nac.yaml` | group `CORE_SWITCHES` | group membership only |
+| `data/devices.nac.yaml` | per device (highest precedence) — **GENERATED from Nautobot** (`lab.sh nautobot render`) | host, STP priorities, VLAN database, `Gi1/0/1` trunk + access ports, SVIs/loopbacks with addresses, the full `routing.bgp` block (from nautobot-bgp-models) |
 
 Values written as `${name}` are resolved from `variables:` at any level
 (device overrides group overrides global). Lists keyed by `id`/`name` are
