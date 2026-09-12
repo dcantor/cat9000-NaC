@@ -160,6 +160,12 @@ nms_xml() {
       <source network='$OOB_NET'/>
       <model type='virtio'/>
     </interface>
+    <!-- eth2: OOB network of the cat8000v lab (~/cat8000v, libvirt net c8k-oob), 10.1.0.10 — shared NMS/Nautobot -->
+    <interface type='network'>
+      <mac address='52:54:00:c9:0a:03'/>
+      <source network='c8k-oob'/>
+      <model type='virtio'/>
+    </interface>
 $(serial_xml nms)
     <channel type='unix'><target type='virtio' name='org.qemu.guest_agent.0'/></channel>
     <rng model='virtio'><backend model='random'>/dev/urandom</backend></rng>
