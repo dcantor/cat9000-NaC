@@ -166,6 +166,12 @@ nms_xml() {
       <source network='c8k-oob'/>
       <model type='virtio'/>
     </interface>
+    <!-- eth3: OOB network of the cat8000v-ipsec lab (~/cat8000v-ipsec, libvirt net ipsec-oob), 10.2.0.10 -->
+    <interface type='network'>
+      <mac address='52:54:00:c9:0a:04'/>
+      <source network='ipsec-oob'/>
+      <model type='virtio'/>
+    </interface>
 $(serial_xml nms)
     <channel type='unix'><target type='virtio' name='org.qemu.guest_agent.0'/></channel>
     <rng model='virtio'><backend model='random'>/dev/urandom</backend></rng>

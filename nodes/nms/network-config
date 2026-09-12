@@ -14,3 +14,8 @@ ethernets:
     set-name: eth2
     addresses: [10.1.0.10/24]
     dhcp4: false
+  ipsec:
+    match: { macaddress: "52:54:00:c9:0a:04" }
+    set-name: eth3
+    addresses: [10.2.0.10/24]
+    dhcp4: false
