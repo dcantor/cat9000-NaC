@@ -1,0 +1,33 @@
+{#- Intended configuration rendered from Nautobot (Golden Config SoT aggregation query "golden-config-lab").
+    Only the features under compliance are rendered: the VLAN database, SVIs and loopbacks. -#}
+{%- set masks = {'24': '255.255.255.0', '30': '255.255.255.252', '32': '255.255.255.255'} -%}
+{%- set svis = [] -%}
+{%- set loops = [] -%}
+{%- for i in interfaces -%}
+  {%- if i.name.startswith('Vlan') -%}{%- set _ = svis.append(i) -%}{%- endif -%}
+  {%- if i.name.startswith('Loopback') and i.ip_addresses -%}{%- set _ = loops.append(i) -%}{%- endif -%}
+{%- endfor -%}
+hostname {{ hostname }}
+!
+{% for v in location.vlan_groups[0].vlans | sort(attribute='vid') -%}
+vlan {{ v.vid }}
+ name {{ v.name }}
+!
+{% endfor -%}
+{% for i in loops -%}
+interface {{ i.name }}
+ description {{ i.description }}
+ ip address {{ i.ip_addresses[0].address.split('/')[0] }} {{ masks[i.ip_addresses[0].address.split('/')[1]] }}
+!
+{% endfor -%}
+{% for i in svis | sort(attribute='name') -%}
+interface {{ i.name }}
+{% if i.description %} description {{ i.description }}
+{% endif -%}
+{% if i.ip_addresses %} ip address {{ i.ip_addresses[0].address.split('/')[0] }} {{ masks[i.ip_addresses[0].address.split('/')[1]] }}
+{% else %} no ip address
+{% endif -%}
+{% if not i.enabled %} shutdown
+{% endif -%}
+!
+{% endfor -%}

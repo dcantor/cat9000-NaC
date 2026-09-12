@@ -381,16 +381,28 @@ cmd_bootstrap() {  # wait for a switch to finish booting, then generate SSH keys
 
 cmd_log() { tail -n "${2:-50}" -f "$(node_dir "${1:?node}")/console.log"; }
 
-cmd_nautobot() {   # install|status|logs|down — Nautobot (Docker Compose) on the NMS jumphost
+nautobot_token() { ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR "lab@${MGMT_IP[nms]}" 'grep ^NAUTOBOT_SUPERUSER_API_TOKEN /opt/nautobot/.env | cut -d= -f2'; }
+nautobot_py() {     # run a nautobot/*.py helper with the API token from the NMS
+  [[ -x "$LAB_DIR/tests/.venv/bin/python" ]] || "$LAB_DIR/tests/setup.sh"
+  NAUTOBOT_URL="http://${MGMT_IP[nms]}:8080" NAUTOBOT_TOKEN="$(nautobot_token)" "$LAB_DIR/tests/.venv/bin/python" "$LAB_DIR/nautobot/$1" "${@:2}"
+}
+
+cmd_nautobot() {   # Nautobot (Docker Compose) on the NMS jumphost
   local sub="${1:-status}"; shift || true
   case "$sub" in
     install) exec "$LAB_DIR/nautobot/install.sh" ;;
+    onboard) nautobot_py onboard.py "$@" ;;          # discover switches from the network
+    seed)    nautobot_py seed.py "$@" ;;             # load the lab intent (one-time bootstrap)
+    render)  nautobot_py render_nac.py "$@" ;;       # regenerate nac/data/devices.nac.yaml (--check to verify)
+    golden)  GITEA_PASSWORD="$(ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR "lab@${MGMT_IP[nms]}" 'grep ^GITEA_PASSWORD /opt/nautobot/.env | cut -d= -f2')" \
+             nautobot_py golden_config.py "$@" ;;   # configure Golden Config, run backup -> intended -> compliance
+    token)   nautobot_token ;;
     status)  cmd_ssh nms 'cd /opt/nautobot && sg docker -c "docker compose ps --format \"table {{.Service}}\t{{.Status}}\""'
              echo; echo "UI/API: http://${MGMT_IP[nms]}:8080  (admin / admin)" ;;
     logs)    cmd_ssh nms "cd /opt/nautobot && sg docker -c 'docker compose logs --tail ${1:-100} ${2:-}'" ;;
     down)    cmd_ssh nms 'cd /opt/nautobot && sg docker -c "docker compose down"' ;;
     up)      cmd_ssh nms 'cd /opt/nautobot && sg docker -c "docker compose up -d"' ;;
-    *) die "usage: lab.sh nautobot {install|status|logs [n] [service]|up|down}" ;;
+    *) die "usage: lab.sh nautobot {install|status|logs [n] [service]|up|down|onboard|seed|render [--check]|golden|token}" ;;
   esac
 }
 
@@ -432,7 +444,7 @@ usage: $(basename "$0") <command> [node...]
   log <node> [n]     follow a node's console log
   nac <tf args..>    run terraform in nac/ (e.g. nac init, nac plan, nac apply)
   test [robot args]  run the Robot Framework tests (e.g. test --exclude internet)
-  nautobot <cmd>     install | status | logs | up | down  (Nautobot on the NMS, port 8080)
+  nautobot <cmd>     install|status|logs|up|down|onboard|seed|render|golden|token  (Nautobot, :8080)
   rebuild [node..]   re-generate domain XML from lab.conf (keeps disks)
   clean [node..]     stop, undefine and delete overlay disks (fresh start)
 nodes: ${ALL_NODES[*]}

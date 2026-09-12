@@ -93,6 +93,10 @@ iosxe:
                 vrf_also: true
       cdp:
         run: true
+      # VTP transparent: VLANs live in running-config (not vlan.dat), so config backups and
+      # Golden Config compliance can see the VLAN database
+      vtp:
+        mode: transparent
       lldp:
         run: true
       spanning_tree:

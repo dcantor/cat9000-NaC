@@ -3,12 +3,17 @@
 name: nautobot
 
 x-nautobot: &nautobot
-  image: networktocode/nautobot:${NAUTOBOT_IMAGE_TAG:-3.2-py3.12}
+  image: cat9000v/nautobot:${NAUTOBOT_IMAGE_TAG:-3.2-py3.12}
+  build:
+    context: .
+    args:
+      NAUTOBOT_IMAGE_TAG: ${NAUTOBOT_IMAGE_TAG:-3.2-py3.12}
   env_file: .env
   restart: unless-stopped
   volumes:
     - nautobot_media:/opt/nautobot/media
     - nautobot_git:/opt/nautobot/git
+    - ./nautobot_config.py:/opt/nautobot/nautobot_config.py:ro   # editable without a rebuild
   depends_on:
     postgres:
       condition: service_healthy
@@ -18,7 +23,7 @@ x-nautobot: &nautobot
 services:
   # one-shot: named volumes are created root-owned, the image runs as uid 999 (nautobot)
   volume_init:
-    image: networktocode/nautobot:${NAUTOBOT_IMAGE_TAG:-3.2-py3.12}
+    image: cat9000v/nautobot:${NAUTOBOT_IMAGE_TAG:-3.2-py3.12}
     user: "0:0"
     entrypoint: ["sh", "-c", "chown -R 999:999 /opt/nautobot/media /opt/nautobot/git"]
     volumes:
@@ -95,7 +100,30 @@ services:
     environment:
       NAUTOBOT_REDIS_PASSWORD: ${NAUTOBOT_REDIS_PASSWORD}
 
+  # Git server for Golden Config repositories (config backups, intended configs, templates)
+  gitea:
+    image: gitea/gitea:1.24
+    restart: unless-stopped
+    environment:
+      USER_UID: "1000"
+      USER_GID: "1000"
+      GITEA__security__INSTALL_LOCK: "true"
+      GITEA__server__ROOT_URL: http://${NMS_IP:-10.0.0.10}:3000/
+      GITEA__server__HTTP_PORT: "3000"
+      GITEA__service__DISABLE_REGISTRATION: "true"
+      GITEA__database__DB_TYPE: sqlite3
+    ports:
+      - "3000:3000"
+    volumes:
+      - gitea_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:3000/api/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
 volumes:
+  gitea_data:
   postgres_data:
   redis_data:
   nautobot_media:

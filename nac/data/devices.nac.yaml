@@ -1,161 +1,511 @@
 ---
-# Device inventory + device-specific configuration (highest precedence).
+# GENERATED from Nautobot by nautobot/render_nac.py — do not edit by hand.
+# Source of truth: http://10.0.0.10:8080  (devices with role core-switch, VLAN group cat9000v-lab)
 iosxe:
   devices:
-    - name: sw1
-      host: 10.0.0.11
-      protocol: restconf         # HTTPS/443; NETCONF lock is broken on Cat9kv 17.18
-      device_groups: [CORE_SWITCHES]
-      variables:
-        router_id: 10.255.0.1
-        transit_ip: 10.100.0.1
-        peer_transit_ip: 10.100.0.2
-      configuration:
-        system:
-          hostname: sw1
-        spanning_tree:
-          vlans:                      # sw1 is the deterministic STP root for every VLAN in use
-            - { id: 1, priority: 4096 }
-            - { id: 10, priority: 4096 }
-            - { id: 20, priority: 4096 }
-            - { id: 99, priority: 4096 }
-            - { id: 100, priority: 4096 }
-            - { id: 110, priority: 4096 }
-            - { id: 111, priority: 4096 }
-            - { id: 112, priority: 4096 }
-            - { id: 113, priority: 4096 }
-            - { id: 114, priority: 4096 }
-            - { id: 115, priority: 4096 }
-            - { id: 116, priority: 4096 }
-            - { id: 117, priority: 4096 }
-            - { id: 118, priority: 4096 }
-            - { id: 119, priority: 4096 }
-            - { id: 210, priority: 4096 }
-            - { id: 211, priority: 4096 }
-            - { id: 212, priority: 4096 }
-            - { id: 213, priority: 4096 }
-            - { id: 214, priority: 4096 }
-            - { id: 215, priority: 4096 }
-            - { id: 216, priority: 4096 }
-            - { id: 217, priority: 4096 }
-            - { id: 218, priority: 4096 }
-            - { id: 219, priority: 4096 }
-        interfaces:
-          # sw1 is the gateway for the USERS VLAN
-          vlans:
-            - id: 10
-              description: USERS gateway
-              shutdown: false
-              ipv4: { address: 10.10.0.1, address_mask: 255.255.255.0 }
-            # routed VLANs 110-114 live on sw1
-            - id: 110
-              description: L3-110 gateway
-              shutdown: false
-              ipv4: { address: 10.110.0.1, address_mask: 255.255.255.0 }
-            - id: 111
-              description: L3-111 gateway
-              shutdown: false
-              ipv4: { address: 10.111.0.1, address_mask: 255.255.255.0 }
-            - id: 112
-              description: L3-112 gateway
-              shutdown: false
-              ipv4: { address: 10.112.0.1, address_mask: 255.255.255.0 }
-            - id: 113
-              description: L3-113 gateway
-              shutdown: false
-              ipv4: { address: 10.113.0.1, address_mask: 255.255.255.0 }
-            - id: 114
-              description: L3-114 gateway
-              shutdown: false
-              ipv4: { address: 10.114.0.1, address_mask: 255.255.255.0 }
-        routing:
-          bgp:
-            address_family:
-              ipv4_unicast:
-                networks:
-                  - { network: 10.255.0.1, mask: 255.255.255.255 }
-                  - { network: 10.10.0.0, mask: 255.255.255.0 }
-                  - { network: 10.110.0.0, mask: 255.255.255.0 }
-                  - { network: 10.111.0.0, mask: 255.255.255.0 }
-                  - { network: 10.112.0.0, mask: 255.255.255.0 }
-                  - { network: 10.113.0.0, mask: 255.255.255.0 }
-                  - { network: 10.114.0.0, mask: 255.255.255.0 }
-
-    - name: sw2
-      host: 10.0.0.12
-      protocol: restconf
-      device_groups: [CORE_SWITCHES]
-      variables:
-        router_id: 10.255.0.2
-        transit_ip: 10.100.0.2
-        peer_transit_ip: 10.100.0.1
-      configuration:
-        system:
-          hostname: sw2
-        spanning_tree:
-          vlans:                      # sw2 is the backup root (one entry per VLAN: that is how IOS reports it back)
-            - { id: 1, priority: 8192 }
-            - { id: 10, priority: 8192 }
-            - { id: 20, priority: 8192 }
-            - { id: 99, priority: 8192 }
-            - { id: 100, priority: 8192 }
-            - { id: 110, priority: 8192 }
-            - { id: 111, priority: 8192 }
-            - { id: 112, priority: 8192 }
-            - { id: 113, priority: 8192 }
-            - { id: 114, priority: 8192 }
-            - { id: 115, priority: 8192 }
-            - { id: 116, priority: 8192 }
-            - { id: 117, priority: 8192 }
-            - { id: 118, priority: 8192 }
-            - { id: 119, priority: 8192 }
-            - { id: 210, priority: 8192 }
-            - { id: 211, priority: 8192 }
-            - { id: 212, priority: 8192 }
-            - { id: 213, priority: 8192 }
-            - { id: 214, priority: 8192 }
-            - { id: 215, priority: 8192 }
-            - { id: 216, priority: 8192 }
-            - { id: 217, priority: 8192 }
-            - { id: 218, priority: 8192 }
-            - { id: 219, priority: 8192 }
-        interfaces:
-          # sw2 is the gateway for the SERVERS VLAN
-          vlans:
-            - id: 20
-              description: SERVERS gateway
-              shutdown: false
-              ipv4: { address: 10.20.0.1, address_mask: 255.255.255.0 }
-            # routed VLANs 115-119 live on sw2
-            - id: 115
-              description: L3-115 gateway
-              shutdown: false
-              ipv4: { address: 10.115.0.1, address_mask: 255.255.255.0 }
-            - id: 116
-              description: L3-116 gateway
-              shutdown: false
-              ipv4: { address: 10.116.0.1, address_mask: 255.255.255.0 }
-            - id: 117
-              description: L3-117 gateway
-              shutdown: false
-              ipv4: { address: 10.117.0.1, address_mask: 255.255.255.0 }
-            - id: 118
-              description: L3-118 gateway
-              shutdown: false
-              ipv4: { address: 10.118.0.1, address_mask: 255.255.255.0 }
-            - id: 119
-              description: L3-119 gateway
-              shutdown: false
-              ipv4: { address: 10.119.0.1, address_mask: 255.255.255.0 }
-        routing:
-          bgp:
-            address_family:
-              ipv4_unicast:
-                networks:
-                  - { network: 10.255.0.2, mask: 255.255.255.255 }
-                  - { network: 10.20.0.0, mask: 255.255.255.0 }
-                  - { network: 10.115.0.0, mask: 255.255.255.0 }
-                  - { network: 10.116.0.0, mask: 255.255.255.0 }
-                  - { network: 10.117.0.0, mask: 255.255.255.0 }
-                  - { network: 10.118.0.0, mask: 255.255.255.0 }
-                  - { network: 10.119.0.0, mask: 255.255.255.0 }
+  - name: sw1
+    host: 10.0.0.11
+    protocol: restconf
+    device_groups:
+    - CORE_SWITCHES
+    variables:
+      router_id: 10.255.0.1
+      transit_ip: 10.100.0.1
+      bgp_asn: 65000
+      peer_transit_ip: 10.100.0.2
+    configuration:
+      system:
+        hostname: sw1
+      spanning_tree:
+        vlans:
+        - id: 1
+          priority: 4096
+        - id: 10
+          priority: 4096
+        - id: 20
+          priority: 4096
+        - id: 99
+          priority: 4096
+        - id: 100
+          priority: 4096
+        - id: 110
+          priority: 4096
+        - id: 111
+          priority: 4096
+        - id: 112
+          priority: 4096
+        - id: 113
+          priority: 4096
+        - id: 114
+          priority: 4096
+        - id: 115
+          priority: 4096
+        - id: 116
+          priority: 4096
+        - id: 117
+          priority: 4096
+        - id: 118
+          priority: 4096
+        - id: 119
+          priority: 4096
+        - id: 210
+          priority: 4096
+        - id: 211
+          priority: 4096
+        - id: 212
+          priority: 4096
+        - id: 213
+          priority: 4096
+        - id: 214
+          priority: 4096
+        - id: 215
+          priority: 4096
+        - id: 216
+          priority: 4096
+        - id: 217
+          priority: 4096
+        - id: 218
+          priority: 4096
+        - id: 219
+          priority: 4096
+      vlan:
+        vlans:
+        - id: 10
+          name: USERS
+        - id: 20
+          name: SERVERS
+        - id: 99
+          name: NATIVE
+        - id: 100
+          name: TRANSIT
+        - id: 110
+          name: L3-110
+        - id: 111
+          name: L3-111
+        - id: 112
+          name: L3-112
+        - id: 113
+          name: L3-113
+        - id: 114
+          name: L3-114
+        - id: 115
+          name: L3-115
+        - id: 116
+          name: L3-116
+        - id: 117
+          name: L3-117
+        - id: 118
+          name: L3-118
+        - id: 119
+          name: L3-119
+        - id: 210
+          name: L2-210
+        - id: 211
+          name: L2-211
+        - id: 212
+          name: L2-212
+        - id: 213
+          name: L2-213
+        - id: 214
+          name: L2-214
+        - id: 215
+          name: L2-215
+        - id: 216
+          name: L2-216
+        - id: 217
+          name: L2-217
+        - id: 218
+          name: L2-218
+        - id: 219
+          name: L2-219
+      interfaces:
+        ethernets:
+        - type: GigabitEthernet
+          id: 1/0/1
+          description: TRUNK to peer core switch
+          shutdown: false
+          switchport:
+            enable: true
+            mode: trunk
+            trunk_native_vlan_id: 99
+            trunk_allowed_vlans:
+              vlans:
+                ids:
+                - 10
+                - 20
+                - 100
+                - 110
+                - 111
+                - 112
+                - 113
+                - 114
+                - 115
+                - 116
+                - 117
+                - 118
+                - 119
+                - 210
+                - 211
+                - 212
+                - 213
+                - 214
+                - 215
+                - 216
+                - 217
+                - 218
+                - 219
+            nonegotiate: true
+        - type: GigabitEthernet
+          id: 1/0/2
+          description: ACCESS - USERS
+          shutdown: false
+          switchport:
+            enable: true
+            mode: access
+            access_vlan: 10
+          spanning_tree:
+            portfast: true
+            bpduguard: true
+        - type: GigabitEthernet
+          id: 1/0/3
+          description: ACCESS - USERS
+          shutdown: false
+          switchport:
+            enable: true
+            mode: access
+            access_vlan: 10
+          spanning_tree:
+            portfast: true
+            bpduguard: true
+        - type: GigabitEthernet
+          id: 1/0/4
+          description: ACCESS - SERVERS
+          shutdown: false
+          switchport:
+            enable: true
+            mode: access
+            access_vlan: 20
+          spanning_tree:
+            portfast: true
+            bpduguard: true
+        vlans:
+        - id: 10
+          description: USERS gateway
+          shutdown: false
+          ipv4:
+            address: 10.10.0.1
+            address_mask: 255.255.255.0
+        - id: 100
+          description: TRANSIT sw1-sw2
+          shutdown: false
+          ipv4:
+            address: 10.100.0.1
+            address_mask: 255.255.255.252
+        - id: 110
+          description: L3-110 gateway
+          shutdown: false
+          ipv4:
+            address: 10.110.0.1
+            address_mask: 255.255.255.0
+        - id: 111
+          description: L3-111 gateway
+          shutdown: false
+          ipv4:
+            address: 10.111.0.1
+            address_mask: 255.255.255.0
+        - id: 112
+          description: L3-112 gateway
+          shutdown: false
+          ipv4:
+            address: 10.112.0.1
+            address_mask: 255.255.255.0
+        - id: 113
+          description: L3-113 gateway
+          shutdown: false
+          ipv4:
+            address: 10.113.0.1
+            address_mask: 255.255.255.0
+        - id: 114
+          description: L3-114 gateway
+          shutdown: false
+          ipv4:
+            address: 10.114.0.1
+            address_mask: 255.255.255.0
+        loopbacks:
+        - id: 0
+          description: Router ID
+          ipv4:
+            address: 10.255.0.1
+            address_mask: 255.255.255.255
+      routing:
+        bgp:
+          address_family:
+            ipv4_unicast:
+              networks:
+              - network: 10.255.0.1
+                mask: 255.255.255.255
+              - network: 10.10.0.0
+                mask: 255.255.255.0
+              - network: 10.110.0.0
+                mask: 255.255.255.0
+              - network: 10.111.0.0
+                mask: 255.255.255.0
+              - network: 10.112.0.0
+                mask: 255.255.255.0
+              - network: 10.113.0.0
+                mask: 255.255.255.0
+              - network: 10.114.0.0
+                mask: 255.255.255.0
+  - name: sw2
+    host: 10.0.0.12
+    protocol: restconf
+    device_groups:
+    - CORE_SWITCHES
+    variables:
+      router_id: 10.255.0.2
+      transit_ip: 10.100.0.2
+      bgp_asn: 65000
+      peer_transit_ip: 10.100.0.1
+    configuration:
+      system:
+        hostname: sw2
+      spanning_tree:
+        vlans:
+        - id: 1
+          priority: 8192
+        - id: 10
+          priority: 8192
+        - id: 20
+          priority: 8192
+        - id: 99
+          priority: 8192
+        - id: 100
+          priority: 8192
+        - id: 110
+          priority: 8192
+        - id: 111
+          priority: 8192
+        - id: 112
+          priority: 8192
+        - id: 113
+          priority: 8192
+        - id: 114
+          priority: 8192
+        - id: 115
+          priority: 8192
+        - id: 116
+          priority: 8192
+        - id: 117
+          priority: 8192
+        - id: 118
+          priority: 8192
+        - id: 119
+          priority: 8192
+        - id: 210
+          priority: 8192
+        - id: 211
+          priority: 8192
+        - id: 212
+          priority: 8192
+        - id: 213
+          priority: 8192
+        - id: 214
+          priority: 8192
+        - id: 215
+          priority: 8192
+        - id: 216
+          priority: 8192
+        - id: 217
+          priority: 8192
+        - id: 218
+          priority: 8192
+        - id: 219
+          priority: 8192
+      vlan:
+        vlans:
+        - id: 10
+          name: USERS
+        - id: 20
+          name: SERVERS
+        - id: 99
+          name: NATIVE
+        - id: 100
+          name: TRANSIT
+        - id: 110
+          name: L3-110
+        - id: 111
+          name: L3-111
+        - id: 112
+          name: L3-112
+        - id: 113
+          name: L3-113
+        - id: 114
+          name: L3-114
+        - id: 115
+          name: L3-115
+        - id: 116
+          name: L3-116
+        - id: 117
+          name: L3-117
+        - id: 118
+          name: L3-118
+        - id: 119
+          name: L3-119
+        - id: 210
+          name: L2-210
+        - id: 211
+          name: L2-211
+        - id: 212
+          name: L2-212
+        - id: 213
+          name: L2-213
+        - id: 214
+          name: L2-214
+        - id: 215
+          name: L2-215
+        - id: 216
+          name: L2-216
+        - id: 217
+          name: L2-217
+        - id: 218
+          name: L2-218
+        - id: 219
+          name: L2-219
+      interfaces:
+        ethernets:
+        - type: GigabitEthernet
+          id: 1/0/1
+          description: TRUNK to peer core switch
+          shutdown: false
+          switchport:
+            enable: true
+            mode: trunk
+            trunk_native_vlan_id: 99
+            trunk_allowed_vlans:
+              vlans:
+                ids:
+                - 10
+                - 20
+                - 100
+                - 110
+                - 111
+                - 112
+                - 113
+                - 114
+                - 115
+                - 116
+                - 117
+                - 118
+                - 119
+                - 210
+                - 211
+                - 212
+                - 213
+                - 214
+                - 215
+                - 216
+                - 217
+                - 218
+                - 219
+            nonegotiate: true
+        - type: GigabitEthernet
+          id: 1/0/2
+          description: ACCESS - USERS
+          shutdown: false
+          switchport:
+            enable: true
+            mode: access
+            access_vlan: 10
+          spanning_tree:
+            portfast: true
+            bpduguard: true
+        - type: GigabitEthernet
+          id: 1/0/3
+          description: ACCESS - USERS
+          shutdown: false
+          switchport:
+            enable: true
+            mode: access
+            access_vlan: 10
+          spanning_tree:
+            portfast: true
+            bpduguard: true
+        - type: GigabitEthernet
+          id: 1/0/4
+          description: ACCESS - SERVERS
+          shutdown: false
+          switchport:
+            enable: true
+            mode: access
+            access_vlan: 20
+          spanning_tree:
+            portfast: true
+            bpduguard: true
+        vlans:
+        - id: 20
+          description: SERVERS gateway
+          shutdown: false
+          ipv4:
+            address: 10.20.0.1
+            address_mask: 255.255.255.0
+        - id: 100
+          description: TRANSIT sw1-sw2
+          shutdown: false
+          ipv4:
+            address: 10.100.0.2
+            address_mask: 255.255.255.252
+        - id: 115
+          description: L3-115 gateway
+          shutdown: false
+          ipv4:
+            address: 10.115.0.1
+            address_mask: 255.255.255.0
+        - id: 116
+          description: L3-116 gateway
+          shutdown: false
+          ipv4:
+            address: 10.116.0.1
+            address_mask: 255.255.255.0
+        - id: 117
+          description: L3-117 gateway
+          shutdown: false
+          ipv4:
+            address: 10.117.0.1
+            address_mask: 255.255.255.0
+        - id: 118
+          description: L3-118 gateway
+          shutdown: false
+          ipv4:
+            address: 10.118.0.1
+            address_mask: 255.255.255.0
+        - id: 119
+          description: L3-119 gateway
+          shutdown: false
+          ipv4:
+            address: 10.119.0.1
+            address_mask: 255.255.255.0
+        loopbacks:
+        - id: 0
+          description: Router ID
+          ipv4:
+            address: 10.255.0.2
+            address_mask: 255.255.255.255
+      routing:
+        bgp:
+          address_family:
+            ipv4_unicast:
+              networks:
+              - network: 10.255.0.2
+                mask: 255.255.255.255
+              - network: 10.20.0.0
+                mask: 255.255.255.0
+              - network: 10.115.0.0
+                mask: 255.255.255.0
+              - network: 10.116.0.0
+                mask: 255.255.255.0
+              - network: 10.117.0.0
+                mask: 255.255.255.0
+              - network: 10.118.0.0
+                mask: 255.255.255.0
+              - network: 10.119.0.0
+                mask: 255.255.255.0

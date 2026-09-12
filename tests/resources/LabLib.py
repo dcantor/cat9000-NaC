@@ -5,6 +5,7 @@ jumphost over SSH (paramiko), and to the host OS for ping/terraform.
 """
 import json
 import os
+import sys
 import socket
 import subprocess
 import time
@@ -128,6 +129,48 @@ class LabLib:
         finally:
             c.close()
         return rc
+
+    # ---- Nautobot -----------------------------------------------------------
+    def _nautobot(self):
+        if not hasattr(self, "_nb"):
+            url = os.environ.get("NAUTOBOT_URL", "http://10.0.0.10:8080")
+            token = os.environ.get("NAUTOBOT_TOKEN")
+            if not token:   # the token lives in /opt/nautobot/.env on the NMS
+                token = self.nms_command("grep ^NAUTOBOT_SUPERUSER_API_TOKEN /opt/nautobot/.env | cut -d= -f2").strip()
+            self._nb = (url, token)
+        return self._nb
+
+    @keyword
+    def nautobot_get(self, path, **params):
+        """GET /api/<path> and return the parsed JSON (results list for list endpoints)."""
+        url, token = self._nautobot()
+        r = requests.get(f"{url}/api/{path.lstrip('/')}", params=params, timeout=60,
+                         headers={"Authorization": f"Token {token}", "Accept": "application/json"})
+        logger.info(f"GET {r.url} -> {r.status_code}\n{r.text[:1500]}")
+        r.raise_for_status()
+        return r.json()
+
+    @keyword
+    def nautobot_graphql(self, query):
+        url, token = self._nautobot()
+        r = requests.post(f"{url}/api/graphql/", json={"query": query}, timeout=60,
+                          headers={"Authorization": f"Token {token}"})
+        logger.info(f"GraphQL {query}\n-> {r.status_code} {r.text[:2000]}")
+        r.raise_for_status()
+        body = r.json()
+        if body.get("errors"):
+            raise AssertionError(f"GraphQL errors: {body['errors']}")
+        return body["data"]
+
+    @keyword
+    def render_nac_check(self):
+        """Run nautobot/render_nac.py --check; returns its exit code (0 = devices.nac.yaml matches Nautobot)."""
+        url, token = self._nautobot()
+        r = subprocess.run([sys.executable, str(LAB_DIR / "nautobot" / "render_nac.py"), "--check"],
+                           capture_output=True, text=True, timeout=120,
+                           env={**os.environ, "NAUTOBOT_URL": url, "NAUTOBOT_TOKEN": token})
+        logger.info(f"<pre>{r.stdout[-4000:]}\n{r.stderr[-1000:]}</pre>", html=True)
+        return r.returncode
 
     # ---- host-side helpers -----------------------------------------------
     @keyword

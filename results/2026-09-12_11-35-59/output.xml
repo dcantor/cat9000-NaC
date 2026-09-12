@@ -1,0 +1,1568 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.4.2 (Python 3.14.4 on linux)" generated="2026-09-12T11:36:03.960887" rpa="false" schemaversion="5">
+<suite id="s1" name="cat9000v lab" source="/home/dcantor/cat9000v/tests/suites">
+<suite id="s1-s1" name="09 Nautobot" source="/home/dcantor/cat9000v/tests/suites/09_nautobot.robot">
+<test id="s1-s1-t1" name="Nautobot is healthy with a Celery worker" line="8">
+<kw name="Nautobot Get" owner="LabLib">
+<msg time="2026-09-12T11:36:04.550514" level="INFO" html="true">&lt;pre&gt;nms$ grep ^NAUTOBOT_SUPERUSER_API_TOKEN /opt/nautobot/.env | cut -d= -f2
+rc=0
+5836bb41b6d2bbda3f3398936a8d33b58d3f8e6c
+&lt;/pre&gt;</msg>
+<msg time="2026-09-12T11:36:05.569240" level="INFO">GET http://10.0.0.10:8080/api/status/ -&gt; 200
+{"django-version":"5.2.17","installed-apps":{"constance":null,"corsheaders":null,"db_file_storage":null,"django.contrib.admin":null,"django.contrib.auth":null,"django.contrib.contenttypes":null,"django.contrib.humanize":null,"django.contrib.messages":null,"django.contrib.sessions":null,"django.contrib.staticfiles":null,"django_ajax_tables":null,"django_celery_beat":"2.9.0..","django_celery_results":"2.6.0..","django_extensions":"4.1.0.final.0","django_filters":"25.2","django_jinja":null,"django_prometheus":"2.5.0","django_tables2":"3.0.1","drf_spectacular":"0.29.0","drf_spectacular_sidecar":"2026.8.1","graphene_django":"3.2.3","health_check":"3.20.8","health_check.storage":null,"nautobot.circuits":null,"nautobot.cloud":null,"nautobot.core":null,"nautobot.data_validation":null,"nautobot.dcim":null,"nautobot.extras":null,"nautobot.ipam":null,"nautobot.load_balancers":null,"nautobot.tenancy":null,"nautobot.users":null,"nautobot.virtualization":null,"nautobot.vpn":null,"nautobot.wireless":null,"nautobot_device_onboarding":"5.5.1","nautobot_golden_config":"3.0.7","nautobot_plugin_nornir":"3.2.4","nautobot_ssot":"4.6.1","rest_framework":"3.17.2","silk":"5.5.2","social_django":"5.9.0","taggit":"6.1.0","timezone_field":"7.2.2"},"nautobot-version":"3.2.4","nautobot-apps":{"nautobot_device_onboarding":"5.5.1","nautobot_golden_config":"3.0.7","nautobot_plugin_nornir":"3.2.4","nautobot_ssot":"4.6.1"},"plugins":{"nautobot_device_onboarding":"5.5.1","nautobot_golden_config":"3.0.7","nautob</msg>
+<msg time="2026-09-12T11:36:05.569570" level="INFO">${st} = {'django-version': '5.2.17', 'installed-apps': {'constance': None, 'corsheaders': None, 'db_file_storage': None, 'django.contrib.admin': None, 'django.contrib.auth': None, 'django.contrib.contenttypes...</msg>
+<var>${st}</var>
+<arg>status/</arg>
+<doc>GET /api/&lt;path&gt; and return the parsed JSON (results list for list endpoints).</doc>
+<status status="PASS" start="2026-09-12T11:36:04.142042" elapsed="1.427555"/>
+</kw>
+<kw name="Should Match Regexp" owner="BuiltIn">
+<arg>${st}[nautobot-version]</arg>
+<arg>^3\\.</arg>
+<doc>Fails if ``string`` does not match ``pattern`` as a regular expression.</doc>
+<status status="PASS" start="2026-09-12T11:36:05.569785" elapsed="0.000413"/>
+</kw>
+<kw name="Should Be True" owner="BuiltIn">
+<arg>${st}[celery-workers-running] &gt;= 1</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="PASS" start="2026-09-12T11:36:05.570273" elapsed="0.000363"/>
+</kw>
+<status status="PASS" start="2026-09-12T11:36:04.141153" elapsed="1.429572"/>
+</test>
+<test id="s1-s1-t2" name="Lab apps are installed" line="13">
+<kw name="Nautobot Get" owner="LabLib">
+<msg time="2026-09-12T11:36:06.585464" level="INFO">GET http://10.0.0.10:8080/api/status/ -&gt; 200
+{"django-version":"5.2.17","installed-apps":{"constance":null,"corsheaders":null,"db_file_storage":null,"django.contrib.admin":null,"django.contrib.auth":null,"django.contrib.contenttypes":null,"django.contrib.humanize":null,"django.contrib.messages":null,"django.contrib.sessions":null,"django.contrib.staticfiles":null,"django_ajax_tables":null,"django_celery_beat":"2.9.0..","django_celery_results":"2.6.0..","django_extensions":"4.1.0.final.0","django_filters":"25.2","django_jinja":null,"django_prometheus":"2.5.0","django_tables2":"3.0.1","drf_spectacular":"0.29.0","drf_spectacular_sidecar":"2026.8.1","graphene_django":"3.2.3","health_check":"3.20.8","health_check.storage":null,"nautobot.circuits":null,"nautobot.cloud":null,"nautobot.core":null,"nautobot.data_validation":null,"nautobot.dcim":null,"nautobot.extras":null,"nautobot.ipam":null,"nautobot.load_balancers":null,"nautobot.tenancy":null,"nautobot.users":null,"nautobot.virtualization":null,"nautobot.vpn":null,"nautobot.wireless":null,"nautobot_device_onboarding":"5.5.1","nautobot_golden_config":"3.0.7","nautobot_plugin_nornir":"3.2.4","nautobot_ssot":"4.6.1","rest_framework":"3.17.2","silk":"5.5.2","social_django":"5.9.0","taggit":"6.1.0","timezone_field":"7.2.2"},"nautobot-version":"3.2.4","nautobot-apps":{"nautobot_device_onboarding":"5.5.1","nautobot_golden_config":"3.0.7","nautobot_plugin_nornir":"3.2.4","nautobot_ssot":"4.6.1"},"plugins":{"nautobot_device_onboarding":"5.5.1","nautobot_golden_config":"3.0.7","nautob</msg>
+<msg time="2026-09-12T11:36:06.585712" level="INFO">${st} = {'django-version': '5.2.17', 'installed-apps': {'constance': None, 'corsheaders': None, 'db_file_storage': None, 'django.contrib.admin': None, 'django.contrib.auth': None, 'django.contrib.contenttypes...</msg>
+<var>${st}</var>
+<arg>status/</arg>
+<doc>GET /api/&lt;path&gt; and return the parsed JSON (results list for list endpoints).</doc>
+<status status="PASS" start="2026-09-12T11:36:05.571094" elapsed="1.014641"/>
+</kw>
+<for flavor="IN">
+<iter>
+<kw name="Dictionary Should Contain Key" owner="Collections">
+<arg>${st}[installed-apps]</arg>
+<arg>${app}</arg>
+<doc>Fails if ``key`` is not found from ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:06.586064" elapsed="0.000172"/>
+</kw>
+<var name="${app}">nautobot_device_onboarding</var>
+<status status="PASS" start="2026-09-12T11:36:06.585958" elapsed="0.000304"/>
+</iter>
+<iter>
+<kw name="Dictionary Should Contain Key" owner="Collections">
+<arg>${st}[installed-apps]</arg>
+<arg>${app}</arg>
+<doc>Fails if ``key`` is not found from ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:06.586384" elapsed="0.000115"/>
+</kw>
+<var name="${app}">nautobot_golden_config</var>
+<status status="PASS" start="2026-09-12T11:36:06.586334" elapsed="0.000196"/>
+</iter>
+<iter>
+<kw name="Dictionary Should Contain Key" owner="Collections">
+<arg>${st}[installed-apps]</arg>
+<arg>${app}</arg>
+<doc>Fails if ``key`` is not found from ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:06.586657" elapsed="0.000133"/>
+</kw>
+<var name="${app}">nautobot_plugin_nornir</var>
+<status status="PASS" start="2026-09-12T11:36:06.586598" elapsed="0.000221"/>
+</iter>
+<iter>
+<kw name="Dictionary Should Contain Key" owner="Collections">
+<arg>${st}[installed-apps]</arg>
+<arg>${app}</arg>
+<doc>Fails if ``key`` is not found from ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:06.586935" elapsed="0.000141"/>
+</kw>
+<var name="${app}">nautobot_ssot</var>
+<status status="PASS" start="2026-09-12T11:36:06.586880" elapsed="0.000225"/>
+</iter>
+<var>${app}</var>
+<value>nautobot_device_onboarding</value>
+<value>nautobot_golden_config</value>
+<value>nautobot_plugin_nornir</value>
+<value>nautobot_ssot</value>
+<status status="PASS" start="2026-09-12T11:36:06.585812" elapsed="0.001318"/>
+</for>
+<status status="PASS" start="2026-09-12T11:36:05.570884" elapsed="1.016337"/>
+</test>
+<test id="s1-s1-t3" name="Every lab node is a device in the lab location" line="19">
+<for flavor="IN">
+<iter>
+<kw name="Nautobot Get" owner="LabLib">
+<msg time="2026-09-12T11:36:06.717105" level="INFO">GET http://10.0.0.10:8080/api/dcim/devices/?name=sw1 -&gt; 200
+{"count":1,"next":null,"previous":null,"results":[{"id":"21cb1c46-34dc-4749-a8f6-a5536d670990","object_type":"dcim.device","display":"sw1","url":"http://10.0.0.10:8080/api/dcim/devices/21cb1c46-34dc-4749-a8f6-a5536d670990/","natural_slug":"sw1__cat9000v-lab_21cb","face":null,"local_config_context_data":{"bgp":{"asn":65000},"stp_priority":4096},"local_config_context_data_owner_object_id":null,"name":"sw1","serial":"98R34VA1AR9","asset_tag":null,"position":null,"device_redundancy_group_priority":null,"vc_position":null,"vc_priority":null,"comments":"","local_config_context_schema":null,"local_config_context_data_owner_content_type":null,"device_type":{"id":"cc8c62c8-54b3-4a8b-b40c-0b5f673176e2","object_type":"dcim.devicetype","url":"http://10.0.0.10:8080/api/dcim/device-types/cc8c62c8-54b3-4a8b-b40c-0b5f673176e2/"},"status":{"id":"8f248011-2a05-4668-8162-ac48e85a9f28","object_type":"extras.status","url":"http://10.0.0.10:8080/api/extras/statuses/8f248011-2a05-4668-8162-ac48e85a9f28/"},"role":{"id":"e5cd93e3-0263-400d-83ed-01d2b7e62f11","object_type":"extras.role","url":"http://10.0.0.10:8080/api/extras/roles/e5cd93e3-0263-400d-83ed-01d2b7e62f11/"},"tenant":null,"platform":{"id":"8409fb74-347d-483d-b852-eb7902bedad0","object_type":"dcim.platform","url":"http://10.0.0.10:8080/api/dcim/platforms/8409fb74-347d-483d-b852-eb7902bedad0/"},"location":{"id":"80f37adb-c8ce-45b6-a2d5-6063ae206ffa","object_type":"dcim.location","url":"http://10.0.0.10:8080/api/dcim/locations/80f37adb-c8ce-</msg>
+<msg time="2026-09-12T11:36:06.717364" level="INFO">${r} = {'count': 1, 'next': None, 'previous': None, 'results': [{'id': '21cb1c46-34dc-4749-a8f6-a5536d670990', 'object_type': 'dcim.device', 'display': 'sw1', 'url': 'http://10.0.0.10:8080/api/dcim/devices/2...</msg>
+<var>${r}</var>
+<arg>dcim/devices/</arg>
+<arg>name=${node}</arg>
+<doc>GET /api/&lt;path&gt; and return the parsed JSON (results list for list endpoints).</doc>
+<status status="PASS" start="2026-09-12T11:36:06.587649" elapsed="0.129738"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2026-09-12T11:36:06.717840" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${r}[count]</arg>
+<arg>1</arg>
+<arg>msg=${node} missing in Nautobot</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2026-09-12T11:36:06.717506" elapsed="0.000382"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<msg time="2026-09-12T11:36:06.718209" level="FAIL">Dictionary '${r}[results][0][location]' has no key 'name'.</msg>
+<arg>${r}[results][0][location][name]</arg>
+<arg>cat9000v-lab</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="FAIL" start="2026-09-12T11:36:06.717998" elapsed="0.000243">Dictionary '${r}[results][0][location]' has no key 'name'.</status>
+</kw>
+<var name="${node}">sw1</var>
+<status status="FAIL" start="2026-09-12T11:36:06.587599" elapsed="0.130695">Dictionary '${r}[results][0][location]' has no key 'name'.</status>
+</iter>
+<var>${node}</var>
+<value>sw1</value>
+<value>sw2</value>
+<value>host1</value>
+<value>host2</value>
+<value>nms</value>
+<status status="FAIL" start="2026-09-12T11:36:06.587522" elapsed="0.130817">Dictionary '${r}[results][0][location]' has no key 'name'.</status>
+</for>
+<status status="FAIL" start="2026-09-12T11:36:06.587355" elapsed="0.131095">Dictionary '${r}[results][0][location]' has no key 'name'.</status>
+</test>
+<test id="s1-s1-t4" name="Switch identity in Nautobot matches the running switches" line="26">
+<for flavor="IN">
+<iter>
+<kw name="Nautobot Get" owner="LabLib">
+<msg time="2026-09-12T11:36:07.302784" level="INFO">GET http://10.0.0.10:8080/api/dcim/devices/?name=sw1&amp;depth=1 -&gt; 200
+{"count":1,"next":null,"previous":null,"results":[{"id":"21cb1c46-34dc-4749-a8f6-a5536d670990","object_type":"dcim.device","display":"sw1","url":"http://10.0.0.10:8080/api/dcim/devices/21cb1c46-34dc-4749-a8f6-a5536d670990/","natural_slug":"sw1__cat9000v-lab_21cb","face":null,"local_config_context_data":{"bgp":{"asn":65000},"stp_priority":4096},"local_config_context_data_owner_object_id":null,"name":"sw1","serial":"98R34VA1AR9","asset_tag":null,"position":null,"device_redundancy_group_priority":null,"vc_position":null,"vc_priority":null,"comments":"","local_config_context_schema":null,"local_config_context_data_owner_content_type":null,"device_type":{"id":"cc8c62c8-54b3-4a8b-b40c-0b5f673176e2","object_type":"dcim.devicetype","display":"Cisco C9KV-UADP-8P","url":"http://10.0.0.10:8080/api/dcim/device-types/cc8c62c8-54b3-4a8b-b40c-0b5f673176e2/","natural_slug":"cisco_c9kv-uadp-8p_cc8c","subdevice_role":null,"front_image":null,"rear_image":null,"model":"C9KV-UADP-8P","part_number":"C9KV-UADP-8P","u_height":1,"is_full_depth":true,"comments":"","manufacturer":{"id":"9e02045c-38a4-4db3-97f1-532c4f0b671f","object_type":"dcim.manufacturer","url":"http://10.0.0.10:8080/api/dcim/manufacturers/9e02045c-38a4-4db3-97f1-532c4f0b671f/"},"device_family":null,"created":"2026-09-12T15:29:18.811443Z","last_updated":"2026-09-12T15:29:18.811455Z","notes_url":"http://10.0.0.10:8080/api/dcim/device-types/cc8c62c8-54b3-4a8b-b40c-0b5f673176e2/notes/","custom_fields":{}},"status":{"id":"8f248011-2a05-4</msg>
+<msg time="2026-09-12T11:36:07.303081" level="INFO">${d} = {'count': 1, 'next': None, 'previous': None, 'results': [{'id': '21cb1c46-34dc-4749-a8f6-a5536d670990', 'object_type': 'dcim.device', 'display': 'sw1', 'url': 'http://10.0.0.10:8080/api/dcim/devices/2...</msg>
+<var>${d}</var>
+<arg>dcim/devices/</arg>
+<arg>name=${sw}</arg>
+<arg>depth=1</arg>
+<doc>GET /api/&lt;path&gt; and return the parsed JSON (results list for list endpoints).</doc>
+<status status="PASS" start="2026-09-12T11:36:06.719021" elapsed="0.584082"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T11:36:07.303574" level="INFO">${dev} = {'id': '21cb1c46-34dc-4749-a8f6-a5536d670990', 'object_type': 'dcim.device', 'display': 'sw1', 'url': 'http://10.0.0.10:8080/api/dcim/devices/21cb1c46-34dc-4749-a8f6-a5536d670990/', 'natural_slug': 's...</msg>
+<var>${dev}</var>
+<arg>${d}[results][0]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T11:36:07.303234" elapsed="0.000362"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${dev}[device_type][model]</arg>
+<arg>C9KV-UADP-8P</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:07.303663" elapsed="0.000198"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${dev}[primary_ip4][host]</arg>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:07.303924" elapsed="0.000223"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T11:36:07.304970" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T11:36:07.304778" elapsed="0.000221"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T11:36:07.305037" elapsed="0.000040"/>
+</return>
+<msg time="2026-09-12T11:36:07.305165" level="INFO">${host} = 10.0.0.11</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T11:36:07.304614" elapsed="0.000567"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-12T11:36:08.825510" level="INFO" html="true">&lt;pre&gt;10.0.0.11# show version | include System Serial Number|Model Number
+Model Number                       : 
+System Serial Number               : 98R34VA1AR9&lt;/pre&gt;</msg>
+<msg time="2026-09-12T11:36:08.825686" level="INFO">${out} = Model Number                       : 
+System Serial Number               : 98R34VA1AR9</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-12T11:36:07.305240" elapsed="1.520472"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-12T11:36:08.825789" elapsed="0.000054"/>
+</return>
+<msg time="2026-09-12T11:36:08.826009" level="INFO">${ver} = Model Number                       : 
+System Serial Number               : 98R34VA1AR9</msg>
+<var>${ver}</var>
+<arg>${sw}</arg>
+<arg>show version | include System Serial Number|Model Number</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-12T11:36:07.304291" elapsed="1.521742"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${ver}</arg>
+<arg>${dev}[serial]</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T11:36:08.826163" elapsed="0.000590"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-12T11:36:06.718951" elapsed="2.107840"/>
+</iter>
+<iter>
+<kw name="Nautobot Get" owner="LabLib">
+<msg time="2026-09-12T11:36:08.992402" level="INFO">GET http://10.0.0.10:8080/api/dcim/devices/?name=sw2&amp;depth=1 -&gt; 200
+{"count":1,"next":null,"previous":null,"results":[{"id":"8e29dbf2-9a51-4c11-9392-73bfec02f23f","object_type":"dcim.device","display":"sw2","url":"http://10.0.0.10:8080/api/dcim/devices/8e29dbf2-9a51-4c11-9392-73bfec02f23f/","natural_slug":"sw2__cat9000v-lab_8e29","face":null,"local_config_context_data":{"bgp":{"asn":65000},"stp_priority":8192},"local_config_context_data_owner_object_id":null,"name":"sw2","serial":"9PD2HA43NFP","asset_tag":null,"position":null,"device_redundancy_group_priority":null,"vc_position":null,"vc_priority":null,"comments":"","local_config_context_schema":null,"local_config_context_data_owner_content_type":null,"device_type":{"id":"cc8c62c8-54b3-4a8b-b40c-0b5f673176e2","object_type":"dcim.devicetype","display":"Cisco C9KV-UADP-8P","url":"http://10.0.0.10:8080/api/dcim/device-types/cc8c62c8-54b3-4a8b-b40c-0b5f673176e2/","natural_slug":"cisco_c9kv-uadp-8p_cc8c","subdevice_role":null,"front_image":null,"rear_image":null,"model":"C9KV-UADP-8P","part_number":"C9KV-UADP-8P","u_height":1,"is_full_depth":true,"comments":"","manufacturer":{"id":"9e02045c-38a4-4db3-97f1-532c4f0b671f","object_type":"dcim.manufacturer","url":"http://10.0.0.10:8080/api/dcim/manufacturers/9e02045c-38a4-4db3-97f1-532c4f0b671f/"},"device_family":null,"created":"2026-09-12T15:29:18.811443Z","last_updated":"2026-09-12T15:29:18.811455Z","notes_url":"http://10.0.0.10:8080/api/dcim/device-types/cc8c62c8-54b3-4a8b-b40c-0b5f673176e2/notes/","custom_fields":{}},"status":{"id":"8f248011-2a05-4</msg>
+<msg time="2026-09-12T11:36:08.992804" level="INFO">${d} = {'count': 1, 'next': None, 'previous': None, 'results': [{'id': '8e29dbf2-9a51-4c11-9392-73bfec02f23f', 'object_type': 'dcim.device', 'display': 'sw2', 'url': 'http://10.0.0.10:8080/api/dcim/devices/8...</msg>
+<var>${d}</var>
+<arg>dcim/devices/</arg>
+<arg>name=${sw}</arg>
+<arg>depth=1</arg>
+<doc>GET /api/&lt;path&gt; and return the parsed JSON (results list for list endpoints).</doc>
+<status status="PASS" start="2026-09-12T11:36:08.826997" elapsed="0.165836"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T11:36:08.993389" level="INFO">${dev} = {'id': '8e29dbf2-9a51-4c11-9392-73bfec02f23f', 'object_type': 'dcim.device', 'display': 'sw2', 'url': 'http://10.0.0.10:8080/api/dcim/devices/8e29dbf2-9a51-4c11-9392-73bfec02f23f/', 'natural_slug': 's...</msg>
+<var>${dev}</var>
+<arg>${d}[results][0]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T11:36:08.992994" elapsed="0.000420"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${dev}[device_type][model]</arg>
+<arg>C9KV-UADP-8P</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:08.993518" elapsed="0.000251"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${dev}[primary_ip4][host]</arg>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:08.993852" elapsed="0.000273"/>
+</kw>
+<kw name="Show" owner="common">
+<kw name="Switch Host" owner="common">
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T11:36:08.995153" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${SWITCHES}[${sw}][host]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T11:36:08.994785" elapsed="0.000395"/>
+</kw>
+<return>
+<value>${host}</value>
+<status status="PASS" start="2026-09-12T11:36:08.995227" elapsed="0.000042"/>
+</return>
+<msg time="2026-09-12T11:36:08.995378" level="INFO">${host} = 10.0.0.12</msg>
+<var>${host}</var>
+<arg>${sw}</arg>
+<status status="PASS" start="2026-09-12T11:36:08.994580" elapsed="0.000819"/>
+</kw>
+<kw name="Run Command" owner="LabLib">
+<msg time="2026-09-12T11:36:10.510270" level="INFO" html="true">&lt;pre&gt;10.0.0.12# show version | include System Serial Number|Model Number
+Model Number                       : 
+System Serial Number               : 9PD2HA43NFP&lt;/pre&gt;</msg>
+<msg time="2026-09-12T11:36:10.510420" level="INFO">${out} = Model Number                       : 
+System Serial Number               : 9PD2HA43NFP</msg>
+<var>${out}</var>
+<arg>${host}</arg>
+<arg>${command}</arg>
+<arg>${timeout}</arg>
+<doc>Run a show/exec command on a switch over SSH and return its output.</doc>
+<status status="PASS" start="2026-09-12T11:36:08.995484" elapsed="1.514957"/>
+</kw>
+<return>
+<value>${out}</value>
+<status status="PASS" start="2026-09-12T11:36:10.510530" elapsed="0.000053"/>
+</return>
+<msg time="2026-09-12T11:36:10.510728" level="INFO">${ver} = Model Number                       : 
+System Serial Number               : 9PD2HA43NFP</msg>
+<var>${ver}</var>
+<arg>${sw}</arg>
+<arg>show version | include System Serial Number|Model Number</arg>
+<doc>Run a show command on a switch by name.</doc>
+<status status="PASS" start="2026-09-12T11:36:08.994280" elapsed="1.516467"/>
+</kw>
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${ver}</arg>
+<arg>${dev}[serial]</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.510861" elapsed="0.000350"/>
+</kw>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-12T11:36:08.826904" elapsed="1.684343"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-12T11:36:06.718829" elapsed="3.792456"/>
+</for>
+<status status="PASS" start="2026-09-12T11:36:06.718621" elapsed="3.792774"/>
+</test>
+<test id="s1-s1-t5" name="VLAN group holds the modelled VLANs" line="36">
+<kw name="Nautobot Graphql" owner="LabLib">
+<msg time="2026-09-12T11:36:10.533023" level="INFO">GraphQL { vlan_groups(name:"cat9000v-lab") { vlans { vid name } } }
+-&gt; 200 {"data":{"vlan_groups":[{"vlans":[{"vid":10,"name":"USERS"},{"vid":20,"name":"SERVERS"},{"vid":99,"name":"NATIVE"},{"vid":100,"name":"TRANSIT"},{"vid":110,"name":"L3-110"},{"vid":111,"name":"L3-111"},{"vid":112,"name":"L3-112"},{"vid":113,"name":"L3-113"},{"vid":114,"name":"L3-114"},{"vid":115,"name":"L3-115"},{"vid":116,"name":"L3-116"},{"vid":117,"name":"L3-117"},{"vid":118,"name":"L3-118"},{"vid":119,"name":"L3-119"},{"vid":210,"name":"L2-210"},{"vid":211,"name":"L2-211"},{"vid":212,"name":"L2-212"},{"vid":213,"name":"L2-213"},{"vid":214,"name":"L2-214"},{"vid":215,"name":"L2-215"},{"vid":216,"name":"L2-216"},{"vid":217,"name":"L2-217"},{"vid":218,"name":"L2-218"},{"vid":219,"name":"L2-219"}]}]}}</msg>
+<msg time="2026-09-12T11:36:10.533272" level="INFO">${vg} = {'vlan_groups': [{'vlans': [{'vid': 10, 'name': 'USERS'}, {'vid': 20, 'name': 'SERVERS'}, {'vid': 99, 'name': 'NATIVE'}, {'vid': 100, 'name': 'TRANSIT'}, {'vid': 110, 'name': 'L3-110'}, {'vid': 111, '...</msg>
+<var>${vg}</var>
+<arg>{ vlan_groups(name:"cat9000v-lab") { vlans { vid name } } }</arg>
+<status status="PASS" start="2026-09-12T11:36:10.511848" elapsed="0.021453"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-09-12T11:36:10.533794" level="INFO">${got} = {}</msg>
+<var>${got}</var>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.533446" elapsed="0.000368"/>
+</kw>
+<for flavor="IN">
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.534049" elapsed="0.000227"/>
+</kw>
+<var name="${v}">{'vid': 10, 'name': 'USERS'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.533991" elapsed="0.000323"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.534431" elapsed="0.000153"/>
+</kw>
+<var name="${v}">{'vid': 20, 'name': 'SERVERS'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.534381" elapsed="0.000233"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.534716" elapsed="0.000130"/>
+</kw>
+<var name="${v}">{'vid': 99, 'name': 'NATIVE'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.534670" elapsed="0.000202"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.534982" elapsed="0.000135"/>
+</kw>
+<var name="${v}">{'vid': 100, 'name': 'TRANSIT'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.534922" elapsed="0.000220"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.535237" elapsed="0.000128"/>
+</kw>
+<var name="${v}">{'vid': 110, 'name': 'L3-110'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.535192" elapsed="0.000197"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.535523" elapsed="0.000166"/>
+</kw>
+<var name="${v}">{'vid': 111, 'name': 'L3-111'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.535464" elapsed="0.000272"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.535840" elapsed="0.000149"/>
+</kw>
+<var name="${v}">{'vid': 112, 'name': 'L3-112'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.535793" elapsed="0.000224"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.536116" elapsed="0.000128"/>
+</kw>
+<var name="${v}">{'vid': 113, 'name': 'L3-113'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.536070" elapsed="0.000198"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.536365" elapsed="0.000126"/>
+</kw>
+<var name="${v}">{'vid': 114, 'name': 'L3-114'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.536322" elapsed="0.000193"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.536607" elapsed="0.000122"/>
+</kw>
+<var name="${v}">{'vid': 115, 'name': 'L3-115'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.536565" elapsed="0.000188"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.536852" elapsed="0.000117"/>
+</kw>
+<var name="${v}">{'vid': 116, 'name': 'L3-116'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.536806" elapsed="0.000198"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.537094" elapsed="0.000127"/>
+</kw>
+<var name="${v}">{'vid': 117, 'name': 'L3-117'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.537052" elapsed="0.000193"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.537333" elapsed="0.000119"/>
+</kw>
+<var name="${v}">{'vid': 118, 'name': 'L3-118'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.537291" elapsed="0.000185"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.537569" elapsed="0.000118"/>
+</kw>
+<var name="${v}">{'vid': 119, 'name': 'L3-119'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.537528" elapsed="0.000182"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.537798" elapsed="0.000117"/>
+</kw>
+<var name="${v}">{'vid': 210, 'name': 'L2-210'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.537759" elapsed="0.000179"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.538043" elapsed="0.000121"/>
+</kw>
+<var name="${v}">{'vid': 211, 'name': 'L2-211'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.537996" elapsed="0.000192"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.538280" elapsed="0.000117"/>
+</kw>
+<var name="${v}">{'vid': 212, 'name': 'L2-212'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.538235" elapsed="0.000185"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.538505" elapsed="0.000141"/>
+</kw>
+<var name="${v}">{'vid': 213, 'name': 'L2-213'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.538466" elapsed="0.000205"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.538773" elapsed="0.000121"/>
+</kw>
+<var name="${v}">{'vid': 214, 'name': 'L2-214'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.538732" elapsed="0.000186"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.539021" elapsed="0.000116"/>
+</kw>
+<var name="${v}">{'vid': 215, 'name': 'L2-215'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.538965" elapsed="0.000194"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.539248" elapsed="0.000118"/>
+</kw>
+<var name="${v}">{'vid': 216, 'name': 'L2-216'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.539205" elapsed="0.000185"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.539476" elapsed="0.000115"/>
+</kw>
+<var name="${v}">{'vid': 217, 'name': 'L2-217'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.539436" elapsed="0.000180"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.539704" elapsed="0.000114"/>
+</kw>
+<var name="${v}">{'vid': 218, 'name': 'L2-218'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.539663" elapsed="0.000178"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${got}</arg>
+<arg>${v}[vid]</arg>
+<arg>${v}[name]</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.539929" elapsed="0.000139"/>
+</kw>
+<var name="${v}">{'vid': 219, 'name': 'L2-219'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.539890" elapsed="0.000203"/>
+</iter>
+<var>${v}</var>
+<value>@{vg}[vlan_groups][0][vlans]</value>
+<status status="PASS" start="2026-09-12T11:36:10.533860" elapsed="0.006250"/>
+</for>
+<kw name="Dictionaries Should Be Equal" owner="Collections">
+<msg time="2026-09-12T11:36:10.540342" level="FAIL">Following keys missing from first dictionary: '10', '20', '99', '100', '110', '111', '112', '113', '114', '115', '116', '117', '118', '119', '210', '211', '212', '213', '214', '215', '216', '217', '218' and '219'
+Following keys missing from second dictionary: '10', '20', '99', '100', '110', '111', '112', '113', '114', '115', '116', '117', '118', '119', '210', '211', '212', '213', '214', '215', '216', '217', '218' and '219'</msg>
+<arg>${got}</arg>
+<arg>${VLANS}</arg>
+<doc>Fails if the given dictionaries are not equal.</doc>
+<status status="FAIL" start="2026-09-12T11:36:10.540168" elapsed="0.000305">Following keys missing from first dictionary: '10', '20', '99', '100', '110', '111', '112', '113', '114', '115', '116', '117', '118', '119', '210', '211', '212', '213', '214', '215', '216', '217', '218' and '219'
+Following keys missing from second dictionary: '10', '20', '99', '100', '110', '111', '112', '113', '114', '115', '116', '117', '118', '119', '210', '211', '212', '213', '214', '215', '216', '217', '218' and '219'</status>
+</kw>
+<status status="FAIL" start="2026-09-12T11:36:10.511564" elapsed="0.029018">Following keys missing from first dictionary: '10', '20', '99', '100', '110', '111', '112', '113', '114', '115', '116', '117', '118', '119', '210', '211', '212', '213', '214', '215', '216', '217', '218' and '219'
+Following keys missing from second dictionary: '10', '20', '99', '100', '110', '111', '112', '113', '114', '115', '116', '117', '118', '119', '210', '211', '212', '213', '214', '215', '216', '217', '218' and '219'</status>
+</test>
+<test id="s1-s1-t6" name="Trunk, access ports, SVIs and cabling are modelled per switch" line="44">
+<for flavor="IN">
+<iter>
+<kw name="Nautobot Graphql" owner="LabLib">
+<msg time="2026-09-12T11:36:10.630560" level="INFO">GraphQL { devices(name:"sw1") { interfaces { name mode untagged_vlan { vid } tagged_vlans { vid } ip_addresses { address } connected_interface { name device { name } } } } }
+-&gt; 200 {"data":{"devices":[{"interfaces":[{"name":"GigabitEthernet0/0","mode":null,"untagged_vlan":null,"tagged_vlans":[],"ip_addresses":[{"address":"10.0.0.11/24"}],"connected_interface":null},{"name":"GigabitEthernet1/0/1","mode":"TAGGED","untagged_vlan":{"vid":99},"tagged_vlans":[{"vid":10},{"vid":20},{"vid":100},{"vid":110},{"vid":111},{"vid":112},{"vid":113},{"vid":114},{"vid":115},{"vid":116},{"vid":117},{"vid":118},{"vid":119},{"vid":210},{"vid":211},{"vid":212},{"vid":213},{"vid":214},{"vid":215},{"vid":216},{"vid":217},{"vid":218},{"vid":219}],"ip_addresses":[],"connected_interface":{"name":"GigabitEthernet1/0/1","device":{"name":"sw2"}}},{"name":"GigabitEthernet1/0/2","mode":"ACCESS","untagged_vlan":{"vid":10},"tagged_vlans":[],"ip_addresses":[],"connected_interface":{"name":"eth1","device":{"name":"host1"}}},{"name":"GigabitEthernet1/0/3","mode":"ACCESS","untagged_vlan":{"vid":10},"tagged_vlans":[],"ip_addresses":[],"connected_interface":null},{"name":"GigabitEthernet1/0/4","mode":"ACCESS","untagged_vlan":{"vid":20},"tagged_vlans":[],"ip_addresses":[],"connected_interface":null},{"name":"GigabitEthernet1/0/5","mode":null,"untagged_vlan":null,"tagged_vlans":[],"ip_addresses":[],"connected_interface":null},{"name":"GigabitEthernet1/0/6","mode":null,"untagged_vlan":null,"tagged_vlans":[],"ip_addresses":[],"connected_interface":null},{"name":"GigabitEthernet1/0/7","mode":null,"untagged_vlan":null,"tagged_vlans":[],"ip_addresses":[],"connected_interface":null},{"name":"GigabitEthernet1/0/8","mode":null,"untagged_vlan":null,"tagged_vlans":[],"ip_addresses":[],"connected_interface":null},{"name":"Loopback0","mode":null,"untagged_vlan":null,"tagged_vlans":[],"ip_addresses":[{"address":"10.255.0.1/32"}],"connected_interface":null},{"name":"Vlan10","mode":"ACCESS","untagged_vlan":{"vid":10},"tagged_vlans":[],"ip_addresses":[{"address":"10.10.0.1/24"}],"connected_interface":null},{"name":"Vlan100","mode":"ACCESS","untagged_vlan":{"vid":100},"tagged_vlans":[],"ip_addresses"</msg>
+<msg time="2026-09-12T11:36:10.630920" level="INFO">${d} = {'devices': [{'interfaces': [{'name': 'GigabitEthernet0/0', 'mode': None, 'untagged_vlan': None, 'tagged_vlans': [], 'ip_addresses': [{'address': '10.0.0.11/24'}], 'connected_interface': None}, {'name...</msg>
+<var>${d}</var>
+<arg>{ devices(name:"${sw}") { interfaces { name mode untagged_vlan { vid } tagged_vlans { vid } ip_addresses { address } connected_interface { name device { name } } } } }</arg>
+<status status="PASS" start="2026-09-12T11:36:10.541104" elapsed="0.089845"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-09-12T11:36:10.631436" level="INFO">${ifs} = {}</msg>
+<var>${ifs}</var>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.631130" elapsed="0.000329"/>
+</kw>
+<for flavor="IN">
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.631732" elapsed="0.000208"/>
+</kw>
+<var name="${i}">{'name': 'GigabitEthernet0/0', 'mode': None, 'untagged_vlan': None, 'tagged_vlans': [], 'ip_addresses': [{'address': '10.0.0.11/24'}], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.631661" elapsed="0.000323"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.632130" elapsed="0.000166"/>
+</kw>
+<var name="${i}">{'name': 'GigabitEthernet1/0/1', 'mode': 'TAGGED', 'untagged_vlan': {'vid': 99}, 'tagged_vlans': [{'vid': 10}, {'vid': 20}, {'vid': 100}, {'vid': 110}, {'vid': 111}, {'vid': 112}, {'vid': 113}, {'vid'...</var>
+<status status="PASS" start="2026-09-12T11:36:10.632070" elapsed="0.000258"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.632454" elapsed="0.000158"/>
+</kw>
+<var name="${i}">{'name': 'GigabitEthernet1/0/2', 'mode': 'ACCESS', 'untagged_vlan': {'vid': 10}, 'tagged_vlans': [], 'ip_addresses': [], 'connected_interface': {'name': 'eth1', 'device': {'name': 'host1'}}}</var>
+<status status="PASS" start="2026-09-12T11:36:10.632396" elapsed="0.000251"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.632780" elapsed="0.000163"/>
+</kw>
+<var name="${i}">{'name': 'GigabitEthernet1/0/3', 'mode': 'ACCESS', 'untagged_vlan': {'vid': 10}, 'tagged_vlans': [], 'ip_addresses': [], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.632721" elapsed="0.000263"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.633110" elapsed="0.000158"/>
+</kw>
+<var name="${i}">{'name': 'GigabitEthernet1/0/4', 'mode': 'ACCESS', 'untagged_vlan': {'vid': 20}, 'tagged_vlans': [], 'ip_addresses': [], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.633053" elapsed="0.000246"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.633429" elapsed="0.000158"/>
+</kw>
+<var name="${i}">{'name': 'GigabitEthernet1/0/5', 'mode': None, 'untagged_vlan': None, 'tagged_vlans': [], 'ip_addresses': [], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.633368" elapsed="0.000249"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.633742" elapsed="0.000156"/>
+</kw>
+<var name="${i}">{'name': 'GigabitEthernet1/0/6', 'mode': None, 'untagged_vlan': None, 'tagged_vlans': [], 'ip_addresses': [], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.633686" elapsed="0.000243"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.634072" elapsed="0.000160"/>
+</kw>
+<var name="${i}">{'name': 'GigabitEthernet1/0/7', 'mode': None, 'untagged_vlan': None, 'tagged_vlans': [], 'ip_addresses': [], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.634016" elapsed="0.000247"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.634384" elapsed="0.000155"/>
+</kw>
+<var name="${i}">{'name': 'GigabitEthernet1/0/8', 'mode': None, 'untagged_vlan': None, 'tagged_vlans': [], 'ip_addresses': [], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.634327" elapsed="0.000244"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.634700" elapsed="0.000161"/>
+</kw>
+<var name="${i}">{'name': 'Loopback0', 'mode': None, 'untagged_vlan': None, 'tagged_vlans': [], 'ip_addresses': [{'address': '10.255.0.1/32'}], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.634642" elapsed="0.000252"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.635031" elapsed="0.000155"/>
+</kw>
+<var name="${i}">{'name': 'Vlan10', 'mode': 'ACCESS', 'untagged_vlan': {'vid': 10}, 'tagged_vlans': [], 'ip_addresses': [{'address': '10.10.0.1/24'}], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.634964" elapsed="0.000253"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.635334" elapsed="0.000156"/>
+</kw>
+<var name="${i}">{'name': 'Vlan100', 'mode': 'ACCESS', 'untagged_vlan': {'vid': 100}, 'tagged_vlans': [], 'ip_addresses': [{'address': '10.100.0.1/30'}], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.635280" elapsed="0.000241"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.635642" elapsed="0.000163"/>
+</kw>
+<var name="${i}">{'name': 'Vlan110', 'mode': 'ACCESS', 'untagged_vlan': {'vid': 110}, 'tagged_vlans': [], 'ip_addresses': [{'address': '10.110.0.1/24'}], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.635585" elapsed="0.000250"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.635955" elapsed="0.000165"/>
+</kw>
+<var name="${i}">{'name': 'Vlan111', 'mode': 'ACCESS', 'untagged_vlan': {'vid': 111}, 'tagged_vlans': [], 'ip_addresses': [{'address': '10.111.0.1/24'}], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.635899" elapsed="0.000253"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.636280" elapsed="0.000151"/>
+</kw>
+<var name="${i}">{'name': 'Vlan112', 'mode': 'ACCESS', 'untagged_vlan': {'vid': 112}, 'tagged_vlans': [], 'ip_addresses': [{'address': '10.112.0.1/24'}], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.636224" elapsed="0.000238"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.636578" elapsed="0.000157"/>
+</kw>
+<var name="${i}">{'name': 'Vlan113', 'mode': 'ACCESS', 'untagged_vlan': {'vid': 113}, 'tagged_vlans': [], 'ip_addresses': [{'address': '10.113.0.1/24'}], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.636524" elapsed="0.000244"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.636892" elapsed="0.000177"/>
+</kw>
+<var name="${i}">{'name': 'Vlan114', 'mode': 'ACCESS', 'untagged_vlan': {'vid': 114}, 'tagged_vlans': [], 'ip_addresses': [{'address': '10.114.0.1/24'}], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.636832" elapsed="0.000269"/>
+</iter>
+<var>${i}</var>
+<value>@{d}[devices][0][interfaces]</value>
+<status status="PASS" start="2026-09-12T11:36:10.631512" elapsed="0.005613"/>
+</for>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${ifs}[GigabitEthernet1/0/1][mode]</arg>
+<arg>TAGGED</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.637204" elapsed="0.000241"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2026-09-12T11:36:10.637752" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${ifs}[GigabitEthernet1/0/1][untagged_vlan][vid]</arg>
+<arg>${TRUNK_NATIVE_VLAN}</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.637522" elapsed="0.000283"/>
+</kw>
+<kw name="Length Should Be" owner="BuiltIn">
+<msg time="2026-09-12T11:36:10.638110" level="INFO">Length is 23.</msg>
+<arg>${ifs}[GigabitEthernet1/0/1][tagged_vlans]</arg>
+<arg>23</arg>
+<doc>Verifies that the length of the given item is correct.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.637882" elapsed="0.000265"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${ifs}[GigabitEthernet1/0/1][connected_interface][device][name]</arg>
+<arg>${SWITCHES}[${sw}][peer]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.638225" elapsed="0.000256"/>
+</kw>
+<for flavor="IN">
+<iter>
+<kw name="Replace String" owner="String">
+<msg time="2026-09-12T11:36:10.638998" level="INFO">${name} = GigabitEthernet1/0/2</msg>
+<var>${name}</var>
+<arg>${port}</arg>
+<arg>Gi</arg>
+<arg>GigabitEthernet</arg>
+<doc>Replaces ``search_for`` in the given ``string`` with ``replace_with``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.638816" elapsed="0.000204"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${ifs}[${name}][mode]</arg>
+<arg>ACCESS</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.639100" elapsed="0.000231"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2026-09-12T11:36:10.639626" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${ifs}[${name}][untagged_vlan][vid]</arg>
+<arg>${vlan}</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.639408" elapsed="0.000266"/>
+</kw>
+<var name="${port}">Gi1/0/2</var>
+<var name="${vlan}">10</var>
+<status status="PASS" start="2026-09-12T11:36:10.638752" elapsed="0.000953"/>
+</iter>
+<iter>
+<kw name="Replace String" owner="String">
+<msg time="2026-09-12T11:36:10.640030" level="INFO">${name} = GigabitEthernet1/0/3</msg>
+<var>${name}</var>
+<arg>${port}</arg>
+<arg>Gi</arg>
+<arg>GigabitEthernet</arg>
+<doc>Replaces ``search_for`` in the given ``string`` with ``replace_with``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.639871" elapsed="0.000179"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${ifs}[${name}][mode]</arg>
+<arg>ACCESS</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.640130" elapsed="0.000228"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2026-09-12T11:36:10.640648" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${ifs}[${name}][untagged_vlan][vid]</arg>
+<arg>${vlan}</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.640432" elapsed="0.000266"/>
+</kw>
+<var name="${port}">Gi1/0/3</var>
+<var name="${vlan}">10</var>
+<status status="PASS" start="2026-09-12T11:36:10.639811" elapsed="0.000918"/>
+</iter>
+<iter>
+<kw name="Replace String" owner="String">
+<msg time="2026-09-12T11:36:10.641032" level="INFO">${name} = GigabitEthernet1/0/4</msg>
+<var>${name}</var>
+<arg>${port}</arg>
+<arg>Gi</arg>
+<arg>GigabitEthernet</arg>
+<doc>Replaces ``search_for`` in the given ``string`` with ``replace_with``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.640872" elapsed="0.000186"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${ifs}[${name}][mode]</arg>
+<arg>ACCESS</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.641138" elapsed="0.000227"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2026-09-12T11:36:10.641652" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${ifs}[${name}][untagged_vlan][vid]</arg>
+<arg>${vlan}</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.641439" elapsed="0.000257"/>
+</kw>
+<var name="${port}">Gi1/0/4</var>
+<var name="${vlan}">20</var>
+<status status="PASS" start="2026-09-12T11:36:10.640814" elapsed="0.000911"/>
+</iter>
+<var>${port}</var>
+<var>${vlan}</var>
+<value>&amp;{ACCESS_PORTS}</value>
+<status status="PASS" start="2026-09-12T11:36:10.638525" elapsed="0.003228"/>
+</for>
+<for flavor="IN">
+<iter>
+<kw name="Should Start With" owner="BuiltIn">
+<arg>${ifs}[${svi}][ip_addresses][0][address]</arg>
+<arg>${ip}/</arg>
+<doc>Fails if the string ``str1`` does not start with the string ``str2``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.642011" elapsed="0.000268"/>
+</kw>
+<var name="${svi}">Vlan10</var>
+<var name="${ip}">10.10.0.1</var>
+<status status="PASS" start="2026-09-12T11:36:10.641932" elapsed="0.000380"/>
+</iter>
+<iter>
+<kw name="Should Start With" owner="BuiltIn">
+<arg>${ifs}[${svi}][ip_addresses][0][address]</arg>
+<arg>${ip}/</arg>
+<doc>Fails if the string ``str1`` does not start with the string ``str2``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.642451" elapsed="0.000263"/>
+</kw>
+<var name="${svi}">Vlan100</var>
+<var name="${ip}">10.100.0.1</var>
+<status status="PASS" start="2026-09-12T11:36:10.642389" elapsed="0.000356"/>
+</iter>
+<var>${svi}</var>
+<var>${ip}</var>
+<value>&amp;{SWITCHES}[${sw}][svis]</value>
+<status status="PASS" start="2026-09-12T11:36:10.641792" elapsed="0.000981"/>
+</for>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${ifs}[Loopback0][ip_addresses][0][address]</arg>
+<arg>${SWITCHES}[${sw}][router_id]/32</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.642848" elapsed="0.000274"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-12T11:36:10.541056" elapsed="0.102097"/>
+</iter>
+<iter>
+<kw name="Nautobot Graphql" owner="LabLib">
+<msg time="2026-09-12T11:36:10.735725" level="INFO">GraphQL { devices(name:"sw2") { interfaces { name mode untagged_vlan { vid } tagged_vlans { vid } ip_addresses { address } connected_interface { name device { name } } } } }
+-&gt; 200 {"data":{"devices":[{"interfaces":[{"name":"GigabitEthernet0/0","mode":null,"untagged_vlan":null,"tagged_vlans":[],"ip_addresses":[{"address":"10.0.0.12/24"}],"connected_interface":null},{"name":"GigabitEthernet1/0/1","mode":"TAGGED","untagged_vlan":{"vid":99},"tagged_vlans":[{"vid":10},{"vid":20},{"vid":100},{"vid":110},{"vid":111},{"vid":112},{"vid":113},{"vid":114},{"vid":115},{"vid":116},{"vid":117},{"vid":118},{"vid":119},{"vid":210},{"vid":211},{"vid":212},{"vid":213},{"vid":214},{"vid":215},{"vid":216},{"vid":217},{"vid":218},{"vid":219}],"ip_addresses":[],"connected_interface":{"name":"GigabitEthernet1/0/1","device":{"name":"sw1"}}},{"name":"GigabitEthernet1/0/2","mode":"ACCESS","untagged_vlan":{"vid":10},"tagged_vlans":[],"ip_addresses":[],"connected_interface":null},{"name":"GigabitEthernet1/0/3","mode":"ACCESS","untagged_vlan":{"vid":10},"tagged_vlans":[],"ip_addresses":[],"connected_interface":null},{"name":"GigabitEthernet1/0/4","mode":"ACCESS","untagged_vlan":{"vid":20},"tagged_vlans":[],"ip_addresses":[],"connected_interface":{"name":"eth1","device":{"name":"host2"}}},{"name":"GigabitEthernet1/0/5","mode":null,"untagged_vlan":null,"tagged_vlans":[],"ip_addresses":[],"connected_interface":null},{"name":"GigabitEthernet1/0/6","mode":null,"untagged_vlan":null,"tagged_vlans":[],"ip_addresses":[],"connected_interface":null},{"name":"GigabitEthernet1/0/7","mode":null,"untagged_vlan":null,"tagged_vlans":[],"ip_addresses":[],"connected_interface":null},{"name":"GigabitEthernet1/0/8","mode":null,"untagged_vlan":null,"tagged_vlans":[],"ip_addresses":[],"connected_interface":null},{"name":"Loopback0","mode":null,"untagged_vlan":null,"tagged_vlans":[],"ip_addresses":[{"address":"10.255.0.2/32"}],"connected_interface":null},{"name":"Vlan20","mode":"ACCESS","untagged_vlan":{"vid":20},"tagged_vlans":[],"ip_addresses":[{"address":"10.20.0.1/24"}],"connected_interface":null},{"name":"Vlan100","mode":"ACCESS","untagged_vlan":{"vid":100},"tagged_vlans":[],"ip_addresses"</msg>
+<msg time="2026-09-12T11:36:10.736024" level="INFO">${d} = {'devices': [{'interfaces': [{'name': 'GigabitEthernet0/0', 'mode': None, 'untagged_vlan': None, 'tagged_vlans': [], 'ip_addresses': [{'address': '10.0.0.12/24'}], 'connected_interface': None}, {'name...</msg>
+<var>${d}</var>
+<arg>{ devices(name:"${sw}") { interfaces { name mode untagged_vlan { vid } tagged_vlans { vid } ip_addresses { address } connected_interface { name device { name } } } } }</arg>
+<status status="PASS" start="2026-09-12T11:36:10.643371" elapsed="0.092684"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-09-12T11:36:10.736429" level="INFO">${ifs} = {}</msg>
+<var>${ifs}</var>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.736184" elapsed="0.000265"/>
+</kw>
+<for flavor="IN">
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.736711" elapsed="0.000166"/>
+</kw>
+<var name="${i}">{'name': 'GigabitEthernet0/0', 'mode': None, 'untagged_vlan': None, 'tagged_vlans': [], 'ip_addresses': [{'address': '10.0.0.12/24'}], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.736636" elapsed="0.000268"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.737059" elapsed="0.000143"/>
+</kw>
+<var name="${i}">{'name': 'GigabitEthernet1/0/1', 'mode': 'TAGGED', 'untagged_vlan': {'vid': 99}, 'tagged_vlans': [{'vid': 10}, {'vid': 20}, {'vid': 100}, {'vid': 110}, {'vid': 111}, {'vid': 112}, {'vid': 113}, {'vid'...</var>
+<status status="PASS" start="2026-09-12T11:36:10.736992" elapsed="0.000236"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.737351" elapsed="0.000132"/>
+</kw>
+<var name="${i}">{'name': 'GigabitEthernet1/0/2', 'mode': 'ACCESS', 'untagged_vlan': {'vid': 10}, 'tagged_vlans': [], 'ip_addresses': [], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.737305" elapsed="0.000204"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.737604" elapsed="0.000120"/>
+</kw>
+<var name="${i}">{'name': 'GigabitEthernet1/0/3', 'mode': 'ACCESS', 'untagged_vlan': {'vid': 10}, 'tagged_vlans': [], 'ip_addresses': [], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.737560" elapsed="0.000188"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.737844" elapsed="0.000127"/>
+</kw>
+<var name="${i}">{'name': 'GigabitEthernet1/0/4', 'mode': 'ACCESS', 'untagged_vlan': {'vid': 20}, 'tagged_vlans': [], 'ip_addresses': [], 'connected_interface': {'name': 'eth1', 'device': {'name': 'host2'}}}</var>
+<status status="PASS" start="2026-09-12T11:36:10.737798" elapsed="0.000218"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.738126" elapsed="0.000122"/>
+</kw>
+<var name="${i}">{'name': 'GigabitEthernet1/0/5', 'mode': None, 'untagged_vlan': None, 'tagged_vlans': [], 'ip_addresses': [], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.738082" elapsed="0.000192"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.738393" elapsed="0.000129"/>
+</kw>
+<var name="${i}">{'name': 'GigabitEthernet1/0/6', 'mode': None, 'untagged_vlan': None, 'tagged_vlans': [], 'ip_addresses': [], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.738335" elapsed="0.000212"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.738644" elapsed="0.000115"/>
+</kw>
+<var name="${i}">{'name': 'GigabitEthernet1/0/7', 'mode': None, 'untagged_vlan': None, 'tagged_vlans': [], 'ip_addresses': [], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.738601" elapsed="0.000185"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.738877" elapsed="0.000160"/>
+</kw>
+<var name="${i}">{'name': 'GigabitEthernet1/0/8', 'mode': None, 'untagged_vlan': None, 'tagged_vlans': [], 'ip_addresses': [], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.738835" elapsed="0.000235"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.739172" elapsed="0.000121"/>
+</kw>
+<var name="${i}">{'name': 'Loopback0', 'mode': None, 'untagged_vlan': None, 'tagged_vlans': [], 'ip_addresses': [{'address': '10.255.0.2/32'}], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.739123" elapsed="0.000193"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.739407" elapsed="0.000119"/>
+</kw>
+<var name="${i}">{'name': 'Vlan20', 'mode': 'ACCESS', 'untagged_vlan': {'vid': 20}, 'tagged_vlans': [], 'ip_addresses': [{'address': '10.20.0.1/24'}], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.739365" elapsed="0.000185"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.739644" elapsed="0.000120"/>
+</kw>
+<var name="${i}">{'name': 'Vlan100', 'mode': 'ACCESS', 'untagged_vlan': {'vid': 100}, 'tagged_vlans': [], 'ip_addresses': [{'address': '10.100.0.2/30'}], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.739599" elapsed="0.000191"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.739883" elapsed="0.000148"/>
+</kw>
+<var name="${i}">{'name': 'Vlan115', 'mode': 'ACCESS', 'untagged_vlan': {'vid': 115}, 'tagged_vlans': [], 'ip_addresses': [{'address': '10.115.0.1/24'}], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.739842" elapsed="0.000221"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.740159" elapsed="0.000117"/>
+</kw>
+<var name="${i}">{'name': 'Vlan116', 'mode': 'ACCESS', 'untagged_vlan': {'vid': 116}, 'tagged_vlans': [], 'ip_addresses': [{'address': '10.116.0.1/24'}], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.740115" elapsed="0.000184"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.740395" elapsed="0.000118"/>
+</kw>
+<var name="${i}">{'name': 'Vlan117', 'mode': 'ACCESS', 'untagged_vlan': {'vid': 117}, 'tagged_vlans': [], 'ip_addresses': [{'address': '10.117.0.1/24'}], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.740353" elapsed="0.000184"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.740627" elapsed="0.000113"/>
+</kw>
+<var name="${i}">{'name': 'Vlan118', 'mode': 'ACCESS', 'untagged_vlan': {'vid': 118}, 'tagged_vlans': [], 'ip_addresses': [{'address': '10.118.0.1/24'}], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.740586" elapsed="0.000181"/>
+</iter>
+<iter>
+<kw name="Set To Dictionary" owner="Collections">
+<arg>${ifs}</arg>
+<arg>${i}[name]</arg>
+<arg>${i}</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.740857" elapsed="0.000151"/>
+</kw>
+<var name="${i}">{'name': 'Vlan119', 'mode': 'ACCESS', 'untagged_vlan': {'vid': 119}, 'tagged_vlans': [], 'ip_addresses': [{'address': '10.119.0.1/24'}], 'connected_interface': None}</var>
+<status status="PASS" start="2026-09-12T11:36:10.740815" elapsed="0.000228"/>
+</iter>
+<var>${i}</var>
+<value>@{d}[devices][0][interfaces]</value>
+<status status="PASS" start="2026-09-12T11:36:10.736498" elapsed="0.004574"/>
+</for>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${ifs}[GigabitEthernet1/0/1][mode]</arg>
+<arg>TAGGED</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.741135" elapsed="0.000219"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2026-09-12T11:36:10.741571" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${ifs}[GigabitEthernet1/0/1][untagged_vlan][vid]</arg>
+<arg>${TRUNK_NATIVE_VLAN}</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.741413" elapsed="0.000196"/>
+</kw>
+<kw name="Length Should Be" owner="BuiltIn">
+<msg time="2026-09-12T11:36:10.741831" level="INFO">Length is 23.</msg>
+<arg>${ifs}[GigabitEthernet1/0/1][tagged_vlans]</arg>
+<arg>23</arg>
+<doc>Verifies that the length of the given item is correct.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.741666" elapsed="0.000200"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${ifs}[GigabitEthernet1/0/1][connected_interface][device][name]</arg>
+<arg>${SWITCHES}[${sw}][peer]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.741924" elapsed="0.000249"/>
+</kw>
+<for flavor="IN">
+<iter>
+<kw name="Replace String" owner="String">
+<msg time="2026-09-12T11:36:10.742530" level="INFO">${name} = GigabitEthernet1/0/2</msg>
+<var>${name}</var>
+<arg>${port}</arg>
+<arg>Gi</arg>
+<arg>GigabitEthernet</arg>
+<doc>Replaces ``search_for`` in the given ``string`` with ``replace_with``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.742404" elapsed="0.000143"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${ifs}[${name}][mode]</arg>
+<arg>ACCESS</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.742606" elapsed="0.000182"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2026-09-12T11:36:10.743051" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${ifs}[${name}][untagged_vlan][vid]</arg>
+<arg>${vlan}</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.742845" elapsed="0.000253"/>
+</kw>
+<var name="${port}">Gi1/0/2</var>
+<var name="${vlan}">10</var>
+<status status="PASS" start="2026-09-12T11:36:10.742339" elapsed="0.000789"/>
+</iter>
+<iter>
+<kw name="Replace String" owner="String">
+<msg time="2026-09-12T11:36:10.743442" level="INFO">${name} = GigabitEthernet1/0/3</msg>
+<var>${name}</var>
+<arg>${port}</arg>
+<arg>Gi</arg>
+<arg>GigabitEthernet</arg>
+<doc>Replaces ``search_for`` in the given ``string`` with ``replace_with``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.743281" elapsed="0.000183"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${ifs}[${name}][mode]</arg>
+<arg>ACCESS</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.743549" elapsed="0.000257"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2026-09-12T11:36:10.744119" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${ifs}[${name}][untagged_vlan][vid]</arg>
+<arg>${vlan}</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.743868" elapsed="0.000296"/>
+</kw>
+<var name="${port}">Gi1/0/3</var>
+<var name="${vlan}">10</var>
+<status status="PASS" start="2026-09-12T11:36:10.743216" elapsed="0.000976"/>
+</iter>
+<iter>
+<kw name="Replace String" owner="String">
+<msg time="2026-09-12T11:36:10.744536" level="INFO">${name} = GigabitEthernet1/0/4</msg>
+<var>${name}</var>
+<arg>${port}</arg>
+<arg>Gi</arg>
+<arg>GigabitEthernet</arg>
+<doc>Replaces ``search_for`` in the given ``string`` with ``replace_with``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.744365" elapsed="0.000195"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${ifs}[${name}][mode]</arg>
+<arg>ACCESS</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.744642" elapsed="0.000196"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2026-09-12T11:36:10.745185" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${ifs}[${name}][untagged_vlan][vid]</arg>
+<arg>${vlan}</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.744923" elapsed="0.000317"/>
+</kw>
+<var name="${port}">Gi1/0/4</var>
+<var name="${vlan}">20</var>
+<status status="PASS" start="2026-09-12T11:36:10.744300" elapsed="0.000970"/>
+</iter>
+<var>${port}</var>
+<var>${vlan}</var>
+<value>&amp;{ACCESS_PORTS}</value>
+<status status="PASS" start="2026-09-12T11:36:10.742211" elapsed="0.003090"/>
+</for>
+<for flavor="IN">
+<iter>
+<kw name="Should Start With" owner="BuiltIn">
+<arg>${ifs}[${svi}][ip_addresses][0][address]</arg>
+<arg>${ip}/</arg>
+<doc>Fails if the string ``str1`` does not start with the string ``str2``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.745570" elapsed="0.000255"/>
+</kw>
+<var name="${svi}">Vlan20</var>
+<var name="${ip}">10.20.0.1</var>
+<status status="PASS" start="2026-09-12T11:36:10.745497" elapsed="0.000352"/>
+</iter>
+<iter>
+<kw name="Should Start With" owner="BuiltIn">
+<arg>${ifs}[${svi}][ip_addresses][0][address]</arg>
+<arg>${ip}/</arg>
+<doc>Fails if the string ``str1`` does not start with the string ``str2``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.745964" elapsed="0.000211"/>
+</kw>
+<var name="${svi}">Vlan100</var>
+<var name="${ip}">10.100.0.2</var>
+<status status="PASS" start="2026-09-12T11:36:10.745916" elapsed="0.000281"/>
+</iter>
+<var>${svi}</var>
+<var>${ip}</var>
+<value>&amp;{SWITCHES}[${sw}][svis]</value>
+<status status="PASS" start="2026-09-12T11:36:10.745350" elapsed="0.000869"/>
+</for>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${ifs}[Loopback0][ip_addresses][0][address]</arg>
+<arg>${SWITCHES}[${sw}][router_id]/32</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.746276" elapsed="0.000235"/>
+</kw>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-12T11:36:10.643310" elapsed="0.103237"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-12T11:36:10.540887" elapsed="0.205686"/>
+</for>
+<for flavor="IN">
+<iter>
+<kw name="Nautobot Graphql" owner="LabLib">
+<msg time="2026-09-12T11:36:10.856225" level="INFO">GraphQL { devices(name:"host1") { interfaces(name:"eth1") { connected_interface { name device { name } } ip_addresses { address } } } }
+-&gt; 200 {"data":{"devices":[{"interfaces":[{"connected_interface":{"name":"GigabitEthernet1/0/2","device":{"name":"sw1"}},"ip_addresses":[{"address":"10.10.0.100/24"}]}]}]}}</msg>
+<msg time="2026-09-12T11:36:10.856433" level="INFO">${d} = {'devices': [{'interfaces': [{'connected_interface': {'name': 'GigabitEthernet1/0/2', 'device': {'name': 'sw1'}}, 'ip_addresses': [{'address': '10.10.0.100/24'}]}]}]}</msg>
+<var>${d}</var>
+<arg>{ devices(name:"${h}") { interfaces(name:"eth1") { connected_interface { name device { name } } ip_addresses { address } } } }</arg>
+<status status="PASS" start="2026-09-12T11:36:10.746812" elapsed="0.109644"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T11:36:10.856845" level="INFO">${e1} = {'connected_interface': {'name': 'GigabitEthernet1/0/2', 'device': {'name': 'sw1'}}, 'ip_addresses': [{'address': '10.10.0.100/24'}]}</msg>
+<var>${e1}</var>
+<arg>${d}[devices][0][interfaces][0]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.856575" elapsed="0.000289"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${e1}[connected_interface][device][name]</arg>
+<arg>${host}[switch]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.856929" elapsed="0.000218"/>
+</kw>
+<kw name="Replace String" owner="String">
+<msg time="2026-09-12T11:36:10.857366" level="INFO">${port} = GigabitEthernet1/0/2</msg>
+<var>${port}</var>
+<arg>${host}[port]</arg>
+<arg>Gi</arg>
+<arg>GigabitEthernet</arg>
+<doc>Replaces ``search_for`` in the given ``string`` with ``replace_with``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.857232" elapsed="0.000152"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${e1}[connected_interface][name]</arg>
+<arg>${port}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.857443" elapsed="0.000180"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${e1}[ip_addresses][0][address]</arg>
+<arg>${host}[ip]/24</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.857683" elapsed="0.000190"/>
+</kw>
+<var name="${h}">host1</var>
+<var name="${host}">{'mgmt': '10.0.0.21', 'switch': 'sw1', 'port': 'Gi1/0/2', 'vlan': '10', 'ip': '10.10.0.100', 'gateway': '10.10.0.1', 'mac': '5254.00c9.0301', 'peer': 'host2'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.746762" elapsed="0.111136"/>
+</iter>
+<iter>
+<kw name="Nautobot Graphql" owner="LabLib">
+<msg time="2026-09-12T11:36:10.969467" level="INFO">GraphQL { devices(name:"host2") { interfaces(name:"eth1") { connected_interface { name device { name } } ip_addresses { address } } } }
+-&gt; 200 {"data":{"devices":[{"interfaces":[{"connected_interface":{"name":"GigabitEthernet1/0/4","device":{"name":"sw2"}},"ip_addresses":[{"address":"10.20.0.100/24"}]}]}]}}</msg>
+<msg time="2026-09-12T11:36:10.969687" level="INFO">${d} = {'devices': [{'interfaces': [{'connected_interface': {'name': 'GigabitEthernet1/0/4', 'device': {'name': 'sw2'}}, 'ip_addresses': [{'address': '10.20.0.100/24'}]}]}]}</msg>
+<var>${d}</var>
+<arg>{ devices(name:"${h}") { interfaces(name:"eth1") { connected_interface { name device { name } } ip_addresses { address } } } }</arg>
+<status status="PASS" start="2026-09-12T11:36:10.858072" elapsed="0.111645"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T11:36:10.970131" level="INFO">${e1} = {'connected_interface': {'name': 'GigabitEthernet1/0/4', 'device': {'name': 'sw2'}}, 'ip_addresses': [{'address': '10.20.0.100/24'}]}</msg>
+<var>${e1}</var>
+<arg>${d}[devices][0][interfaces][0]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.969840" elapsed="0.000311"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${e1}[connected_interface][device][name]</arg>
+<arg>${host}[switch]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.970216" elapsed="0.000211"/>
+</kw>
+<kw name="Replace String" owner="String">
+<msg time="2026-09-12T11:36:10.970638" level="INFO">${port} = GigabitEthernet1/0/4</msg>
+<var>${port}</var>
+<arg>${host}[port]</arg>
+<arg>Gi</arg>
+<arg>GigabitEthernet</arg>
+<doc>Replaces ``search_for`` in the given ``string`` with ``replace_with``.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.970493" elapsed="0.000163"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${e1}[connected_interface][name]</arg>
+<arg>${port}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.970721" elapsed="0.000195"/>
+</kw>
+<kw name="Should Be Equal" owner="BuiltIn">
+<arg>${e1}[ip_addresses][0][address]</arg>
+<arg>${host}[ip]/24</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<status status="PASS" start="2026-09-12T11:36:10.970988" elapsed="0.000199"/>
+</kw>
+<var name="${h}">host2</var>
+<var name="${host}">{'mgmt': '10.0.0.22', 'switch': 'sw2', 'port': 'Gi1/0/4', 'vlan': '20', 'ip': '10.20.0.100', 'gateway': '10.20.0.1', 'mac': '5254.00c9.0401', 'peer': 'host1'}</var>
+<status status="PASS" start="2026-09-12T11:36:10.858021" elapsed="0.113190"/>
+</iter>
+<var>${h}</var>
+<var>${host}</var>
+<value>&amp;{HOSTS}</value>
+<status status="PASS" start="2026-09-12T11:36:10.746610" elapsed="0.224630"/>
+</for>
+<status status="PASS" start="2026-09-12T11:36:10.540714" elapsed="0.430596"/>
+</test>
+<test id="s1-s1-t7" name="Config context carries the routing and STP intent" line="74">
+<for flavor="IN">
+<iter>
+<kw name="Nautobot Graphql" owner="LabLib">
+<msg time="2026-09-12T11:36:11.037858" level="INFO">GraphQL { devices(name:"sw1") { local_config_context_data } }
+-&gt; 200 {"data":{"devices":[{"local_config_context_data":{"bgp":{"asn":65000},"stp_priority":4096}}]}}</msg>
+<msg time="2026-09-12T11:36:11.038091" level="INFO">${d} = {'devices': [{'local_config_context_data': {'bgp': {'asn': 65000}, 'stp_priority': 4096}}]}</msg>
+<var>${d}</var>
+<arg>{ devices(name:"${sw}") { local_config_context_data } }</arg>
+<status status="PASS" start="2026-09-12T11:36:10.971760" elapsed="0.066361"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T11:36:11.038582" level="INFO">${ctx} = {'bgp': {'asn': 65000}, 'stp_priority': 4096}</msg>
+<var>${ctx}</var>
+<arg>${d}[devices][0][local_config_context_data]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T11:36:11.038268" elapsed="0.000335"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2026-09-12T11:36:11.038843" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${ctx}[bgp][asn]</arg>
+<arg>${BGP_ASN}</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2026-09-12T11:36:11.038672" elapsed="0.000211"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<arg>${ctx}[stp_priority]</arg>
+<arg>${STP_PRIORITY}[${sw}]</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2026-09-12T11:36:11.038940" elapsed="0.000281"/>
+</kw>
+<var name="${sw}">sw1</var>
+<status status="PASS" start="2026-09-12T11:36:10.971709" elapsed="0.067542"/>
+</iter>
+<iter>
+<kw name="Nautobot Graphql" owner="LabLib">
+<msg time="2026-09-12T11:36:11.096256" level="INFO">GraphQL { devices(name:"sw2") { local_config_context_data } }
+-&gt; 200 {"data":{"devices":[{"local_config_context_data":{"bgp":{"asn":65000},"stp_priority":8192}}]}}</msg>
+<msg time="2026-09-12T11:36:11.096471" level="INFO">${d} = {'devices': [{'local_config_context_data': {'bgp': {'asn': 65000}, 'stp_priority': 8192}}]}</msg>
+<var>${d}</var>
+<arg>{ devices(name:"${sw}") { local_config_context_data } }</arg>
+<status status="PASS" start="2026-09-12T11:36:11.039392" elapsed="0.057111"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-09-12T11:36:11.096965" level="INFO">${ctx} = {'bgp': {'asn': 65000}, 'stp_priority': 8192}</msg>
+<var>${ctx}</var>
+<arg>${d}[devices][0][local_config_context_data]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-09-12T11:36:11.096655" elapsed="0.000344"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2026-09-12T11:36:11.097349" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${ctx}[bgp][asn]</arg>
+<arg>${BGP_ASN}</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2026-09-12T11:36:11.097085" elapsed="0.000316"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<arg>${ctx}[stp_priority]</arg>
+<arg>${STP_PRIORITY}[${sw}]</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2026-09-12T11:36:11.097477" elapsed="0.000278"/>
+</kw>
+<var name="${sw}">sw2</var>
+<status status="PASS" start="2026-09-12T11:36:11.039337" elapsed="0.058447"/>
+</iter>
+<var>${sw}</var>
+<value>@{SWITCH_NAMES}</value>
+<status status="PASS" start="2026-09-12T11:36:10.971605" elapsed="0.126206"/>
+</for>
+<status status="PASS" start="2026-09-12T11:36:10.971431" elapsed="0.126455"/>
+</test>
+<test id="s1-s1-t8" name="NAC device model rendered from Nautobot matches the committed file" line="82">
+<kw name="Render Nac Check" owner="LabLib">
+<msg time="2026-09-12T11:36:11.339775" level="INFO" html="true">&lt;pre&gt;/home/dcantor/cat9000v/nac/data/devices.nac.yaml matches Nautobot
+
+&lt;/pre&gt;</msg>
+<msg time="2026-09-12T11:36:11.339954" level="INFO">${rc} = 0</msg>
+<var>${rc}</var>
+<doc>Run nautobot/render_nac.py --check; returns its exit code (0 = devices.nac.yaml matches Nautobot).</doc>
+<status status="PASS" start="2026-09-12T11:36:11.098301" elapsed="0.241693"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2026-09-12T11:36:11.340487" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${rc}</arg>
+<arg>0</arg>
+<arg>msg=nac/data/devices.nac.yaml differs from Nautobot — run ./lab.sh nautobot render</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2026-09-12T11:36:11.340152" elapsed="0.000391"/>
+</kw>
+<tag>nac</tag>
+<status status="PASS" start="2026-09-12T11:36:11.098024" elapsed="0.242621"/>
+</test>
+<kw name="Suite Teardown Close Connections" owner="common" type="TEARDOWN">
+<kw name="Close All Connections" owner="LabLib">
+<status status="PASS" start="2026-09-12T11:36:11.341276" elapsed="0.021298"/>
+</kw>
+<status status="PASS" start="2026-09-12T11:36:11.341126" elapsed="0.021556"/>
+</kw>
+<doc>Nautobot on the NMS: service health, apps, and the lab as modelled in it — Nautobot is the
+source of truth for nac/data/devices.nac.yaml and must match both that file and the devices.</doc>
+<status status="FAIL" start="2026-09-12T11:36:03.983956" elapsed="7.378765"/>
+</suite>
+<status status="FAIL" start="2026-09-12T11:36:03.961598" elapsed="7.401763"/>
+</suite>
+<statistics>
+<total>
+<stat pass="6" fail="2" skip="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="1" fail="0" skip="0">nac</stat>
+</tag>
+<suite>
+<stat name="cat9000v lab" id="s1" pass="6" fail="2" skip="0">cat9000v lab</stat>
+<stat name="09 Nautobot" id="s1-s1" pass="6" fail="2" skip="0">cat9000v lab.09 Nautobot</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

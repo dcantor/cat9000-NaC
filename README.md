@@ -120,8 +120,11 @@ belongs in `nac/data/`.
 ## Nautobot
 
 [Nautobot](nautobot/README.md) 3.2 runs on the NMS jumphost as a Docker
-Compose stack (`./lab.sh nautobot install|status|logs|up|down`):
-http://10.0.0.10:8080, `admin`/`admin`.
+Compose stack with Device Onboarding, Golden Config, Nornir and SSoT apps and
+a Gitea server: http://10.0.0.10:8080 (`admin`/`admin`), http://10.0.0.10:3000.
+Nautobot is the **source of truth** for the switches' per-device intent —
+`nac/data/devices.nac.yaml` is rendered from it (`./lab.sh nautobot render`) —
+and Golden Config backs up and checks compliance of the running configs.
 
 ## Tests
 
