@@ -19,3 +19,8 @@ ethernets:
     set-name: eth3
     addresses: [10.2.0.10/24]
     dhcp4: false
+  srv6:
+    match: { macaddress: "52:54:00:c9:0a:05" }
+    set-name: eth4
+    addresses: [10.3.0.10/24]
+    dhcp4: false

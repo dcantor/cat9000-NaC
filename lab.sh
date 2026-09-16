@@ -172,6 +172,12 @@ nms_xml() {
       <source network='ipsec-oob'/>
       <model type='virtio'/>
     </interface>
+    <!-- eth4: OOB network of the srv6-core lab (~/srv6-core, libvirt net srv6-oob), 10.3.0.10 -->
+    <interface type='network'>
+      <mac address='52:54:00:c9:0a:05'/>
+      <source network='srv6-oob'/>
+      <model type='virtio'/>
+    </interface>
 $(serial_xml nms)
     <channel type='unix'><target type='virtio' name='org.qemu.guest_agent.0'/></channel>
     <rng model='virtio'><backend model='random'>/dev/urandom</backend></rng>
