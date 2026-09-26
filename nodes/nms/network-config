@@ -24,3 +24,8 @@ ethernets:
     set-name: eth4
     addresses: [10.3.0.10/24]
     dhcp4: false
+  c8d:
+    match: { macaddress: "52:54:00:c9:0a:06" }
+    set-name: eth5
+    addresses: [10.5.0.10/24]
+    dhcp4: false

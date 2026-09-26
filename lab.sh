@@ -178,6 +178,12 @@ nms_xml() {
       <source network='srv6-oob'/>
       <model type='virtio'/>
     </interface>
+    <!-- eth5: OOB network of c8000v-dmvpn-lab (~/c8000v-dmvpn-lab, libvirt net c8d-oob), 10.5.0.10 -->
+    <interface type='network'>
+      <mac address='52:54:00:c9:0a:06'/>
+      <source network='c8d-oob'/>
+      <model type='virtio'/>
+    </interface>
 $(serial_xml nms)
     <channel type='unix'><target type='virtio' name='org.qemu.guest_agent.0'/></channel>
     <rng model='virtio'><backend model='random'>/dev/urandom</backend></rng>
