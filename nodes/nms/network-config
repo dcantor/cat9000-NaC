@@ -29,3 +29,8 @@ ethernets:
     set-name: eth5
     addresses: [10.5.0.10/24]
     dhcp4: false
+  evpn:
+    match: { macaddress: "52:54:00:c9:0a:07" }
+    set-name: eth6
+    addresses: [10.6.0.10/24]
+    dhcp4: false
