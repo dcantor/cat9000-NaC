@@ -184,7 +184,7 @@ nms_xml() {
       <source network='c8d-oob'/>
       <model type='virtio'/>
     </interface>
-    <!-- eth6: OOB network of evpn-fabric (~/evpn-fabric, libvirt net evpn-oob), 10.6.0.10 -->
+    <!-- eth6: OOB network of evpn-fabric (~/evpn-fabric, libvirt net evpn-oob), 10.106.0.10 -->
     <interface type='network'>
       <mac address='52:54:00:c9:0a:07'/>
       <source network='evpn-oob'/>

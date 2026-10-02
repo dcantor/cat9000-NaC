@@ -32,5 +32,5 @@ ethernets:
   evpn:
     match: { macaddress: "52:54:00:c9:0a:07" }
     set-name: eth6
-    addresses: [10.6.0.10/24]
+    addresses: [10.106.0.10/24]
     dhcp4: false
